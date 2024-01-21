@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
 public class Constellation {
+
     /**
      * 별자리(캐릭터) ID
      */
@@ -35,7 +36,7 @@ public class Constellation {
     /**
      * 스토리
      */
-    @Column(name = "constellation_stroy", nullable = false)
+    @Column(name = "constellation_story", nullable = false)
     private String story;
     /**
      * 정체성

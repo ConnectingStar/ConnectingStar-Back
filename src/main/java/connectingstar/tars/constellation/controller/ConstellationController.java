@@ -1,5 +1,7 @@
 package connectingstar.tars.constellation.controller;
 
+import connectingstar.tars.constellation.command.ConstellationCommandService;
+import connectingstar.tars.constellation.query.ConstellationQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,5 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConstellationController {
 
+    private ConstellationCommandService constellationCommandService;
+    private ConstellationQueryService constellationQueryService;
 
 }
