@@ -2,8 +2,12 @@ package connectingstar.tars.constellation.controller;
 
 import connectingstar.tars.constellation.command.ConstellationCommandService;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
+import connectingstar.tars.constellation.request.ConstellationOneRequest;
+import connectingstar.tars.constellation.validation.ConstellationValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConstellationController {
 
-    private ConstellationCommandService constellationCommandService;
-    private ConstellationQueryService constellationQueryService;
+    private final ConstellationCommandService constellationCommandService;
+    private final ConstellationQueryService constellationQueryService;
 
+    @GetMapping(value = "/one")
+    public ResponseEntity<?> getOne(ConstellationOneRequest param) {
+        ConstellationValidator.validate(param);
+
+        return ResponseEntity.ok(constellationQueryService.getOne(param));
+    }
 }

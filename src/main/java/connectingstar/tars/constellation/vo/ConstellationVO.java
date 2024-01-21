@@ -16,13 +16,17 @@ import lombok.Getter;
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({})
+@JsonPropertyOrder({"constellationId", "name", "description", "story", "identity", "image", "characterImage", "starCount"})
 public class ConstellationVO {
 
     /**
      * 별자리(캐릭터) ID
      */
     private final Integer constellationId;
+    /**
+     * 별자리(캐릭터) 타입 ID
+     */
+    private final Integer constellationTypeId;
     /**
      * 이름
      */
@@ -54,6 +58,7 @@ public class ConstellationVO {
 
     public ConstellationVO(Constellation constellation) {
         this.constellationId = constellation.getConstellationId();
+        this.constellationTypeId = constellation.getConstellationType().getConstellationTypeId();
         this.name = constellation.getName();
         this.description = constellation.getDescription();
         this.story = constellation.getStory();
