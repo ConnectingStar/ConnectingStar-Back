@@ -2,6 +2,7 @@ package connectingstar.tars.constellation.controller;
 
 import connectingstar.tars.constellation.command.ConstellationCommandService;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
+import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.request.ConstellationOneRequest;
 import connectingstar.tars.constellation.validation.ConstellationValidator;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,12 @@ public class ConstellationController {
         ConstellationValidator.validate(param);
 
         return ResponseEntity.ok(constellationQueryService.getOne(param));
+    }
+
+    @GetMapping(value = "/list")
+    public ResponseEntity<?> getList(ConstellationListRequest param) {
+        ConstellationValidator.validate(param);
+
+        return ResponseEntity.ok(constellationQueryService.getList(param));
     }
 }

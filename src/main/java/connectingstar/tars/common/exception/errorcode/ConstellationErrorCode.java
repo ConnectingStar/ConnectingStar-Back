@@ -24,11 +24,13 @@ public enum ConstellationErrorCode implements ErrorCode {
     CONSTELLATION_PARAM_IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "별자리 이미지는 필수 입력값입니다."),
     CONSTELLATION_PARAM_CHARACTER_IMAGE_EMPTY(HttpStatus.BAD_REQUEST, "캐릭터 이미지는 필수 입력값입니다."),
     CONSTELLATION_PARAM_STAR_COUNT_EMPTY(HttpStatus.BAD_REQUEST, "필요한 별 개수는 필수 입력값입니다."),
+    CONSTELLATION_PARAM_TYPE_ID_EMPTY(HttpStatus.BAD_REQUEST, "별자리 타입 ID는 필수 입력값입니다."),
 
     /**
      * not found
      */
-    CONSTELLATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "별자리 정보를 찾을 수 없습니다.");
+    CONSTELLATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "별자리 정보를 찾을 수 없습니다."),
+    CONSTELLATION_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "별자리 타입 정보를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
