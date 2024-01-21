@@ -44,7 +44,7 @@ public class Constellation {
     @Column(name = "constellation_identity", nullable = false)
     private String identity;
     /**
-     * 별자리 이미지
+     * 별자리 이미지(별자리 오픈되기 전의 캐릭터 이미지)
      */
     @Column(name = "constellation_image", nullable = false)
     private String image;
@@ -58,6 +58,10 @@ public class Constellation {
      */
     @Column(name = "constellation_star_count", nullable = false)
     private Integer starCount;
+
+    @ManyToOne
+    @JoinColumn(name = "constellation_type_id")
+    private ConstellationType constellationType;
 
     public Constellation(String name, String description, String story, String identity, String image, String characterImage, Integer starCount) {
         setName(name);
