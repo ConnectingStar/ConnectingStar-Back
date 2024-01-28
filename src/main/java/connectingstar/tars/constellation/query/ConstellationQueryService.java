@@ -4,7 +4,7 @@ import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.request.ConstellationOneRequest;
-import connectingstar.tars.constellation.vo.ConstellationVO;
+import connectingstar.tars.constellation.response.ConstellationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ import static connectingstar.tars.common.exception.errorcode.ConstellationErrorC
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_TYPE_NOT_FOUND;
 
 /**
- * 별자리(캐릭터) 엔티티의 정보를 반환하는 요청을 처리하는 서비스 클래스
+ * 별자리(캐릭터) 정보 조회 서비스
  *
  * @author 송병선
  */
@@ -28,25 +28,29 @@ public class ConstellationQueryService {
 
     /**
      * 별자리 단일 조회
+     *
+     * @param param {@link ConstellationOneRequest}
      */
     @Transactional(readOnly = true)
-    public ConstellationVO getOne(ConstellationOneRequest param) {
+    public ConstellationResponse getOne(ConstellationOneRequest param) {
         verifyIdNotFound(param.getConstellationId());
         return constellationRepository.findById(param.getConstellationId())
-                .map(ConstellationVO::new)
+                .map(ConstellationResponse::new)
                 .get();
     }
 
     /**
      * 별자리 타입별 목록 조회
      * 추후에 QueryDSL을 도입하면 그때 동적쿼리를 적용해 전체 조회 기능 추가 예정
+     *
+     * @param param {@link ConstellationListRequest}
      */
     @Transactional(readOnly = true)
-    public List<ConstellationVO> getList(ConstellationListRequest param) {
+    public List<ConstellationResponse> getList(ConstellationListRequest param) {
         verifyTypeIdNotFound(param.getConstellationTypeId());
         return constellationRepository.findAllByConstellationType_ConstellationTypeId(param.getConstellationTypeId())
                 .stream()
-                .map(ConstellationVO::new)
+                .map(ConstellationResponse::new)
                 .collect(Collectors.toList());
     }
 
