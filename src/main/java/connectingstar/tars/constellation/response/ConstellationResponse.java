@@ -1,12 +1,8 @@
-package connectingstar.tars.constellation.vo;
+package connectingstar.tars.constellation.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.constellation.domain.Constellation;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Getter;
 
 /**
@@ -17,7 +13,7 @@ import lombok.Getter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"constellationId", "name", "description", "story", "identity", "image", "characterImage", "starCount"})
-public class ConstellationVO {
+public class ConstellationResponse {
 
     /**
      * 별자리(캐릭터) ID
@@ -56,7 +52,7 @@ public class ConstellationVO {
      */
     private final Integer starCount;
 
-    public ConstellationVO(Constellation constellation) {
+    public ConstellationResponse(Constellation constellation) {
         this.constellationId = constellation.getConstellationId();
         this.constellationTypeId = constellation.getConstellationType().getConstellationTypeId();
         this.name = constellation.getName();

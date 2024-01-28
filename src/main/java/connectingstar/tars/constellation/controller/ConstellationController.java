@@ -2,6 +2,7 @@ package connectingstar.tars.constellation.controller;
 
 import connectingstar.tars.constellation.command.ConstellationCommandService;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
+import connectingstar.tars.constellation.query.ConstellationTypeQueryService;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.request.ConstellationOneRequest;
 import connectingstar.tars.constellation.validation.ConstellationValidator;
@@ -25,6 +26,7 @@ public class ConstellationController {
 
     private final ConstellationCommandService constellationCommandService;
     private final ConstellationQueryService constellationQueryService;
+    private final ConstellationTypeQueryService constellationTypeQueryService;
 
     @GetMapping(value = "/one")
     public ResponseEntity<?> getOne(ConstellationOneRequest param) {
@@ -38,5 +40,10 @@ public class ConstellationController {
         ConstellationValidator.validate(param);
 
         return ResponseEntity.ok(constellationQueryService.getList(param));
+    }
+
+    @GetMapping(value = "/type")
+    public ResponseEntity<?> getTypeList() {
+        return ResponseEntity.ok(constellationTypeQueryService.getList());
     }
 }
