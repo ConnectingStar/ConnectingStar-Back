@@ -34,37 +34,37 @@ public class RunHabit {
     /**
      * 정체성
      */
-    @Column(name = "identity")
+    @Column(name = "identity", nullable = false)
     private String identity;
 
     /**
      * 실천 시간
      */
-    @Column(name = "run_time")
+    @Column(name = "run_time", nullable = false)
     private LocalDateTime runTime;
 
     /**
      * 장소
      */
-    @Column(name = "place")
+    @Column(name = "place", nullable = false)
     private String place;
 
     /**
      * 행동
      */
-    @Column(name = "action")
+    @Column(name = "action", nullable = false)
     private String action;
 
     /**
      * 얼마나
      */
-    @Column(name = "value")
+    @Column(name = "value", nullable = false)
     private Integer value;
 
     /**
      * 단위
      */
-    @Column(name = "unit")
+    @Column(name = "unit", nullable = false)
     private String unit;
 
     /**
