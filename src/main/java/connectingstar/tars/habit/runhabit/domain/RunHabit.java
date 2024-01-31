@@ -1,11 +1,13 @@
 package connectingstar.tars.habit.runhabit.domain;
 
+import connectingstar.tars.habit.habitalert.domain.HabitAlert;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 진행중인습관 엔티티
@@ -27,9 +29,10 @@ public class RunHabit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer runHabitId;
 
-//    userId추가되면 적용
-//    @Column(name = "user_id")
-//    private Integer userId;
+    /**
+     * 사용자 PK
+     */
+    //TODO: USER Entity 추가 후 작성
 
     /**
      * 정체성
@@ -68,13 +71,10 @@ public class RunHabit {
     private String unit;
 
     /**
-     * 1차 알림
+     * 알림들
      */
-    //TODO: 습관 알림 클래스 생성 후 추가진행
+    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
+    private List<HabitAlert> alerts;
 
-    /**
-     * 2차 알림
-     */
-    //TODO: 습관 알림 클래스 생성 후 추가진행
 
 }
