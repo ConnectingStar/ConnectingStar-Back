@@ -2,6 +2,9 @@ package connectingstar.tars.habit.habithistory.domain;
 
 import connectingstar.tars.habit.runhabit.domain.RunHabit;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +14,10 @@ import java.time.LocalDateTime;
  * @author 김성수
  */
 
+@Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Access(AccessType.FIELD)
 public class HabitHistory {
 
     /**
@@ -30,8 +36,8 @@ public class HabitHistory {
     /**
      * 습관 PK
      */
-    @ManyToOne
-    @Column(name = "run_habit_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE} )
+    @JoinColumn(name = "run_habit_id",nullable = false)
     private RunHabit runHabit;
 
     /**
