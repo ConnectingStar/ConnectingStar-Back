@@ -37,19 +37,19 @@ public class HabitAlert {
     /**
      * 알림 차수 ex) 1차 = 1, 2차 = 2
      */
-    @Column(name = "alert_order")
+    @Column(name = "alert_order", nullable = false)
     private Integer alertOrder;
 
 
     /**
      * 알림 시간
      */
-    @Column(name = "alert_time")
+    @Column(name = "alert_time", nullable = false)
     private LocalDateTime alertTime;
 
     /**
      * 알림 여부
      */
-    @Column(name = "alert_status")
+    @Column(name = "alert_status", nullable = false)
     private Boolean alertStatus;
 }
