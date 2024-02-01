@@ -73,6 +73,11 @@ public class RunHabit {
     private String unit;
 
     /**
+     * 습관 기록
+     */
+    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private List<HabitHistory> habitHistories = new ArrayList<>();
+    /**
      * 알림들
      */
     @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
