@@ -1,5 +1,6 @@
 package connectingstar.tars.habit.domain;
 
+import connectingstar.tars.habit.request.RunHabitPutRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -92,7 +93,17 @@ public class RunHabit {
         this.unit = unit;
     }
 
-    public void updateAlert(HabitAlert habitAlert){
+    public void addAlert(HabitAlert habitAlert){
         this.alerts.add(habitAlert);
+    }
+
+    public void updateData(RunHabitPutRequest param) {
+        this.identity = param.getIdentity() != null ? param.getIdentity() : this.identity;
+        this.runTime = param.getRunTime() != null ? param.getRunTime() : this.runTime;
+        this.place = param.getPlace() != null ? param.getPlace() : this.place;
+        this.action = param.getAction() != null ? param.getAction() : this.action;
+        this.value = param.getValue() != null ? param.getValue() : this.value;
+        this.unit = param.getUnit() != null ? param.getUnit() : this.unit;
+
     }
 }

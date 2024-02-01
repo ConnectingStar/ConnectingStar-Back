@@ -49,7 +49,7 @@ public class HabitHistory {
     /**
      * 느낀점
      */
-    @Column(name = "review",nullable = false)
+    @Column(name = "review",nullable = false,length = 400)
     private String review;
 
     /**
