@@ -1,13 +1,13 @@
 package connectingstar.tars.habit.domain;
 
-import connectingstar.tars.habit.domain.HabitAlert;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,8 +74,25 @@ public class RunHabit {
     /**
      * 알림들
      */
-    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
-    private List<HabitAlert> alerts;
+    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private List<HabitAlert> alerts = new ArrayList<>();
 
+    @Builder(builderMethodName = "postRunHabit")
+    public RunHabit(String identity,
+                    LocalTime runTime,
+                    String place,
+                    String action,
+                    Integer value,
+                    String unit) {
+        this.identity = identity;
+        this.runTime = runTime;
+        this.place = place;
+        this.action = action;
+        this.value = value;
+        this.unit = unit;
+    }
 
+    public void updateAlert(HabitAlert habitAlert){
+        this.alerts.add(habitAlert);
+    }
 }
