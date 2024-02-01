@@ -1,5 +1,6 @@
 package connectingstar.tars.habit.domain;
 
+import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.habit.request.RunHabitPutRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,7 +22,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD) //공부 필요
-public class RunHabit {
+public class RunHabit extends Auditable {
 
     /**
      * 진행중인 습관 ID
@@ -72,6 +73,11 @@ public class RunHabit {
     @Column(name = "unit", nullable = false)
     private String unit;
 
+    /**
+     * 습관 기록
+     */
+    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private List<HabitHistory> habitHistories = new ArrayList<>();
     /**
      * 알림들
      */
