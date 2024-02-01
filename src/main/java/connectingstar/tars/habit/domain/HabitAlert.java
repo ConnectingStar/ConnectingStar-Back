@@ -2,6 +2,7 @@ package connectingstar.tars.habit.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,4 +53,12 @@ public class HabitAlert {
      */
     @Column(name = "alert_status", nullable = false)
     private Boolean alertStatus;
+
+    @Builder(builderMethodName = "postHabitAlert")
+    public HabitAlert(RunHabit runHabit, Integer alertOrder, LocalTime alertTime, Boolean alertStatus) {
+        this.runHabit = runHabit;
+        this.alertOrder = alertOrder;
+        this.alertTime = alertTime;
+        this.alertStatus = alertStatus;
+    }
 }
