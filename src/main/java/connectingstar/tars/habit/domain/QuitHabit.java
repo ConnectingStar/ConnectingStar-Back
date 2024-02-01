@@ -1,7 +1,9 @@
 package connectingstar.tars.habit.domain;
 
+import connectingstar.tars.common.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +19,7 @@ import java.time.LocalTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
-public class QuitHabit {
+public class QuitHabit extends Auditable {
 
     /**
      * 종료한 습관 ID
@@ -57,7 +59,7 @@ public class QuitHabit {
     private Integer value;
 
     /**
-     * 실천횟수
+     * 휴식 실천횟수
      */
     @Column(name = "rest_value", nullable = false)
     private Integer restValue;
@@ -80,4 +82,15 @@ public class QuitHabit {
     @Column(name = "quit_date", nullable = false)
     private LocalDateTime quitDate;
 
+    @Builder(builderMethodName = "postQuitHabit")
+    public QuitHabit(LocalTime runTime, String place, String action, Integer value, Integer restValue, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
+        this.runTime = runTime;
+        this.place = place;
+        this.action = action;
+        this.value = value;
+        this.restValue = restValue;
+        this.reasonOfQuit = reasonOfQuit;
+        this.startDate = startDate;
+        this.quitDate = quitDate;
+    }
 }

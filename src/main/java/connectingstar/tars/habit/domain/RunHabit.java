@@ -1,5 +1,6 @@
 package connectingstar.tars.habit.domain;
 
+import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.habit.request.RunHabitPutRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,7 +22,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD) //공부 필요
-public class RunHabit {
+public class RunHabit extends Auditable {
 
     /**
      * 진행중인 습관 ID

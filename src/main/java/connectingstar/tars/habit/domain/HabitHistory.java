@@ -1,5 +1,6 @@
 package connectingstar.tars.habit.domain;
 
+import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.habit.domain.RunHabit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
-public class HabitHistory {
+public class HabitHistory extends Auditable {
 
     /**
      * 습관기록 데이터 ID
