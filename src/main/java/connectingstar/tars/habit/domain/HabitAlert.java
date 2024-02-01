@@ -1,12 +1,12 @@
-package connectingstar.tars.habit.habitalert.domain;
+package connectingstar.tars.habit.domain;
 
-import connectingstar.tars.habit.runhabit.domain.RunHabit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * 습관 알림(1차, 2차)
@@ -45,7 +45,7 @@ public class HabitAlert {
      * 알림 시간
      */
     @Column(name = "alert_time", nullable = false)
-    private LocalDateTime alertTime;
+    private LocalTime alertTime;
 
     /**
      * 알림 여부

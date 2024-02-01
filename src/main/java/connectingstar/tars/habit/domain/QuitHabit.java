@@ -1,33 +1,31 @@
-package connectingstar.tars.habit.runhabit.domain;
+package connectingstar.tars.habit.domain;
 
-import connectingstar.tars.habit.habitalert.domain.HabitAlert;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.time.LocalTime;
 
 /**
- * 진행중인습관 엔티티
+ * 종료한 습관 엔티티
  *
  * @author 김성수
  */
-
-@Entity
 @Getter
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Access(AccessType.FIELD) //공부 필요
-public class RunHabit {
+@Access(AccessType.FIELD)
+public class QuitHabit {
 
     /**
-     * 진행중인 습관 ID
+     * 종료한 습관 ID
      */
     @Id
-    @Column(name = "run_habit_id", nullable = false)
+    @Column(name = "quit_habit_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer runHabitId;
+    private Integer quitHabitId;
 
     /**
      * 사용자 PK
@@ -35,16 +33,10 @@ public class RunHabit {
     //TODO: USER Entity 추가 후 작성
 
     /**
-     * 정체성
-     */
-    @Column(name = "identity", nullable = false)
-    private String identity;
-
-    /**
      * 실천 시간
      */
     @Column(name = "run_time", nullable = false)
-    private LocalDateTime runTime;
+    private LocalTime runTime;
 
     /**
      * 장소
@@ -59,22 +51,33 @@ public class RunHabit {
     private String action;
 
     /**
-     * 얼마나
+     * 실천횟수
      */
     @Column(name = "value", nullable = false)
     private Integer value;
 
     /**
-     * 단위
+     * 실천횟수
      */
-    @Column(name = "unit", nullable = false)
-    private String unit;
+    @Column(name = "rest_value", nullable = false)
+    private Integer restValue;
 
     /**
-     * 알림들
+     * 종료 사유
      */
-    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
-    private List<HabitAlert> alerts;
+    @Column(name = "reason_of_quit", nullable = false)
+    private String reasonOfQuit;
 
+    /**
+     * 시작 날짜
+     */
+    @Column(name = "start_date", nullable = false)
+    private LocalDateTime startDate;
+
+    /**
+     * 종료 날짜
+     */
+    @Column(name = "quit_date", nullable = false)
+    private LocalDateTime quitDate;
 
 }

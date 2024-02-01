@@ -1,30 +1,34 @@
-package connectingstar.tars.habit.quithabit.domain;
+package connectingstar.tars.habit.domain;
 
+import connectingstar.tars.habit.domain.HabitAlert;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 /**
- * 종료한 습관 엔티티
+ * 진행중인습관 엔티티
  *
  * @author 김성수
  */
-@Getter
+
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Access(AccessType.FIELD)
-public class QuitHabit {
+@Access(AccessType.FIELD) //공부 필요
+public class RunHabit {
 
     /**
-     * 종료한 습관 ID
+     * 진행중인 습관 ID
      */
     @Id
-    @Column(name = "quit_habit_id", nullable = false)
+    @Column(name = "run_habit_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer quitHabitId;
+    private Integer runHabitId;
 
     /**
      * 사용자 PK
@@ -32,10 +36,16 @@ public class QuitHabit {
     //TODO: USER Entity 추가 후 작성
 
     /**
+     * 정체성
+     */
+    @Column(name = "identity", nullable = false)
+    private String identity;
+
+    /**
      * 실천 시간
      */
     @Column(name = "run_time", nullable = false)
-    private LocalDateTime runTime;
+    private LocalTime runTime;
 
     /**
      * 장소
@@ -50,33 +60,22 @@ public class QuitHabit {
     private String action;
 
     /**
-     * 실천횟수
+     * 얼마나
      */
     @Column(name = "value", nullable = false)
     private Integer value;
 
     /**
-     * 실천횟수
+     * 단위
      */
-    @Column(name = "rest_value", nullable = false)
-    private Integer restValue;
+    @Column(name = "unit", nullable = false)
+    private String unit;
 
     /**
-     * 종료 사유
+     * 알림들
      */
-    @Column(name = "reason_of_quit", nullable = false)
-    private String reasonOfQuit;
+    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
+    private List<HabitAlert> alerts;
 
-    /**
-     * 시작 날짜
-     */
-    @Column(name = "start_date", nullable = false)
-    private LocalDateTime startDate;
-
-    /**
-     * 종료 날짜
-     */
-    @Column(name = "quit_date", nullable = false)
-    private LocalDateTime quitDate;
 
 }
