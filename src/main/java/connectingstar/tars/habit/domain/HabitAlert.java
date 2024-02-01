@@ -62,6 +62,6 @@ public class HabitAlert {
     }
 
     public void updateAlertTime(LocalTime alertTime) {
-        this.alertTime = alertTime;
+        this.alertTime = alertTime != null ? alertTime : this.alertTime;
     }
 }

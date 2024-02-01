@@ -2,15 +2,13 @@ package connectingstar.tars.habit.controller;
 
 import connectingstar.tars.habit.command.RunHabitCommandService;
 import connectingstar.tars.habit.request.RunHabitPostRequest;
+import connectingstar.tars.habit.request.RunHabitPutRequest;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 진행중인 습관 관련 API
@@ -30,5 +28,10 @@ public class HabitController {
         runHabitCommandService.postRunHabit(param);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/")
+    public ResponseEntity<?> putRunHabit(@RequestBody RunHabitPutRequest param) {
+        return ResponseEntity.ok(runHabitCommandService.putRunHabit(param));
     }
 }
