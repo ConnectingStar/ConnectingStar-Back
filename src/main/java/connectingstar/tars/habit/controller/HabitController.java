@@ -1,6 +1,7 @@
 package connectingstar.tars.habit.controller;
 
 import connectingstar.tars.habit.command.RunHabitCommandService;
+import connectingstar.tars.habit.request.RunHabitDeleteRequest;
 import connectingstar.tars.habit.request.RunHabitPostRequest;
 import connectingstar.tars.habit.request.RunHabitPutRequest;
 import connectingstar.tars.habit.validation.HabitValidator;
@@ -33,5 +34,11 @@ public class HabitController {
     @PutMapping(value = "/")
     public ResponseEntity<?> putRunHabit(@RequestBody RunHabitPutRequest param) {
         return ResponseEntity.ok(runHabitCommandService.putRunHabit(param));
+    }
+
+    @DeleteMapping(value = "/")
+    public ResponseEntity<?> deleteRunHabit(@RequestBody RunHabitDeleteRequest param) {
+        runHabitCommandService.deleteRunHabit(param);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
