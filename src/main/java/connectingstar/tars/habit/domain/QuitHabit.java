@@ -65,7 +65,7 @@ public class QuitHabit {
     /**
      * 종료 사유
      */
-    @Column(name = "reason_of_quit", nullable = false)
+    @Column(name = "reason_of_quit", nullable = false, length = 400)
     private String reasonOfQuit;
 
     /**
