@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -60,5 +59,9 @@ public class HabitAlert {
         this.alertOrder = alertOrder;
         this.alertTime = alertTime;
         this.alertStatus = alertStatus;
+    }
+
+    public void updateAlertTime(LocalTime alertTime) {
+        this.alertTime = alertTime;
     }
 }
