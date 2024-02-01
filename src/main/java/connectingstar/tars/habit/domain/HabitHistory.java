@@ -1,6 +1,6 @@
-package connectingstar.tars.habit.habithistory.domain;
+package connectingstar.tars.habit.domain;
 
-import connectingstar.tars.habit.runhabit.domain.RunHabit;
+import connectingstar.tars.habit.domain.RunHabit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
