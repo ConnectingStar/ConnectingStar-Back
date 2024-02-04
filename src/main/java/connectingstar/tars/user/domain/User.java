@@ -24,9 +24,9 @@ public class User {
 
     private String identity; //정체성
 
-    private String email; //
+    private String email; // ?
 
-    private String password;
+    private String password;  //소셜로그인
 
     private String profileCharacter;
 
@@ -46,6 +46,4 @@ public class User {
         this.profileCharacter = profileCharacter;
         this.socialType = socialType;
     }
-
-
 }
