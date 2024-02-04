@@ -24,25 +24,22 @@ public class User {
 
     private String identity; //정체성
 
-    private String email; // ?
+    private String email; //소셜 로그인 이메일
 
-    private String password;  //소셜로그인
-
-    private String profileCharacter;
+    private String profileCharacter; //프로필 캐릭터
 
     @Enumerated
     private SocialType socialType;
 
     @Builder
     public User(String nickname, String gender, String ageRange, String referrer, String identity,
-                String email, String password, String profileCharacter, SocialType socialType) {
+                String email, String profileCharacter, SocialType socialType) {
         this.nickname = nickname;
         this.gender = gender;
         this.ageRange = ageRange;
         this.referrer = referrer;
         this.identity = identity;
         this.email = email;
-        this.password = password;
         this.profileCharacter = profileCharacter;
         this.socialType = socialType;
     }
