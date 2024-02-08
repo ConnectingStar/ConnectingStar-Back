@@ -16,7 +16,8 @@ public class User {
 
     private String nickname; //닉네임
 
-    private String gender; //남,여,선택안함
+    @Enumerated(EnumType.STRING)
+    private String gender; //남(M),여(W),선택안함(N)
 
     private String ageRange; //나이 연령대
 
@@ -28,7 +29,7 @@ public class User {
 
     private String profileCharacter; //프로필 캐릭터
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
     @Builder
