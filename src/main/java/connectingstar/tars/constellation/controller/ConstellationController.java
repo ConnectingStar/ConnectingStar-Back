@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConstellationController {
 
-    private final ConstellationCommandService constellationCommandService;
     private final ConstellationQueryService constellationQueryService;
     private final ConstellationTypeQueryService constellationTypeQueryService;
 
@@ -37,8 +36,6 @@ public class ConstellationController {
 
     @GetMapping(value = "/list")
     public ResponseEntity<?> getList(ConstellationListRequest param) {
-        ConstellationValidator.validate(param);
-
         return ResponseEntity.ok(constellationQueryService.getList(param));
     }
 

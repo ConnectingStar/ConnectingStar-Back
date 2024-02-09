@@ -1,15 +1,20 @@
 package connectingstar.tars.constellation.query;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.constellation.domain.Constellation;
+import connectingstar.tars.constellation.repository.ConstellationDao;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
+import connectingstar.tars.constellation.repository.ConstellationTypeRepository;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.request.ConstellationOneRequest;
-import connectingstar.tars.constellation.response.ConstellationResponse;
+import connectingstar.tars.constellation.response.ConstellationListResponse;
+import connectingstar.tars.constellation.response.ConstellationOneResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
@@ -25,6 +30,8 @@ import static connectingstar.tars.common.exception.errorcode.ConstellationErrorC
 public class ConstellationQueryService {
 
     private final ConstellationRepository constellationRepository;
+    private final ConstellationDao constellationDao;
+    private final ConstellationTypeRepository constellationTypeRepository;
 
     /**
      * 별자리 단일 조회
@@ -32,11 +39,8 @@ public class ConstellationQueryService {
      * @param param {@link ConstellationOneRequest}
      */
     @Transactional(readOnly = true)
-    public ConstellationResponse getOne(ConstellationOneRequest param) {
-        verifyIdNotFound(param.getConstellationId());
-        return constellationRepository.findById(param.getConstellationId())
-                .map(ConstellationResponse::new)
-                .get();
+    public ConstellationOneResponse getOne(ConstellationOneRequest param) {
+        return new ConstellationOneResponse(getConstellation(param.getConstellationId()));
     }
 
     /**
@@ -46,23 +50,21 @@ public class ConstellationQueryService {
      * @param param {@link ConstellationListRequest}
      */
     @Transactional(readOnly = true)
-    public List<ConstellationResponse> getList(ConstellationListRequest param) {
+    public List<ConstellationListResponse> getList(ConstellationListRequest param) {
         verifyTypeIdNotFound(param.getConstellationTypeId());
-        return constellationRepository.findAllByConstellationType_ConstellationTypeId(param.getConstellationTypeId())
-                .stream()
-                .map(ConstellationResponse::new)
-                .collect(Collectors.toList());
+        return constellationDao.getList(param);
     }
 
-    private void verifyIdNotFound(Integer id) {
-        if (!constellationRepository.existsById(id)) {
-            throw new ValidationException(CONSTELLATION_NOT_FOUND);
-        }
+    private Constellation getConstellation(Integer constellationId) {
+        return constellationRepository.findById(constellationId)
+            .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
     }
 
     private void verifyTypeIdNotFound(Integer typeId) {
-        if (!constellationRepository.existsByConstellationType_ConstellationTypeId(typeId)) {
-            throw new ValidationException(CONSTELLATION_TYPE_NOT_FOUND);
+        if (Objects.nonNull(typeId)) {
+            if (!constellationTypeRepository.existsById(typeId)) {
+                throw new ValidationException(CONSTELLATION_TYPE_NOT_FOUND);
+            }
         }
     }
 }

@@ -26,13 +26,6 @@ public class ConstellationValidator {
         validateNull(param.getConstellationId(), CONSTELLATION_PARAM_ID_EMPTY);
     }
 
-    /**
-     * 별자리(캐릭터) 단일 조회 요청 검증
-     */
-    public void validate(ConstellationListRequest param) {
-        validateNull(param.getConstellationTypeId(), CONSTELLATION_PARAM_TYPE_ID_EMPTY);
-    }
-
     private void validateNull(Object param, ErrorCode errorCode) {
         if (Objects.isNull(param)) {
             throw new ValidationException(errorCode);

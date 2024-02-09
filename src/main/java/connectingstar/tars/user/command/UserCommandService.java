@@ -9,11 +9,13 @@ import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
+import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserConstellationSaveRequest;
 import lombok.RequiredArgsConstructor;
 
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 /**
@@ -27,6 +29,7 @@ public class UserCommandService {
 
   private final UserRepository userRepository;
   private final ConstellationRepository constellationRepository;
+  private final UserConstellationRepository userConstellationRepository;
 
   /**
    * 회원 별자리(캐릭터) 등록
@@ -37,6 +40,7 @@ public class UserCommandService {
   public void saveConstellation(UserConstellationSaveRequest param) {
     User user = getUser(param.getUserId());
     Constellation constellation = getConstellation(param.getConstellationId());
+    verifyConstellationDuplicate(param.getUserId(), constellation.getConstellationId());
 
     user.addUserConstellation(new UserConstellation(constellation));
   }
@@ -49,5 +53,17 @@ public class UserCommandService {
   private Constellation getConstellation(Integer constellationId) {
     return constellationRepository.findById(constellationId)
         .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
+  }
+
+  /**
+   * 이미 등록한 별자리인지 검증
+   *
+   * @param userId          회원 ID
+   * @param constellationId 별자리 ID
+   */
+  private void verifyConstellationDuplicate(Long userId, Integer constellationId) {
+    if (userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId)) {
+      throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
+    }
   }
 }

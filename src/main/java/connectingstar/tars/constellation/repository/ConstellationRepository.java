@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * 별자리(캐릭터) JPA Repository
+ *
+ * @author 송병선
+ */
 public interface ConstellationRepository extends JpaRepository<Constellation, Integer> {
 
-    List<Constellation> findAllByConstellationType_ConstellationTypeId(Integer constellationTypeId);
-
-    boolean existsByConstellationType_ConstellationTypeId(Integer constellationTypeId);
 }
