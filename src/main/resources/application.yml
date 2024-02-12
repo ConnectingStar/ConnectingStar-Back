@@ -12,6 +12,8 @@ spring:
             client-id: 2aec517a57deaaff5bb7efaae720c928 #RestAPI
             client-secret: F09wDA20lYZyGfBDdadXxiFGhQRGT3yW #Secret
             redirect-uri: http://localhost:8080/oauth/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
             scope:
               - profile
               - account_email
