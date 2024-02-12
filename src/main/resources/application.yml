@@ -9,8 +9,9 @@ spring:
       client:
         registration:
           kakao:
-            client-id: { 클라이언트 아이디 }
-            client-secret: { F09wDA20lYZyGfBDdadXxiFGhQRGT3yW }
+            client-id: 2aec517a57deaaff5bb7efaae720c928 #RestAPI
+            client-secret: F09wDA20lYZyGfBDdadXxiFGhQRGT3yW #Secret
+            redirect-uri: http://localhost:8080/oauth/kakao
             scope:
               - profile
               - account_email
