@@ -1,6 +1,7 @@
 package connectingstar.tars.habit.command;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.common.exception.errorcode.UserErrorCode;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
@@ -13,13 +14,14 @@ import connectingstar.tars.habit.request.RunHabitDeleteRequest;
 import connectingstar.tars.habit.request.RunHabitPostRequest;
 import connectingstar.tars.habit.request.RunHabitPutRequest;
 import connectingstar.tars.habit.response.RunHabitPutResponse;
+import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,6 +49,8 @@ public class RunHabitCommandService {
     private final HabitAlertRepository habitAlertRepository;
     private final QuitHabitRepository quitHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
+    private final UserRepository userRepository;
+
     /**
      * 진행중인 습관 생성
      *
@@ -54,8 +58,11 @@ public class RunHabitCommandService {
      */
     @Transactional
     public void postRunHabit(RunHabitPostRequest param) {
+        User user = userRepository.findById(param.getUserId()).orElseThrow(() ->
+                new ValidationException(UserErrorCode.USER_NOT_FOUND));
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
+                .user(user)
                 .runTime(param.getRunTime())
                 .place(param.getPlace())
                 .action(param.getAction())
@@ -104,6 +111,7 @@ public class RunHabitCommandService {
      */
     @Transactional
     public RunHabitPutResponse putRunHabit(RunHabitPutRequest param) {
+        //UserId 검증을 통해 Validation 던지기
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
 
         runHabit.updateData(param);
@@ -134,13 +142,15 @@ public class RunHabitCommandService {
      * @param param {@link RunHabitDeleteRequest}
      */
     public void deleteRunHabit(RunHabitDeleteRequest param) {
-
+        User user = userRepository.findById(param.getUserId()).orElseThrow(() ->
+                new ValidationException(UserErrorCode.USER_NOT_FOUND));
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
 
 
         QuitHabit quitHabit = QuitHabit.postQuitHabit()
                 .runTime(runHabit.getRunTime())
+                .user(user)
                 .place(runHabit.getPlace())
                 .action(runHabit.getAction())
                 .value(findValue(habitHistories, NOT_REST))

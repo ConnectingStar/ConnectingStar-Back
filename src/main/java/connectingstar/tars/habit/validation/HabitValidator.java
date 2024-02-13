@@ -2,6 +2,8 @@ package connectingstar.tars.habit.validation;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.ErrorCode;
+import connectingstar.tars.common.exception.errorcode.UserErrorCode;
+import connectingstar.tars.habit.request.QuitHabitListRequest;
 import connectingstar.tars.habit.request.RunHabitPostRequest;
 import lombok.experimental.UtilityClass;
 
@@ -28,6 +30,9 @@ public class HabitValidator {
         validateNull(param.getAction(), RUN_HABIT_PARAM_ACTION_EMPTY);
         validateNull(param.getValue(), RUN_HABIT_PARAM_VALUE_EMPTY);
         validateNull(param.getUnit(), RUN_HABIT_PARAM_UNIT_EMPTY);
+    }
+    public void validate(QuitHabitListRequest param) {
+        validateNull(param.getUserId(), UserErrorCode.USER_NOT_FOUND);
     }
 
     private void validateNull(Object param, ErrorCode errorCode) {

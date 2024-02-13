@@ -2,6 +2,7 @@ package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.habit.request.RunHabitPutRequest;
+import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,7 +36,9 @@ public class RunHabit extends Auditable {
     /**
      * 사용자 PK
      */
-    //TODO: USER Entity 추가 후 작성
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
 
     /**
      * 정체성
@@ -76,7 +79,7 @@ public class RunHabit extends Auditable {
     /**
      * 습관 기록
      */
-    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<HabitHistory> habitHistories = new ArrayList<>();
     /**
      * 알림들
@@ -86,11 +89,13 @@ public class RunHabit extends Auditable {
 
     @Builder(builderMethodName = "postRunHabit")
     public RunHabit(String identity,
+                    User user,
                     LocalTime runTime,
                     String place,
                     String action,
                     Integer value,
                     String unit) {
+        this.user = user;
         this.identity = identity;
         this.runTime = runTime;
         this.place = place;

@@ -15,7 +15,7 @@ public class RunHabitDeleteRequest {
     /**
      * 사용자 PK
      */
-    //TODO: USER Entity 추가 후 작성
+    private Long userId;
 
     /**
      * 진행중인 습관 ID

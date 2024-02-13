@@ -24,7 +24,7 @@ public class RunHabitPutRequest {
     /**
      * 사용자 PK
      */
-    //TODO: USER Entity 추가 후 작성
+    private Long userId;
 
     /**
      * 정체성
