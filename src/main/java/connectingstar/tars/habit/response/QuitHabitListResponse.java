@@ -1,94 +1,94 @@
-package connectingstar.tars.habit.domain;
+package connectingstar.tars.habit.response;
 
-import connectingstar.tars.common.audit.Auditable;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
- * 종료한 습관 엔티티
+ * 내 종료한 습관 조회 응답
  *
  * @author 김성수
  */
 @Getter
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Access(AccessType.FIELD)
-public class QuitHabit extends Auditable {
+@JsonPropertyOrder({"quitHabitId", "userId","userName", "runTime", "place", "action", "value", "restValue", "reasonOfQuit","startDate", "quitDate"})
+public class QuitHabitListResponse {
 
     /**
      * 종료한 습관 ID
      */
-    @Id
-    @Column(name = "quit_habit_id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer quitHabitId;
+    private final Integer quitHabitId;
 
     /**
      * 사용자 PK
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "user_id",nullable = false)
-    private User user;
+    private final Long userId;
+
+
+    /**
+     * 사용자 이름
+     */
+    private final String userNickname;
 
     /**
      * 실천 시간
      */
     @Column(name = "run_time", nullable = false)
-    private LocalTime runTime;
+    private final LocalTime runTime;
 
     /**
      * 장소
      */
     @Column(name = "place", nullable = false)
-    private String place;
+    private final String place;
 
     /**
      * 행동
      */
     @Column(name = "action", nullable = false)
-    private String action;
+    private final String action;
 
     /**
      * 실천횟수
      */
     @Column(name = "value", nullable = false)
-    private Integer value;
+    private final Integer value;
 
     /**
      * 휴식 실천횟수
      */
     @Column(name = "rest_value", nullable = false)
-    private Integer restValue;
+    private final Integer restValue;
 
     /**
      * 종료 사유
      */
     @Column(name = "reason_of_quit", nullable = false, length = 400)
-    private String reasonOfQuit;
+    private final String reasonOfQuit;
 
     /**
      * 시작 날짜
      */
     @Column(name = "start_date", nullable = false)
-    private LocalDateTime startDate;
+    private final LocalDateTime startDate;
 
     /**
      * 종료 날짜
      */
     @Column(name = "quit_date", nullable = false)
-    private LocalDateTime quitDate;
+    private final LocalDateTime quitDate;
 
-    @Builder(builderMethodName = "postQuitHabit")
-    public QuitHabit(LocalTime runTime,User user, String place, String action, Integer value, Integer restValue, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
+    public QuitHabitListResponse(Integer quitHabitId, Long userId, String userNickname, LocalTime runTime,
+                                 String place, String action, Integer value, Integer restValue, String reasonOfQuit,
+                                 LocalDateTime startDate, LocalDateTime quitDate) {
+        this.quitHabitId = quitHabitId;
+        this.userId = userId;
+        this.userNickname = userNickname;
         this.runTime = runTime;
-        this.user = user;
         this.place = place;
         this.action = action;
         this.value = value;

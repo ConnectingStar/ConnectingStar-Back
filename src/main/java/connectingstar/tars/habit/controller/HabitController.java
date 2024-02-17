@@ -1,6 +1,8 @@
 package connectingstar.tars.habit.controller;
 
 import connectingstar.tars.habit.command.RunHabitCommandService;
+import connectingstar.tars.habit.query.QuitHabitQueryService;
+import connectingstar.tars.habit.request.QuitHabitListRequest;
 import connectingstar.tars.habit.request.RunHabitDeleteRequest;
 import connectingstar.tars.habit.request.RunHabitPostRequest;
 import connectingstar.tars.habit.request.RunHabitPutRequest;
@@ -22,8 +24,9 @@ import org.springframework.web.bind.annotation.*;
 public class HabitController {
 
     private final RunHabitCommandService runHabitCommandService;
+    private final QuitHabitQueryService quitHabitQueryService;
 
-    @PostMapping(value = "/")
+    @PostMapping
     public ResponseEntity<?> postRunHabit(@RequestBody RunHabitPostRequest param) {
         HabitValidator.validate(param);
         runHabitCommandService.postRunHabit(param);
@@ -31,12 +34,18 @@ public class HabitController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/")
+    @GetMapping(value = "/quit")
+    public ResponseEntity<?> getQuitHabitList(QuitHabitListRequest param) {
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(quitHabitQueryService.getQuitHabitList(param));
+    }
+
+    @PutMapping
     public ResponseEntity<?> putRunHabit(@RequestBody RunHabitPutRequest param) {
         return ResponseEntity.ok(runHabitCommandService.putRunHabit(param));
     }
 
-    @DeleteMapping(value = "/")
+    @DeleteMapping
     public ResponseEntity<?> deleteRunHabit(@RequestBody RunHabitDeleteRequest param) {
         runHabitCommandService.deleteRunHabit(param);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

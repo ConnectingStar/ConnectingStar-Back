@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import connectingstar.tars.habit.domain.HabitHistory;
+import connectingstar.tars.habit.domain.QuitHabit;
+import connectingstar.tars.habit.domain.RunHabit;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +39,17 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<HabitHistory> habitHistories = new ArrayList<>(); //사용자의 습관기록 데이터들
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<RunHabit> runHabits = new ArrayList<>(); //사용자가 진행중인 습관들
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<QuitHabit> quitHabits = new ArrayList<>() ; //사용자가 이전에 종료한 습관들
+
 
     /**
      * 보유한 별자리(캐릭터) 목록
