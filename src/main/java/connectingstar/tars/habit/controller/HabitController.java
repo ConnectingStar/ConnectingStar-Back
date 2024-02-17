@@ -1,11 +1,9 @@
 package connectingstar.tars.habit.controller;
 
+import connectingstar.tars.habit.command.HabitHistoryCommandService;
 import connectingstar.tars.habit.command.RunHabitCommandService;
 import connectingstar.tars.habit.query.QuitHabitQueryService;
-import connectingstar.tars.habit.request.QuitHabitListRequest;
-import connectingstar.tars.habit.request.RunHabitDeleteRequest;
-import connectingstar.tars.habit.request.RunHabitPostRequest;
-import connectingstar.tars.habit.request.RunHabitPutRequest;
+import connectingstar.tars.habit.request.*;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class HabitController {
 
     private final RunHabitCommandService runHabitCommandService;
+    private final HabitHistoryCommandService habitHistoryCommandService;
     private final QuitHabitQueryService quitHabitQueryService;
 
     @PostMapping
@@ -34,8 +33,15 @@ public class HabitController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PostMapping(value = "/history")
+    public ResponseEntity<?> postHabitHistory(@RequestBody HabitHistoryPostRequest param) {
+        HabitValidator.validate(param);
+        habitHistoryCommandService.postHistoryHabit(param);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @GetMapping(value = "/quit")
-    public ResponseEntity<?> getQuitHabitList(QuitHabitListRequest param) {
+    public ResponseEntity<?> getQuitHabitList(@RequestBody QuitHabitListRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(quitHabitQueryService.getQuitHabitList(param));
     }

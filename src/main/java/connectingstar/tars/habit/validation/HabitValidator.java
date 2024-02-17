@@ -3,6 +3,7 @@ package connectingstar.tars.habit.validation;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.ErrorCode;
 import connectingstar.tars.common.exception.errorcode.UserErrorCode;
+import connectingstar.tars.habit.request.HabitHistoryPostRequest;
 import connectingstar.tars.habit.request.QuitHabitListRequest;
 import connectingstar.tars.habit.request.RunHabitPostRequest;
 import lombok.experimental.UtilityClass;
@@ -20,16 +21,35 @@ import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.*;
 @UtilityClass
 public class HabitValidator {
 
+    public static final int ACHIEVEMENT_MIN = 1;
+    public static final int ACHIEVEMENT_MAX = 5;
+
     /**
      * 진행중인 습관 생성 요청 검증
      */
     public void validate(RunHabitPostRequest param) {
-        validateNull(param.getIdentity(), RUN_HABIT_PARAM_IDENTITY_EMPTY);
-        validateNull(param.getRunTime(), RUN_HABIT_PARAM_RUN_TIME_EMPTY);
-        validateNull(param.getPlace(), RUN_HABIT_PARAM_PLACE_EMPTY);
-        validateNull(param.getAction(), RUN_HABIT_PARAM_ACTION_EMPTY);
-        validateNull(param.getValue(), RUN_HABIT_PARAM_VALUE_EMPTY);
-        validateNull(param.getUnit(), RUN_HABIT_PARAM_UNIT_EMPTY);
+        validateNull(param.getUserId(),PARAM_USER_ID_EMPTY);
+        validateNull(param.getIdentity(), PARAM_IDENTITY_EMPTY);
+        validateNull(param.getRunTime(), PARAM_RUN_TIME_EMPTY);
+        validateNull(param.getPlace(), PARAM_PLACE_EMPTY);
+        validateNull(param.getAction(), PARAM_ACTION_EMPTY);
+        validateNull(param.getValue(), PARAM_VALUE_EMPTY);
+        validateNull(param.getUnit(), PARAM_UNIT_EMPTY);
+    }
+
+    /**
+     * 오늘 실천한 습관 저장 요청 검증
+     */
+    public void validate(HabitHistoryPostRequest param) {
+        validateNull(param.getUserId(),PARAM_USER_ID_EMPTY);
+        validateNull(param.getRunHabitId(),PARAM_RUN_HABIT_ID_EMPTY);
+        validateNull(param.getAchievement(),PARAM_ACHIEVEMENT_EMPTY);
+        validateNull(param.getRunPlace(),PARAM_PLACE_EMPTY);
+        validateNull(param.getRunValue(),PARAM_VALUE_EMPTY);
+        validateNull(param.getReview(),PARAM_REVIEW_EMPTY);
+        validateNull(param.getIsRest(),PARAM_IS_REST_EMPTY);
+
+        validateRange(param.getAchievement(), ACHIEVEMENT_MIN, ACHIEVEMENT_MAX, OUT_OF_ACHIEVEMENT_RANGE);
     }
     public void validate(QuitHabitListRequest param) {
         validateNull(param.getUserId(), UserErrorCode.USER_NOT_FOUND);
@@ -37,6 +57,11 @@ public class HabitValidator {
 
     private void validateNull(Object param, ErrorCode errorCode) {
         if (Objects.isNull(param)) {
+            throw new ValidationException(errorCode);
+        }
+    }
+    private void validateRange(Integer param, Integer min, Integer max, ErrorCode errorCode) {
+        if(param < min || param > max) {
             throw new ValidationException(errorCode);
         }
     }
