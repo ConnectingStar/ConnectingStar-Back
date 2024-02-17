@@ -26,7 +26,7 @@ public class HabitController {
     private final RunHabitCommandService runHabitCommandService;
     private final QuitHabitQueryService quitHabitQueryService;
 
-    @PostMapping(value = "/")
+    @PostMapping
     public ResponseEntity<?> postRunHabit(@RequestBody RunHabitPostRequest param) {
         HabitValidator.validate(param);
         runHabitCommandService.postRunHabit(param);
@@ -34,18 +34,18 @@ public class HabitController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
-    @GetMapping(value = "/quit/")
-    public ResponseEntity<?> getQuitHabitList(@RequestBody QuitHabitListRequest param) {
+    @GetMapping(value = "/quit")
+    public ResponseEntity<?> getQuitHabitList(QuitHabitListRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(quitHabitQueryService.getQuitHabitList(param));
     }
-    @PutMapping(value = "/")
+
+    @PutMapping
     public ResponseEntity<?> putRunHabit(@RequestBody RunHabitPutRequest param) {
         return ResponseEntity.ok(runHabitCommandService.putRunHabit(param));
     }
 
-    @DeleteMapping(value = "/")
+    @DeleteMapping
     public ResponseEntity<?> deleteRunHabit(@RequestBody RunHabitDeleteRequest param) {
         runHabitCommandService.deleteRunHabit(param);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
