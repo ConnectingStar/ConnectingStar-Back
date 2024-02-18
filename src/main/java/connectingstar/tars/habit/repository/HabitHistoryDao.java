@@ -6,11 +6,12 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.habit.domain.QHabitHistory;
-import connectingstar.tars.habit.request.MonthHabitHistoryListRequest;
-import connectingstar.tars.habit.response.MonthHabitHistoryListResponse;
+import connectingstar.tars.habit.request.HabitHistoryListRequest;
+import connectingstar.tars.habit.response.HabitHistoryListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -32,7 +33,7 @@ public class HabitHistoryDao {
      * @param param 조회 조건
      * @return      조회 결과
      */
-    public List<MonthHabitHistoryListResponse> getMonthHistoryList(MonthHabitHistoryListRequest param) {
+    public List<HabitHistoryListResponse> getMonthHabitHistoryList(HabitHistoryListRequest param) {
 
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
 
@@ -43,18 +44,41 @@ public class HabitHistoryDao {
                 .fetch();
     }
 
-    private BooleanExpression getPredicate(MonthHabitHistoryListRequest param, QHabitHistory habitHistory) {
+    /**
+     * 기준 일의 주간 습관 조회
+     *
+     * @param param 조회 조건
+     * @return      조회 결과
+     */
+    public List<HabitHistoryListResponse> getWeeklyHabitHistoryList(HabitHistoryListRequest param, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+
+        QHabitHistory habitHistory = QHabitHistory.habitHistory;
+
+        return queryFactory
+                .select(getConstructorExpression())
+                .from(habitHistory)
+                .where(getPredicate(param, habitHistory,startDateTime,endDateTime))
+                .fetch();
+    }
+
+    private BooleanExpression getPredicate(HabitHistoryListRequest param, QHabitHistory habitHistory) {
         return habitHistory.user.Id.eq(param.getUserId())
                 .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()))
                 .and(habitHistory.createdAt.year().eq(param.getReferenceDate().getYear()))
                 .and(habitHistory.createdAt.month().eq(param.getReferenceDate().getMonthValue()));
     }
 
-    private ConstructorExpression<MonthHabitHistoryListResponse> getConstructorExpression() {
+    private BooleanExpression getPredicate(HabitHistoryListRequest param, QHabitHistory habitHistory,LocalDateTime startDateTime,LocalDateTime endDateTime) {
+        return habitHistory.user.Id.eq(param.getUserId())
+                .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()))
+                .and(habitHistory.createdAt.between(startDateTime,endDateTime));
+    }
+
+    private ConstructorExpression<HabitHistoryListResponse> getConstructorExpression() {
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
 
         return Projections.constructor(
-                MonthHabitHistoryListResponse.class,
+                HabitHistoryListResponse.class,
                 habitHistory.runDate,
                 habitHistory.achievement,
                 habitHistory.runValue
