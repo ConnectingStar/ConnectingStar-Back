@@ -5,16 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 /**
- * 내 월간 습관이력 조회 요청
+ * 내 습관 기록 조회 요청
  *
  * @author 김성수
  */
 @Getter
 @Setter
-public class MonthHabitHistoryListRequest {
+public class HabitHistoryListRequest {
 
     /**
      * 유저 ID

@@ -49,9 +49,15 @@ public class HabitController {
     }
 
     @GetMapping(value = "/history/month")
-    public ResponseEntity<?> getMonthHabitHistoryList(MonthHabitHistoryListRequest param){
+    public ResponseEntity<?> getMonthHabitHistoryList(HabitHistoryListRequest param){
         HabitValidator.validate(param);
         return ResponseEntity.ok(habitHistoryQueryService.getMonthHabitHistoryList(param));
+    }
+
+    @GetMapping(value = "/history/weekly")
+    public ResponseEntity<?> getWeeklyHabitHistoryList(HabitHistoryListRequest param){
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(habitHistoryQueryService.getWeeklyHabitHistoryList(param));
     }
 
 

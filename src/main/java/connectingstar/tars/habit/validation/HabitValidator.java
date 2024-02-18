@@ -2,16 +2,13 @@ package connectingstar.tars.habit.validation;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.ErrorCode;
-import connectingstar.tars.common.exception.errorcode.UserErrorCode;
-import connectingstar.tars.habit.request.HabitHistoryPostRequest;
-import connectingstar.tars.habit.request.MonthHabitHistoryListRequest;
-import connectingstar.tars.habit.request.QuitHabitListRequest;
-import connectingstar.tars.habit.request.RunHabitPostRequest;
+import connectingstar.tars.habit.request.*;
 import lombok.experimental.UtilityClass;
 
 import java.util.Objects;
 
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.*;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 
 /**
@@ -57,14 +54,16 @@ public class HabitValidator {
      * 종료한 습관 조회 요청 검증
      */
     public void validate(QuitHabitListRequest param) {
-        validateNull(param.getUserId(), UserErrorCode.USER_NOT_FOUND);
+        validateNull(param.getUserId(), USER_NOT_FOUND);
     }
 
     /**
-     * 월간 습관 기록 조회 요청 검증
+     * 습관 기록 조회 요청 검증
      */
-    public void validate(MonthHabitHistoryListRequest param) {
+    public void validate(HabitHistoryListRequest param) {
         validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
+        validateNull(param.getUserId(), USER_NOT_FOUND);
+        validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
     }
 
     private void validateNull(Object param, ErrorCode errorCode) {
