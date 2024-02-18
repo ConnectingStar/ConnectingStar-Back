@@ -4,6 +4,7 @@ import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.ErrorCode;
 import connectingstar.tars.common.exception.errorcode.UserErrorCode;
 import connectingstar.tars.habit.request.HabitHistoryPostRequest;
+import connectingstar.tars.habit.request.MonthHabitHistoryListRequest;
 import connectingstar.tars.habit.request.QuitHabitListRequest;
 import connectingstar.tars.habit.request.RunHabitPostRequest;
 import lombok.experimental.UtilityClass;
@@ -51,8 +52,19 @@ public class HabitValidator {
 
         validateRange(param.getAchievement(), ACHIEVEMENT_MIN, ACHIEVEMENT_MAX, OUT_OF_ACHIEVEMENT_RANGE);
     }
+
+    /**
+     * 종료한 습관 조회 요청 검증
+     */
     public void validate(QuitHabitListRequest param) {
         validateNull(param.getUserId(), UserErrorCode.USER_NOT_FOUND);
+    }
+
+    /**
+     * 월간 습관 기록 조회 요청 검증
+     */
+    public void validate(MonthHabitHistoryListRequest param) {
+        validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
     }
 
     private void validateNull(Object param, ErrorCode errorCode) {

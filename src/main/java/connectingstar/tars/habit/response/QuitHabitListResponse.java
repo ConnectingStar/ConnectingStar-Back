@@ -2,8 +2,6 @@ package connectingstar.tars.habit.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import connectingstar.tars.user.domain.User;
-import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -15,7 +13,8 @@ import java.time.LocalTime;
  * @author 김성수
  */
 @Getter
-@JsonPropertyOrder({"quitHabitId", "userId","userName", "runTime", "place", "action", "value", "restValue", "reasonOfQuit","startDate", "quitDate"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({"quitHabitId", "userId","userNickname", "runTime", "place", "action", "value", "restValue", "reasonOfQuit","startDate", "quitDate"})
 public class QuitHabitListResponse {
 
     /**
@@ -37,49 +36,41 @@ public class QuitHabitListResponse {
     /**
      * 실천 시간
      */
-    @Column(name = "run_time", nullable = false)
     private final LocalTime runTime;
 
     /**
      * 장소
      */
-    @Column(name = "place", nullable = false)
     private final String place;
 
     /**
      * 행동
      */
-    @Column(name = "action", nullable = false)
     private final String action;
 
     /**
      * 실천횟수
      */
-    @Column(name = "value", nullable = false)
     private final Integer value;
 
     /**
      * 휴식 실천횟수
      */
-    @Column(name = "rest_value", nullable = false)
     private final Integer restValue;
 
     /**
      * 종료 사유
      */
-    @Column(name = "reason_of_quit", nullable = false, length = 400)
     private final String reasonOfQuit;
 
     /**
      * 시작 날짜
      */
-    @Column(name = "start_date", nullable = false)
     private final LocalDateTime startDate;
 
     /**
      * 종료 날짜
      */
-    @Column(name = "quit_date", nullable = false)
     private final LocalDateTime quitDate;
 
     public QuitHabitListResponse(Integer quitHabitId, Long userId, String userNickname, LocalTime runTime,
