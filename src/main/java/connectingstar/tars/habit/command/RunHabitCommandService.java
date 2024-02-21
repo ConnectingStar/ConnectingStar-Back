@@ -111,7 +111,6 @@ public class RunHabitCommandService {
      */
     @Transactional
     public RunHabitPutResponse putRunHabit(RunHabitPutRequest param) {
-        //UserId 검증을 통해 Validation 던지기
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
 
         runHabit.updateData(param);

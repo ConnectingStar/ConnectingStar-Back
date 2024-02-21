@@ -48,6 +48,12 @@ public class HabitController {
         return ResponseEntity.ok(quitHabitQueryService.getQuitHabitList(param));
     }
 
+    @GetMapping(value = "/history")
+    public ResponseEntity<?> getHabitHistoryList(HabitHistoryGetListRequest param) {
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(habitHistoryQueryService.getHabitHistoryList(param));
+    }
+
     @GetMapping(value = "/history/month")
     public ResponseEntity<?> getMonthHabitHistoryList(HabitHistoryListRequest param){
         HabitValidator.validate(param);

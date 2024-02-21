@@ -2,11 +2,14 @@ package connectingstar.tars.habit.repository;
 
 
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.habit.domain.QHabitHistory;
+import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
+import connectingstar.tars.habit.response.HabitHistoryGetListResponse;
 import connectingstar.tars.habit.response.HabitHistoryListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -27,8 +30,35 @@ public class HabitHistoryDao {
 
     private final JPAQueryFactory queryFactory;
 
+
     /**
-     * 기준 달의 습관 조회
+     * 내 습관 기록 조회
+     *
+     * @param param 조회 조건
+     * @return      조회 결과
+     */
+    public List<HabitHistoryGetListResponse> getHabitHistoryList(HabitHistoryGetListRequest param){
+
+        QHabitHistory habitHistory = QHabitHistory.habitHistory;
+        OrderSpecifier<Integer> orderSpecifier = habitHistory.habitHistoryId.desc();
+        if(param.getIncrease())  orderSpecifier = habitHistory.habitHistoryId.asc();
+        return queryFactory
+                .select(Projections.constructor(
+                        HabitHistoryGetListResponse.class,
+                        habitHistory.runDate,
+                        habitHistory.runPlace,
+                        habitHistory.runValue,
+                        habitHistory.runHabit.unit,
+                        habitHistory.review
+                        ))
+                .from(habitHistory)
+                .where(getPredicate(param, habitHistory))
+                .orderBy(orderSpecifier)
+                .fetch();
+    }
+
+    /**
+     * 기준 달의 습관 기록 조회
      *
      * @param param 조회 조건
      * @return      조회 결과
@@ -45,7 +75,7 @@ public class HabitHistoryDao {
     }
 
     /**
-     * 기준 일의 주간 습관 조회
+     * 기준 일의 주간 습관 기록 조회
      *
      * @param param 조회 조건
      * @return      조회 결과
@@ -59,6 +89,11 @@ public class HabitHistoryDao {
                 .from(habitHistory)
                 .where(getPredicate(param, habitHistory,startDateTime,endDateTime))
                 .fetch();
+    }
+
+    private BooleanExpression getPredicate(HabitHistoryGetListRequest param, QHabitHistory habitHistory) {
+        return habitHistory.user.Id.eq(param.getUserId())
+                .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()));
     }
 
     private BooleanExpression getPredicate(HabitHistoryListRequest param, QHabitHistory habitHistory) {

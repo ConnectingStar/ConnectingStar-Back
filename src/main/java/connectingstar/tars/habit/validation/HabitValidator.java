@@ -60,6 +60,15 @@ public class HabitValidator {
     /**
      * 습관 기록 조회 요청 검증
      */
+    public void validate(HabitHistoryGetListRequest param) {
+        validateNull(param.getUserId(), USER_NOT_FOUND);
+        validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
+        validateNull(param.getIncrease(), PARAM_INCREASE_EMPTY);
+    }
+
+    /**
+     * 습관 기록 기간 조회 요청 검증
+     */
     public void validate(HabitHistoryListRequest param) {
         validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
         validateNull(param.getUserId(), USER_NOT_FOUND);

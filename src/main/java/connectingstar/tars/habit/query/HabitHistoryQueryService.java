@@ -1,7 +1,9 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.habit.repository.HabitHistoryDao;
+import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
+import connectingstar.tars.habit.response.HabitHistoryGetListResponse;
 import connectingstar.tars.habit.response.HabitHistoryListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,16 @@ public class HabitHistoryQueryService {
         LocalDate thisWeekSat = thisWeekSunday.plusDays(DAYS_TO_ADD);
         LocalDateTime endDateTime = thisWeekSat.atTime(23, 59, 59);
         return habitHistoryDao.getWeeklyHabitHistoryList(param,startDateTime,endDateTime);
+    }
+
+    /**
+     * 습관 기록 목록 조회
+     *
+     * @return 요청 결과
+     */
+
+    public List<HabitHistoryGetListResponse> getHabitHistoryList(HabitHistoryGetListRequest param) {
+        return habitHistoryDao.getHabitHistoryList(param);
     }
 
 }
