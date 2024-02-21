@@ -1,7 +1,6 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.habit.repository.QuitHabitDao;
-import connectingstar.tars.habit.repository.QuitHabitRepository;
 import connectingstar.tars.habit.request.QuitHabitListRequest;
 import connectingstar.tars.habit.response.QuitHabitListResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class QuitHabitQueryService {
      * @return 요청 결과
      */
 
-    public List<QuitHabitListResponse> getQuitHabitList(QuitHabitListRequest param) {
+    public List<QuitHabitListResponse> getList(QuitHabitListRequest param) {
         return quitHabitDao.getList(param);
     }
 }

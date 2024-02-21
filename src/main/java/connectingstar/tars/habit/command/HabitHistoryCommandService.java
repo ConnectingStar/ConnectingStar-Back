@@ -32,7 +32,7 @@ public class HabitHistoryCommandService {
     private final RunHabitRepository runHabitRepository;
     private final UserRepository userRepository;
 
-    public void postHistoryHabit(HabitHistoryPostRequest param) {
+    public void saveHistoryHabit(HabitHistoryPostRequest param) {
         User user = userRepository.findById(param.getUserId()).orElseThrow(()
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
 

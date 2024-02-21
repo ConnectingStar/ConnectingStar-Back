@@ -30,7 +30,7 @@ public class HabitController {
     @PostMapping
     public ResponseEntity<?> postRunHabit(@RequestBody RunHabitPostRequest param) {
         HabitValidator.validate(param);
-        runHabitCommandService.postRunHabit(param);
+        runHabitCommandService.saveRunHabit(param);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -38,43 +38,43 @@ public class HabitController {
     @PostMapping(value = "/history")
     public ResponseEntity<?> postHabitHistory(@RequestBody HabitHistoryPostRequest param) {
         HabitValidator.validate(param);
-        habitHistoryCommandService.postHistoryHabit(param);
+        habitHistoryCommandService.saveHistoryHabit(param);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/quit")
     public ResponseEntity<?> getQuitHabitList(QuitHabitListRequest param) {
         HabitValidator.validate(param);
-        return ResponseEntity.ok(quitHabitQueryService.getQuitHabitList(param));
+        return ResponseEntity.ok(quitHabitQueryService.getList(param));
     }
 
     @GetMapping(value = "/history")
     public ResponseEntity<?> getHabitHistoryList(HabitHistoryGetListRequest param) {
         HabitValidator.validate(param);
-        return ResponseEntity.ok(habitHistoryQueryService.getHabitHistoryList(param));
-    }
-
-    @GetMapping(value = "/history/month")
-    public ResponseEntity<?> getMonthHabitHistoryList(HabitHistoryListRequest param){
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(habitHistoryQueryService.getMonthHabitHistoryList(param));
+        return ResponseEntity.ok(habitHistoryQueryService.getList(param));
     }
 
     @GetMapping(value = "/history/weekly")
     public ResponseEntity<?> getWeeklyHabitHistoryList(HabitHistoryListRequest param){
         HabitValidator.validate(param);
-        return ResponseEntity.ok(habitHistoryQueryService.getWeeklyHabitHistoryList(param));
+        return ResponseEntity.ok(habitHistoryQueryService.getWeeklyList(param));
+    }
+
+    @GetMapping(value = "/history/month")
+    public ResponseEntity<?> getMonthHabitHistoryList(HabitHistoryListRequest param){
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(habitHistoryQueryService.getMonthList(param));
     }
 
 
     @PutMapping
     public ResponseEntity<?> putRunHabit(@RequestBody RunHabitPutRequest param) {
-        return ResponseEntity.ok(runHabitCommandService.putRunHabit(param));
+        return ResponseEntity.ok(runHabitCommandService.modifyRunHabit(param));
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteRunHabit(@RequestBody RunHabitDeleteRequest param) {
-        runHabitCommandService.deleteRunHabit(param);
+        runHabitCommandService.removeRunHabit(param);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

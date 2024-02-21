@@ -33,7 +33,7 @@ public class HabitHistoryQueryService {
      * @return 요청 결과
      */
 
-    public List<HabitHistoryListResponse> getMonthHabitHistoryList(HabitHistoryListRequest param) {
+    public List<HabitHistoryListResponse> getMonthList(HabitHistoryListRequest param) {
         return habitHistoryDao.getMonthHabitHistoryList(param);
     }
 
@@ -43,7 +43,7 @@ public class HabitHistoryQueryService {
      * @return 요청 결과
      */
 
-    public List<HabitHistoryListResponse> getWeeklyHabitHistoryList(HabitHistoryListRequest param) {
+    public List<HabitHistoryListResponse> getWeeklyList(HabitHistoryListRequest param) {
         LocalDate referenceDate = param.getReferenceDate();
         LocalDate thisWeekSunday = referenceDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
         LocalDateTime startDateTime = thisWeekSunday.atStartOfDay();
@@ -58,7 +58,7 @@ public class HabitHistoryQueryService {
      * @return 요청 결과
      */
 
-    public List<HabitHistoryGetListResponse> getHabitHistoryList(HabitHistoryGetListRequest param) {
+    public List<HabitHistoryGetListResponse> getList(HabitHistoryGetListRequest param) {
         return habitHistoryDao.getHabitHistoryList(param);
     }
 

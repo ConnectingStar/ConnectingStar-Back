@@ -57,7 +57,7 @@ public class RunHabitCommandService {
      * @param param {@link RunHabitPostRequest}
      */
     @Transactional
-    public void postRunHabit(RunHabitPostRequest param) {
+    public void saveRunHabit(RunHabitPostRequest param) {
         User user = userRepository.findById(param.getUserId()).orElseThrow(() ->
                 new ValidationException(UserErrorCode.USER_NOT_FOUND));
         RunHabit runHabit = RunHabit.postRunHabit()
@@ -110,7 +110,7 @@ public class RunHabitCommandService {
      * @param param {@link RunHabitPutRequest}
      */
     @Transactional
-    public RunHabitPutResponse putRunHabit(RunHabitPutRequest param) {
+    public RunHabitPutResponse modifyRunHabit(RunHabitPutRequest param) {
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
 
         runHabit.updateData(param);
@@ -140,7 +140,7 @@ public class RunHabitCommandService {
      *
      * @param param {@link RunHabitDeleteRequest}
      */
-    public void deleteRunHabit(RunHabitDeleteRequest param) {
+    public void removeRunHabit(RunHabitDeleteRequest param) {
         User user = userRepository.findById(param.getUserId()).orElseThrow(() ->
                 new ValidationException(UserErrorCode.USER_NOT_FOUND));
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
