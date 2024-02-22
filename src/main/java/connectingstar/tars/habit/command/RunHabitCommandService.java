@@ -58,8 +58,7 @@ public class RunHabitCommandService {
      */
     @Transactional
     public void saveRunHabit(RunHabitPostRequest param) {
-        User user = userRepository.findById(param.getUserId()).orElseThrow(() ->
-                new ValidationException(UserErrorCode.USER_NOT_FOUND));
+        User user = findUserByUserId(param.getUserId());
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)
@@ -75,6 +74,11 @@ public class RunHabitCommandService {
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         runHabitRepository.save(runHabit);
         //추후 필요시 Return 값 추가 예정
+    }
+
+    private User findUserByUserId(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
     private HabitAlert makeAlert(RunHabit runHabit,LocalTime runTime, LocalTime alert, int alertStatus) {
@@ -141,8 +145,7 @@ public class RunHabitCommandService {
      * @param param {@link RunHabitDeleteRequest}
      */
     public void removeRunHabit(RunHabitDeleteRequest param) {
-        User user = userRepository.findById(param.getUserId()).orElseThrow(() ->
-                new ValidationException(UserErrorCode.USER_NOT_FOUND));
+        User user = findUserByUserId(param.getUserId());
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
 

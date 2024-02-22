@@ -33,13 +33,11 @@ public class HabitHistoryCommandService {
     private final UserRepository userRepository;
 
     public void saveHistoryHabit(HabitHistoryPostRequest param) {
-        User user = userRepository.findById(param.getUserId()).orElseThrow(()
-                -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
+        User user = findUesrByUserId(param);
 
         checkTodayCreateHistoryHabit(user);
 
-        RunHabit runHabit = runHabitRepository.findById(param.getRunHabitId()).orElseThrow(()
-                -> new ValidationException(HabitErrorCode.RUN_HABIT_NOT_FOUND));
+        RunHabit runHabit = findRunHabitByRunHabitId(param);
         HabitHistory build = HabitHistory.builder()
                 .user(user)
                 .runHabit(runHabit)
@@ -51,6 +49,16 @@ public class HabitHistoryCommandService {
                 .isRest(param.getIsRest())
                 .build();
         habitHistoryRepository.save(build);
+    }
+
+    private RunHabit findRunHabitByRunHabitId(HabitHistoryPostRequest param) {
+        return runHabitRepository.findById(param.getRunHabitId()).orElseThrow(()
+                -> new ValidationException(HabitErrorCode.RUN_HABIT_NOT_FOUND));
+    }
+
+    private User findUesrByUserId(HabitHistoryPostRequest param) {
+        return userRepository.findById(param.getUserId()).orElseThrow(()
+                -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
     private void checkTodayCreateHistoryHabit(User user) {

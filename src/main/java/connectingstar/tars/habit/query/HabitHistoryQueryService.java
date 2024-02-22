@@ -38,7 +38,6 @@ public class HabitHistoryQueryService {
 
     public static final int DAYS_TO_ADD = 6;
     private final HabitHistoryDao habitHistoryDao;
-    private final UserRepository userRepository;
 
     /**
      * 월간 습관 기록 목록 조회
