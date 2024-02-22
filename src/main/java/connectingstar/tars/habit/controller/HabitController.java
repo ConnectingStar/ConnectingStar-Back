@@ -66,6 +66,12 @@ public class HabitController {
         return ResponseEntity.ok(habitHistoryQueryService.getMonthList(param));
     }
 
+    @GetMapping(value = "/history/check")
+    public ResponseEntity<?> getTodayCreateHistory(HabitHistoryCreateCheckRequest param){
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(habitHistoryQueryService.checkTodayCreate(param));
+    }
+
 
     @PutMapping
     public ResponseEntity<?> putRunHabit(@RequestBody RunHabitPutRequest param) {

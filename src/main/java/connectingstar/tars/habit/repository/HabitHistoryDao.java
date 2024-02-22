@@ -7,10 +7,14 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.habit.domain.QHabitHistory;
+import connectingstar.tars.habit.domain.QRunHabit;
+import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
+import connectingstar.tars.habit.response.HabitHistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HabitHistoryGetListResponse;
 import connectingstar.tars.habit.response.HabitHistoryListResponse;
+import connectingstar.tars.user.domain.QUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -89,6 +93,29 @@ public class HabitHistoryDao {
                 .from(habitHistory)
                 .where(getPredicate(param, habitHistory,startDateTime,endDateTime))
                 .fetch();
+    }
+
+    public HabitHistoryCreateCheckResponse getCheckTodayCreate(HabitHistoryCreateCheckRequest param) {
+        QUser user = QUser.user;
+        QHabitHistory habitHistory = QHabitHistory.habitHistory;
+        QRunHabit runHabit = QRunHabit.runHabit;
+
+        BooleanExpression userMatch = user.Id.eq(param.getUserId());
+        BooleanExpression runHabitMatch = runHabit.runHabitId.eq(param.getRunHabitId());
+        BooleanExpression dateMatch = isSameDate(param, habitHistory);
+        return new HabitHistoryCreateCheckResponse(queryFactory
+                .selectFrom(habitHistory)
+                .join(habitHistory.user, user)
+                .join(habitHistory.runHabit, runHabit)
+                .where(userMatch.and(runHabitMatch).and(dateMatch))
+                .fetchCount() > 0);
+    }
+
+    private static BooleanExpression isSameDate(HabitHistoryCreateCheckRequest param, QHabitHistory habitHistory) {
+        BooleanExpression dateMatch = habitHistory.runDate.year().eq(param.getDate().getYear())
+                .and(habitHistory.runDate.month().eq(param.getDate().getMonthValue()))
+                .and(habitHistory.runDate.dayOfMonth().eq(param.getDate().getDayOfMonth()));
+        return dateMatch;
     }
 
     private BooleanExpression getPredicate(HabitHistoryGetListRequest param, QHabitHistory habitHistory) {

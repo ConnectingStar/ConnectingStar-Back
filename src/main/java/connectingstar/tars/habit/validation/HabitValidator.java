@@ -75,6 +75,12 @@ public class HabitValidator {
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
     }
 
+    public void validate(HabitHistoryCreateCheckRequest param) {
+        validateNull(param.getDate(), PARAM_DATE_EMPTY);
+        validateNull(param.getUserId(), USER_NOT_FOUND);
+        validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
+    }
+
     private void validateNull(Object param, ErrorCode errorCode) {
         if (Objects.isNull(param)) {
             throw new ValidationException(errorCode);

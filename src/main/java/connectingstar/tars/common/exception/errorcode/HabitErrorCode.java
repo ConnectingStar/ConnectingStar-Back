@@ -28,6 +28,7 @@ public enum HabitErrorCode implements ErrorCode {
     PARAM_RUN_HABIT_ID_EMPTY(HttpStatus.BAD_REQUEST, "진행중인 습관 ID(PK)는 필수 입력값입니다"),
     PARAM_REVIEW_EMPTY(HttpStatus.BAD_REQUEST, "별자취는 필수 입력값입니다"),
     PARAM_REFERENCE_DATE_EMPTY(HttpStatus.BAD_REQUEST, "참고 날짜는 필수 입력값입니다"),
+    PARAM_DATE_EMPTY(HttpStatus.BAD_REQUEST, "날짜는 필수 입력값입니다"),
     PARAM_UNIT_EMPTY(HttpStatus.BAD_REQUEST, "습관 단위는 필수 입력값입니다"),
     PARAM_USER_ID_EMPTY(HttpStatus.BAD_REQUEST, "유저 ID(PK)는 필수 입력값입니다"),
     PARAM_VALUE_EMPTY(HttpStatus.BAD_REQUEST, "습관 수량(얼마나)은 필수 입력값입니다"),

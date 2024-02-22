@@ -1,10 +1,19 @@
 package connectingstar.tars.habit.query;
 
+import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.common.exception.errorcode.ErrorCode;
+import connectingstar.tars.common.exception.errorcode.HabitErrorCode;
+import connectingstar.tars.common.exception.errorcode.UserErrorCode;
+import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.repository.HabitHistoryDao;
+import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
+import connectingstar.tars.habit.response.HabitHistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HabitHistoryGetListResponse;
 import connectingstar.tars.habit.response.HabitHistoryListResponse;
+import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +21,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 습관 기록 조회 서비스
@@ -26,6 +38,7 @@ public class HabitHistoryQueryService {
 
     public static final int DAYS_TO_ADD = 6;
     private final HabitHistoryDao habitHistoryDao;
+    private final UserRepository userRepository;
 
     /**
      * 월간 습관 기록 목록 조회
@@ -61,5 +74,10 @@ public class HabitHistoryQueryService {
     public List<HabitHistoryGetListResponse> getList(HabitHistoryGetListRequest param) {
         return habitHistoryDao.getHabitHistoryList(param);
     }
+
+    public HabitHistoryCreateCheckResponse checkTodayCreate(HabitHistoryCreateCheckRequest param){
+        return habitHistoryDao.getCheckTodayCreate(param);
+    }
+
 
 }
