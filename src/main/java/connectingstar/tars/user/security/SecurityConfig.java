@@ -4,28 +4,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import connectingstar.tars.user.ouath.OAuthCommandService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,11 +38,6 @@ public class SecurityConfig {
 
     public SecurityConfig(OAuthCommandService oAuthCommandService) {
         this.oAuthCommandService = oAuthCommandService;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -64,19 +59,37 @@ public class SecurityConfig {
         http.headers(headerConfig -> headerConfig
                         .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
 
-        http.oauth2Login(oauth2Login -> oauth2Login
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userAuthoritiesMapper(grantedAuthoritiesMapper())));
+        http.oauth2Login( (oauth2Login) -> oauth2Login
+                .loginPage("login")
+                .successHandler(successHandler())
+                .userInfoEndpoint(userInfo -> userInfo.userService(oAuthCommandService))
+        );
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        // 일단 모든 API 허용되게 설정
-                        new AntPathRequestMatcher("/**")
-                ).permitAll()
+                .requestMatchers( new AntPathRequestMatcher("/**")).permitAll()
                 .anyRequest().authenticated()
         );
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return ((request, response, authentication) -> {
+            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
+
+            String id = defaultOAuth2User.getAttributes().get("id").toString();
+            String body = """
+                    {"id":"%s"}
+                    """.formatted(id);
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+
+            PrintWriter writer = response.getWriter();
+            writer.println(body);
+            writer.flush();
+        });
     }
 
     private GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
