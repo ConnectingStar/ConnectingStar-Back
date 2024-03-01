@@ -6,7 +6,6 @@ import connectingstar.tars.constellation.repository.ConstellationDao;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.constellation.repository.ConstellationTypeRepository;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
-import connectingstar.tars.constellation.request.ConstellationOneRequest;
 import connectingstar.tars.constellation.response.ConstellationListResponse;
 import connectingstar.tars.constellation.response.ConstellationOneResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_TYPE_NOT_FOUND;
@@ -36,11 +34,11 @@ public class ConstellationQueryService {
     /**
      * 별자리 단일 조회
      *
-     * @param param {@link ConstellationOneRequest}
+     * @param constellationId 별자리 ID
      */
     @Transactional(readOnly = true)
-    public ConstellationOneResponse getOne(ConstellationOneRequest param) {
-        return new ConstellationOneResponse(getConstellation(param.getConstellationId()));
+    public ConstellationOneResponse getOne(Integer constellationId) {
+        return new ConstellationOneResponse(getConstellation(constellationId));
     }
 
     /**
