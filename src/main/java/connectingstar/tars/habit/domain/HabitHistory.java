@@ -2,8 +2,10 @@ package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,12 +34,14 @@ public class HabitHistory extends Auditable {
     /**
      * 사용자 PK
      */
-    //TODO: USER Entity 추가 후 작성
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
 
     /**
      * 습관 PK
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE} )
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
     @JoinColumn(name = "run_habit_id",nullable = false)
     private RunHabit runHabit;
 
@@ -70,7 +74,7 @@ public class HabitHistory extends Auditable {
      * 실천량
      */
     @Column(name = "run_value",nullable = false)
-    private String runValue;
+    private Integer runValue;
 
     /**
      * 휴식 여부
@@ -78,4 +82,16 @@ public class HabitHistory extends Auditable {
     @Column(name = "is_rest",nullable = false)
     private Boolean isRest;
 
+    @Builder
+    public HabitHistory(Integer habitHistoryId, User user, RunHabit runHabit, Integer achievement, String review, LocalDateTime runDate, String runPlace, Integer runValue, Boolean isRest) {
+        this.habitHistoryId = habitHistoryId;
+        this.user = user;
+        this.runHabit = runHabit;
+        this.achievement = achievement;
+        this.review = review;
+        this.runDate = runDate;
+        this.runPlace = runPlace;
+        this.runValue = runValue;
+        this.isRest = isRest;
+    }
 }

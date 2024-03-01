@@ -1,7 +1,6 @@
 package connectingstar.tars.constellation.query;
 
 import connectingstar.tars.constellation.repository.ConstellationTypeRepository;
-import connectingstar.tars.constellation.response.ConstellationResponse;
 import connectingstar.tars.constellation.response.ConstellationTypeResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

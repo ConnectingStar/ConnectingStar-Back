@@ -1,6 +1,7 @@
 package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
+import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,7 +33,9 @@ public class QuitHabit extends Auditable {
     /**
      * 사용자 PK
      */
-    //TODO: USER Entity 추가 후 작성
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
 
     /**
      * 실천 시간
@@ -83,8 +86,9 @@ public class QuitHabit extends Auditable {
     private LocalDateTime quitDate;
 
     @Builder(builderMethodName = "postQuitHabit")
-    public QuitHabit(LocalTime runTime, String place, String action, Integer value, Integer restValue, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
+    public QuitHabit(LocalTime runTime,User user, String place, String action, Integer value, Integer restValue, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
         this.runTime = runTime;
+        this.user = user;
         this.place = place;
         this.action = action;
         this.value = value;

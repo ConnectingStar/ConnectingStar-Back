@@ -1,19 +1,20 @@
 package connectingstar.tars.habit.request;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 진행중인 습관 삭제 요청
+ * 내 습관 기록 기간 조회 요청
  *
  * @author 김성수
  */
 @Getter
 @Setter
-public class RunHabitDeleteRequest {
+public class HabitHistoryGetListRequest {
 
     /**
-     * 사용자 PK
+     * 유저 ID
      */
     private Long userId;
 
@@ -23,7 +24,7 @@ public class RunHabitDeleteRequest {
     private Integer runHabitId;
 
     /**
-     * 삭제 이유
+     * 최신,오래된 순 구분
      */
-    private String reason;
+    private Boolean increase;
 }

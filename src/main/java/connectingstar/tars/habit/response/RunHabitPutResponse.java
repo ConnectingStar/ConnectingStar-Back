@@ -16,7 +16,7 @@ import java.time.LocalTime;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"runHabitId", "identity", "runTime", "place", "action", "value", "unit", "firstAlert","secondAlert"})
+@JsonPropertyOrder({"runHabitId", "userId","userName","identity", "runTime", "place", "action", "value", "unit", "firstAlert","secondAlert"})
 public class RunHabitPutResponse {
 
 
@@ -28,7 +28,13 @@ public class RunHabitPutResponse {
     /**
      * 사용자 PK
      */
-    //TODO: USER Entity 추가 후 작성
+    private final Long userId;
+
+
+    /**
+     * 사용자 이름
+     */
+    private final String userNickname;
 
     /**
      * 정체성
@@ -72,6 +78,8 @@ public class RunHabitPutResponse {
 
     public RunHabitPutResponse(RunHabit runHabit,LocalTime firstAlert,LocalTime secondAlert) {
         this.runHabitId = runHabit.getRunHabitId();
+        this.userId = runHabit.getUser().getId();
+        this.userNickname = runHabit.getUser().getNickname();
         this.identity = runHabit.getIdentity();
         this.runTime = runHabit.getRunTime();
         this.place = runHabit.getPlace();
