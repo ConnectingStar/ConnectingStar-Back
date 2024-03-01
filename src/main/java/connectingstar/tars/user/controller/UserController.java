@@ -2,16 +2,12 @@ package connectingstar.tars.user.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import connectingstar.tars.common.response.SuccessResponse;
-import connectingstar.tars.constellation.request.ConstellationOneRequest;
-import connectingstar.tars.constellation.validation.ConstellationValidator;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.request.UserConstellationSaveRequest;
 import connectingstar.tars.user.validation.UserValidator;
