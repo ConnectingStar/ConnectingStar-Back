@@ -48,8 +48,8 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable())
                 .httpBasic(httpBasic -> httpBasic.disable());
 
-        http.exceptionHandling((exceptionHanding) ->
-                exceptionHanding.accessDeniedHandler(jwtAccessDeniedHandler));
+//        http.exceptionHandling((exceptionHanding) ->
+//                exceptionHanding.accessDeniedHandler(jwtAccessDeniedHandler));
 
         // 세션을 사용하지 않기 때문에 STATELESS로 설정
         http.sessionManagement((sessionManagement) ->
@@ -116,35 +116,5 @@ public class SecurityConfig {
 
             return mappedAuthorities;
         };
-    }
-
-    private final AuthenticationEntryPoint unauthorizedEntryPoint =
-            (request, response, authException) -> {
-                ErrorResponse fail = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Spring security unauthorized...");
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                String json = new ObjectMapper().writeValueAsString(fail);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                PrintWriter writer = response.getWriter();
-                writer.write(json);
-                writer.flush();
-            };
-
-    private final AccessDeniedHandler accessDeniedHandler =
-            (request, response, accessDeniedException) -> {
-                ErrorResponse fail = new ErrorResponse(HttpStatus.FORBIDDEN, "Spring security forbidden...");
-                response.setStatus(HttpStatus.FORBIDDEN.value());
-                String json = new ObjectMapper().writeValueAsString(fail);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                PrintWriter writer = response.getWriter();
-                writer.write(json);
-                writer.flush();
-            };
-
-    @Getter
-    @RequiredArgsConstructor
-    public class ErrorResponse {
-
-        private final HttpStatus status;
-        private final String message;
     }
 }
