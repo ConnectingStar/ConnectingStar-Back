@@ -40,6 +40,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String socialId;
+
+    private String refreshToken;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<HabitHistory> habitHistories = new ArrayList<>(); //사용자의 습관기록 데이터들
 
@@ -58,7 +65,7 @@ public class User {
 
     @Builder
     public User(String nickname, Gender gender, String ageRange, String referrer, String identity,
-                String email, String profileCharacter, SocialType socialType) {
+                String email, String profileCharacter, SocialType socialType, Role role) {
         this.nickname = nickname;
         this.gender = gender;
         this.ageRange = ageRange;
@@ -67,6 +74,7 @@ public class User {
         this.email = email;
         this.profileCharacter = profileCharacter;
         this.socialType = socialType;
+        this.role = role;
     }
 
     /**
@@ -79,5 +87,13 @@ public class User {
 
         this.userConstellationList.add(userConstellation);
         userConstellation.setUser(this);
+    }
+
+    /**
+     * 리프레쉬 토큰 업데이트
+     */
+
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.refreshToken = updateRefreshToken;
     }
 }
