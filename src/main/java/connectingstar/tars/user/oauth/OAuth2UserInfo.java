@@ -1,4 +1,4 @@
-package connectingstar.tars.user.ouath;
+package connectingstar.tars.user.oauth;
 
 import java.util.Map;
 

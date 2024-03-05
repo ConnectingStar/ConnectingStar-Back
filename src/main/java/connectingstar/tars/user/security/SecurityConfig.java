@@ -1,6 +1,6 @@
 package connectingstar.tars.user.security;
 
-import connectingstar.tars.user.ouath.OAuthCommandService;
+import connectingstar.tars.user.oauth.OAuth2UserCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,11 +27,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final OAuthCommandService oAuthCommandService;
-
-    public SecurityConfig(OAuthCommandService oAuthCommandService) {
-        this.oAuthCommandService = oAuthCommandService;
-    }
+    private final OAuth2UserCommandService oAuthCommandService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

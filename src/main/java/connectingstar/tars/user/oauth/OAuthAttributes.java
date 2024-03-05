@@ -1,4 +1,4 @@
-package connectingstar.tars.user.ouath;
+package connectingstar.tars.user.oauth;
 
 import connectingstar.tars.user.domain.Role;
 import connectingstar.tars.user.domain.SocialType;

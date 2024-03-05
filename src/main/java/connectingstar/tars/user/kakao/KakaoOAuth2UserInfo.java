@@ -1,6 +1,6 @@
 package connectingstar.tars.user.kakao;
 
-import connectingstar.tars.user.ouath.OAuth2UserInfo;
+import connectingstar.tars.user.oauth.OAuth2UserInfo;
 
 import java.util.Map;
 
