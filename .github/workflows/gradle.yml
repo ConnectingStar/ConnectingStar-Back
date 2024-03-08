@@ -36,13 +36,26 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: cicdsample
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # SCP로 서버로 전송
       - name: SCP transfer
-        run: scp *.jar ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }}:~/cicd
-      - name: Execute remote commands
-        run: |
-          ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo fuser -k 8080/tcp"
-          ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo nohup java -jar ~/cicd/*.jar &"
+        uses: appleboy/scp-action@master
+        with:
+          username: ${{ secrets.USER_ID }}
+          host: ${{ secrets.SERVER_IP }}
+          key: ${{ secrets.SSH_KEY }}
+          rm: true
+          source: ${{ secrets.SOURCE_PATH }}
+          target: ${{ secrets.DIST_PATH }}
+          ## 작업에 사용했던 dist 디렉토리를 경로상에서 제거
+          strip_components: 1
+          # 내가 만든 서버 스크립트 실행
+      - name: Execute Server Init Script
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ secrets.USER_ID }}
+          host: ${{ secrets.SERVER_IP }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          script: |
+            sh action_deploy.sh 
