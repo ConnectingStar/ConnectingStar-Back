@@ -1,5 +1,6 @@
 name: Java CD with Gradle
- 
+env:
+  RESOURCE_PATH: ./ConnectingStar-Back/ConnectingStar-Back/src/main/resources/application.yml 
 on:
   push:
     branches: [ "dev" ] 
@@ -19,7 +20,7 @@ jobs:
       - name: Set yml file 
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./ConnectingStar-Back/ConnectingStar-Back/src/main/resources/application.yml
+          files: ${{ env.RESOURCE_PATH }}
         env:
           spring.datasource.url: ${{ secrets.RDS_URL }} 
           spring.datasource.username: ${{ secrets.RDS_ID }} 
