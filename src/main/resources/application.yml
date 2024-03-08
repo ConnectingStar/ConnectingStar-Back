@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: RDS_URL
-    username: RDS_ID
-    password: RDS_PW
+    url: ${{ secrets.RDS_URL }}
+    username: ${{ secrets.RDS_ID }}
+    password: ${{ secrets.RDS_PW }}
 
   jpa:
     hibernate:
@@ -12,3 +12,4 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
