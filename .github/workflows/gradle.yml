@@ -17,6 +17,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Check current directory
+        run: pwd
       - name: Set yml file 
         uses: microsoft/variable-substitution@v1
         with:
