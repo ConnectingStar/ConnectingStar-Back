@@ -42,4 +42,9 @@ public class UserController {
     //UserValidator.validate(loginUser); 필요없는 것 같은데 ...
     return ResponseEntity.ok(userCommandService.getUserBasicInfo(loginUser));
   }
+
+  @GetMapping(value = "/userBasicInfoAndHabit")
+  public ResponseEntity<?> getUserBasicInfoAndHabit(@LoginUser User loginUser) {
+    return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit(loginUser));
+  }
 }
