@@ -1,5 +1,8 @@
 package connectingstar.tars.user.command;
 
+import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.repository.RunHabitRepository;
+import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +16,8 @@ import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserConstellationSaveRequest;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
@@ -30,6 +35,7 @@ public class UserCommandService {
   private final UserRepository userRepository;
   private final ConstellationRepository constellationRepository;
   private final UserConstellationRepository userConstellationRepository;
+  private final RunHabitRepository runHabitRepository;
 
   /**
    * 회원 별자리(캐릭터) 등록
@@ -66,9 +72,17 @@ public class UserCommandService {
       throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
     }
   }
-
-  public UserBasicInfoResponse getUserBasicInfo(User user) {
-    User getUser = getUser(user.getId());
+  public UserBasicInfoResponse getUserBasicInfo(User loginUser) {
+    User getUser = getUser(loginUser.getId());
     return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity());
+  }
+
+  public Object getUserBasicInfoAndHabit(User loginUser) {
+    User getUser = getUser(loginUser.getId());
+    List<RunHabit> runHabitList = getRunHabit(getUser);
+    return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(), runHabitList);
+  }
+  private List<RunHabit> getRunHabit(User user) {
+    return runHabitRepository.findAllByUser(user);
   }
 }
