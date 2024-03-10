@@ -1,11 +1,12 @@
 package connectingstar.tars.user.controller;
 
+import connectingstar.tars.user.domain.LoginUser;
+import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.jwt.JwtCommandService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.UserCommandService;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
  * 회원 관련 API
  *
  * @author 송병선
+ * @author 김규리
  */
 @RequiredArgsConstructor
 @RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
   private final UserCommandService userCommandService;
+  private final JwtCommandService jwtCommandService;
 
   @PostMapping(value = "/constellation")
   public ResponseEntity<?> postAsConstellation(@RequestBody UserConstellationSaveRequest param) {
@@ -32,5 +35,11 @@ public class UserController {
     userCommandService.saveConstellation(param);
 
     return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  @GetMapping(value = "/userBasicInfo")
+  public ResponseEntity<?> getUserBasicInfo(@LoginUser User loginUser) {
+    //UserValidator.validate(loginUser); 필요없는 것 같은데 ...
+    return ResponseEntity.ok(userCommandService.getUserBasicInfo(loginUser));
   }
 }
