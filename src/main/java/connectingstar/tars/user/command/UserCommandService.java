@@ -1,5 +1,6 @@
 package connectingstar.tars.user.command;
 
+import connectingstar.tars.user.response.UserBasicInfoResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,5 +65,10 @@ public class UserCommandService {
     if (userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId)) {
       throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
     }
+  }
+
+  public UserBasicInfoResponse getUserBasicInfo(User user) {
+    User getUser = getUser(user.getId());
+    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity());
   }
 }
