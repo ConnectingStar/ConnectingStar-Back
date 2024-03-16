@@ -52,6 +52,13 @@ def querydslSrcDir = 'src/main/generated'
 clean {
 	delete file(querydslSrcDir)
 }
+task copyPrivate(type: Copy) {
+	copy {
+		from './ConnectingStar-Back-Data'
+		include "*.yml"
+		into 'src/main/resources'
+	}
+}
 tasks.withType(JavaCompile) {
 	options.generatedSourceOutputDirectory = file(querydslSrcDir)
 }
