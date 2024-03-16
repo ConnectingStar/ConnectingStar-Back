@@ -1,0 +1,3 @@
+[submodule "ConnectingStar-Back-Data"]
+	path = ConnectingStar-Back-Data
+	url = https://github.com/ConnectingStar/ConnectingStar-Back-Data.git
