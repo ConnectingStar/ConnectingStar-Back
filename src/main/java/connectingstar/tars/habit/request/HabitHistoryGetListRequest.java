@@ -27,4 +27,9 @@ public class HabitHistoryGetListRequest {
      * 최신,오래된 순 구분
      */
     private Boolean increase;
+
+    /**
+     * 휴식 여부 구분
+     */
+    private Boolean isRest;
 }
