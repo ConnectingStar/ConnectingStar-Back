@@ -112,13 +112,15 @@ public class HabitHistoryDao {
     }
 
     private static BooleanExpression isSameDate(HabitHistoryCreateCheckRequest param, QHabitHistory habitHistory) {
-        BooleanExpression dateMatch = habitHistory.runDate.year().eq(param.getDate().getYear())
+        return habitHistory.runDate.year().eq(param.getDate().getYear())
                 .and(habitHistory.runDate.month().eq(param.getDate().getMonthValue()))
                 .and(habitHistory.runDate.dayOfMonth().eq(param.getDate().getDayOfMonth()));
-        return dateMatch;
     }
 
     private BooleanExpression getPredicate(HabitHistoryGetListRequest param, QHabitHistory habitHistory) {
+        if(param.getIsRest() != null) return habitHistory.user.Id.eq(param.getUserId())
+                .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()))
+                .and(habitHistory.isRest.eq(param.getIsRest()));
         return habitHistory.user.Id.eq(param.getUserId())
                 .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()));
     }

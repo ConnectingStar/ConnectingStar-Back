@@ -33,7 +33,7 @@ public class HabitHistoryCommandService {
     private final UserRepository userRepository;
 
     public void saveHistoryHabit(HabitHistoryPostRequest param) {
-        User user = findUesrByUserId(param);
+        User user = findUserByUserId(param);
 
         checkTodayCreateHistoryHabit(user);
 
@@ -56,7 +56,7 @@ public class HabitHistoryCommandService {
                 -> new ValidationException(HabitErrorCode.RUN_HABIT_NOT_FOUND));
     }
 
-    private User findUesrByUserId(HabitHistoryPostRequest param) {
+    private User findUserByUserId(HabitHistoryPostRequest param) {
         return userRepository.findById(param.getUserId()).orElseThrow(()
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
