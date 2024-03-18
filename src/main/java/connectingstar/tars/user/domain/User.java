@@ -7,6 +7,7 @@ import java.util.Objects;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.star.domain.Star;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,5 +1,6 @@
-package connectingstar.tars.user.domain;
+package connectingstar.tars.star.domain;
 
+import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
