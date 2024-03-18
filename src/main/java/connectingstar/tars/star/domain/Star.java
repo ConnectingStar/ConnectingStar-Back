@@ -17,7 +17,6 @@ public class Star {
 
     int cnt;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "user_id",nullable = false)
+    @OneToOne(mappedBy = "star")
     private User user;
 }
