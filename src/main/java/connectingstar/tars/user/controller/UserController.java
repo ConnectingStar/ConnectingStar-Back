@@ -47,4 +47,16 @@ public class UserController {
   public ResponseEntity<?> getUserBasicInfoAndHabit(@LoginUser User loginUser) {
     return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit(loginUser));
   }
+
+  /**
+   * 별자리 단일 조회 시 사용자 보유 여부 반환
+   *
+   * @param param 별자리 ID, 사용자 ID
+   * @return 사용자 별자리 보유 여부
+   */
+  @GetMapping(value = "/one")
+  public ResponseEntity<?> getHavingUserConstellation(UserConstellationSaveRequest param) {
+    UserValidator.validate(param);
+    return ResponseEntity.ok(userCommandService.getUserHavingConstellation(param));
+  }
 }
