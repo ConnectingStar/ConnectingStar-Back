@@ -38,6 +38,16 @@ public class UserConstellation {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long userConstellationId;
   /**
+   * 사용한 별 개수
+   */
+  @Column(name = "start_count", nullable = false)
+  private Integer startCount;
+  /**
+   * 별자리 등록 여부
+   */
+  @Column(name = "reg_yn", nullable = false)
+  private Boolean regYn = Boolean.FALSE;
+  /**
    * 사용자
    */
   @ManyToOne
@@ -54,11 +64,30 @@ public class UserConstellation {
     setConstellation(constellation);
   }
 
+  /**
+   * 사용한 별 개수 수정
+   */
+  public void modifyStarCount(Integer startCount) {
+    setStartCount(startCount);
+
+    if (startCount >= constellation.getStarCount()) {
+      setRegYn(Boolean.TRUE);
+    }
+  }
+
   void setUser(User user) {
     this.user = user;
   }
 
   private void setConstellation(Constellation constellation) {
     this.constellation = constellation;
+  }
+
+  private void setStartCount(Integer startCount) {
+    this.startCount = startCount;
+  }
+
+  private void setRegYn(Boolean regYn) {
+    this.regYn = regYn;
   }
 }

@@ -3,14 +3,13 @@ package connectingstar.tars.user.controller;
 import connectingstar.tars.user.domain.LoginUser;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.jwt.JwtCommandService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.UserCommandService;
-import connectingstar.tars.user.request.UserConstellationSaveRequest;
+import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.validation.UserValidator;
 import lombok.RequiredArgsConstructor;
 
@@ -29,10 +28,16 @@ public class UserController {
   private final UserCommandService userCommandService;
   private final JwtCommandService jwtCommandService;
 
-  @PostMapping(value = "/constellation")
-  public ResponseEntity<?> postAsConstellation(@RequestBody UserConstellationSaveRequest param) {
+  /**
+   * 사용자 별자리 별 등록
+   *
+   * @param param 별자리 정보
+   * @return 요청 결과
+   */
+  @PostMapping(value = "/constellation/star")
+  public ResponseEntity<?> postAsConstellationStar(@RequestBody UserConstellationStarRequest param) {
     UserValidator.validate(param);
-    userCommandService.saveConstellation(param);
+    userCommandService.modifyStarCount(param);
 
     return ResponseEntity.ok(new SuccessResponse());
   }

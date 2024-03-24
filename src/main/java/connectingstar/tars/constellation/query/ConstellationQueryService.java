@@ -53,7 +53,14 @@ public class ConstellationQueryService {
         return constellationDao.getList(param);
     }
 
-    private Constellation getConstellation(Integer constellationId) {
+    /**
+     * 별자리 엔티티 조회 
+     * 
+     * @param constellationId 별자리 ID
+     * @return 별자리 엔티티
+     */
+    @Transactional(readOnly = true)
+    public Constellation getConstellation(Integer constellationId) {
         return constellationRepository.findById(constellationId)
             .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
     }
