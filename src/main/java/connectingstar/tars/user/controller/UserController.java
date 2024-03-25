@@ -32,6 +32,14 @@ public class UserController {
   private final UserOutCommandService userOutCommandService;
   private final JwtCommandService jwtCommandService;
 
+  @DeleteMapping("/{userId}")
+  public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
+    UserValidator.validate(userId);
+    userCommandService.deleteUser(userId);
+
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
   @PostMapping(value = "/constellation")
   public ResponseEntity<?> postAsConstellation(@RequestBody UserConstellationSaveRequest param) {
     UserValidator.validate(param);

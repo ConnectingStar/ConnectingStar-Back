@@ -28,6 +28,7 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
  *
  * @author 송병선
+ * @author 김규리
  */
 @RequiredArgsConstructor
 @Service
@@ -37,6 +38,15 @@ public class UserCommandService {
   private final ConstellationRepository constellationRepository;
   private final UserConstellationRepository userConstellationRepository;
   private final RunHabitRepository runHabitRepository;
+
+  /**
+   * 유저 삭제
+   * @param id
+   */
+  @Transactional
+  public void deleteUser(Integer id) {
+    userRepository.deleteById(id);
+  }
 
   /**
    * 회원 별자리(캐릭터) 등록
@@ -52,7 +62,7 @@ public class UserCommandService {
     user.addUserConstellation(new UserConstellation(constellation));
   }
 
-  private User getUser(Long userId) {
+  private User getUser(Integer userId) {
     return userRepository.findById(userId)
          .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
   }
@@ -68,7 +78,7 @@ public class UserCommandService {
    * @param userId          회원 ID
    * @param constellationId 별자리 ID
    */
-  private void verifyConstellationDuplicate(Long userId, Integer constellationId) {
+  private void verifyConstellationDuplicate(Integer userId, Integer constellationId) {
     if (userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId)) {
       throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
     }
@@ -100,7 +110,7 @@ public class UserCommandService {
     return new UserHavingConstellationResponse(isHavingConstellation(user.getId(), constellation.getConstellationId()));
   }
 
-  public boolean isHavingConstellation(Long userId, Integer constellationId) {
+  public boolean isHavingConstellation(Integer userId, Integer constellationId) {
       return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
   }
 }
