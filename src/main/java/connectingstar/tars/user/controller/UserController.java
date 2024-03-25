@@ -1,9 +1,11 @@
 package connectingstar.tars.user.controller;
 
+import connectingstar.tars.user.command.UserOutCommandService;
 import connectingstar.tars.user.domain.LoginUser;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.jwt.JwtCommandService;
-import jakarta.servlet.http.HttpServletRequest;
+import connectingstar.tars.user.request.UserOutReasonRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
   private final UserCommandService userCommandService;
+  private final UserOutCommandService userOutCommandService;
   private final JwtCommandService jwtCommandService;
 
   @PostMapping(value = "/constellation")
@@ -58,5 +61,11 @@ public class UserController {
   public ResponseEntity<?> getHavingUserConstellation(UserConstellationSaveRequest param) {
     UserValidator.validate(param);
     return ResponseEntity.ok(userCommandService.getUserHavingConstellation(param));
+  }
+
+  @PostMapping(value = "/out")
+  public ResponseEntity<?> postUserOutReason(@RequestBody UserOutReasonRequest param) {
+    userOutCommandService.saveUserOut(param);
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 }
