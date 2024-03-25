@@ -12,15 +12,17 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "out", catalog = "tars")
-public class Out {
+public class UserOut {
 
-    /**
-     * 탈퇴 이유 ID
-     */
     @Id
     @Column(name = "out_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer outId;
+
+    /**
+     * 탈퇴 이유
+     */
+    private String reason;
 
     /**
      * 성별 남(M),여(W),선택안함(N)
@@ -36,17 +38,18 @@ public class Out {
     /**
      * 가입 날짜
      */
-    @Column(name = "create_date",nullable = false)
+    @Column(name = "create_date", nullable = false)
     private LocalDateTime createDate;
 
     /**
      * 탈퇴 날짜
      */
-    @Column(name = "delete_date",nullable = false)
+    @Column(name = "delete_date", nullable = false)
     private LocalDateTime deleteDate;
 
     @Builder
-    public Out(Gender gender, String ageRange, LocalDateTime createDate, LocalDateTime deleteDate) {
+    public UserOut(String reason, Gender gender, String ageRange, LocalDateTime createDate, LocalDateTime deleteDate) {
+        this.reason = reason;
         this.gender = gender;
         this.ageRange = ageRange;
         this.createDate = createDate;
