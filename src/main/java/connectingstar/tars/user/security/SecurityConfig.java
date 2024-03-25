@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable()));
 
         http.oauth2Login( (oauth2Login) -> oauth2Login
-                .loginPage("login")
+                .loginPage("/login")
                 .successHandler(successHandler())
                 .userInfoEndpoint(userInfo -> userInfo.userService(oAuthCommandService))
         );
