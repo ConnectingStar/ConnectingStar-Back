@@ -7,6 +7,7 @@ import java.util.Objects;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.star.domain.Star;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,8 +57,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<QuitHabit> quitHabits = new ArrayList<>() ; //사용자가 이전에 종료한 습관들
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Star> stars = new ArrayList<>() ; //사용자가 가지고 있는 별
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
+    @JoinColumn(name = "star_id", referencedColumnName = "id")
+    private Star star; //사용자가 가지고 있는 별
 
 
     /**
