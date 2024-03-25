@@ -9,7 +9,7 @@ import connectingstar.tars.user.domain.UserConstellation;
  *
  * @author 송병선
  */
-public interface UserConstellationRepository extends JpaRepository<UserConstellation, Long> {
+public interface UserConstellationRepository extends JpaRepository<UserConstellation, Integer> {
 
-  boolean existsByUser_IdAndConstellation_ConstellationId(Long userId, Integer constellationId);
+  boolean existsByUser_IdAndConstellation_ConstellationId(Integer userId, Integer constellationId);
 }

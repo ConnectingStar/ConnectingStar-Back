@@ -15,5 +15,5 @@ public class QuitHabitListRequest {
     /**
      * 유저 ID
      */
-    private Long userId;
+    private Integer userId;
 }

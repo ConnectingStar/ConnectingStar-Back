@@ -19,7 +19,7 @@ public class RunHabitPostRequest {
     /**
      * 사용자 PK
      */
-    private Long userId;
+    private Integer userId;
 
     /**
      * 정체성

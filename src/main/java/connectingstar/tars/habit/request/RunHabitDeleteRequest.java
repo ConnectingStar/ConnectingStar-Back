@@ -15,7 +15,7 @@ public class RunHabitDeleteRequest {
     /**
      * 사용자 PK
      */
-    private Long userId;
+    private Integer userId;
 
     /**
      * 진행중인 습관 ID

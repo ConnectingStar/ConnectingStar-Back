@@ -76,7 +76,7 @@ public class RunHabitCommandService {
         //추후 필요시 Return 값 추가 예정
     }
 
-    private User findUserByUserId(Long userId) {
+    private User findUserByUserId(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
