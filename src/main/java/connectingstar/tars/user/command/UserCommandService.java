@@ -4,6 +4,7 @@ import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
+import connectingstar.tars.user.response.UserHavingConstellation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +73,7 @@ public class UserCommandService {
       throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
     }
   }
+
   public UserBasicInfoResponse getUserBasicInfo(User loginUser) {
     User getUser = getUser(loginUser.getId());
     return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity());
@@ -82,7 +84,26 @@ public class UserCommandService {
     List<RunHabit> runHabitList = getRunHabit(getUser);
     return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(), runHabitList);
   }
+
   private List<RunHabit> getRunHabit(User user) {
     return runHabitRepository.findAllByUser(user);
+  }
+
+
+  public UserHavingConstellation getUserHavingConstellation(UserConstellationSaveRequest param) {
+    User user = getUser(param.getUserId());
+    Constellation constellation = getConstellation(param.getConstellationId());
+
+    return new UserHavingConstellation(isHavingConstellation(user.getId(), constellation.getConstellationId()));
+  }
+
+  /**
+   * 이미 등록한 별자리인지 확인
+   *
+   * @param userId          회원 ID
+   * @param constellationId 별자리 ID
+   */
+  private boolean isHavingConstellation(Long userId, Integer constellationId) {
+      return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
   }
 }
