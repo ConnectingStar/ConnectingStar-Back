@@ -1,5 +1,6 @@
-package connectingstar.tars.user.domain;
+package connectingstar.tars.star.domain;
 
+import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,11 +13,12 @@ public class Star {
     @Id
     @Column(name = "star_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
-    int cnt;
+    @Column(name = "cnt", nullable = false)
+    private Integer cnt;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "user_id",nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
