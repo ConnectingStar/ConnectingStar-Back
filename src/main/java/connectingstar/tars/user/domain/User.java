@@ -58,7 +58,7 @@ public class User {
     private List<QuitHabit> quitHabits = new ArrayList<>() ; //사용자가 이전에 종료한 습관들
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "star_id", referencedColumnName = "id")
+    @JoinColumn(name = "star_id")
     private Star star; //사용자가 가지고 있는 별
 
 
