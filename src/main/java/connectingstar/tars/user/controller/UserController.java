@@ -1,9 +1,8 @@
 package connectingstar.tars.user.controller;
 
 import connectingstar.tars.user.command.UserOutCommandService;
-import connectingstar.tars.user.domain.LoginUser;
+//import connectingstar.tars.user.domain.LoginUser;
 import connectingstar.tars.user.domain.User;
-import connectingstar.tars.user.jwt.JwtCommandService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,7 +30,6 @@ public class UserController {
 
   private final UserCommandService userCommandService;
   private final UserOutCommandService userOutCommandService;
-  private final JwtCommandService jwtCommandService;
 
   /**
    * 사용자 별자리 별 등록
@@ -47,16 +45,16 @@ public class UserController {
     return ResponseEntity.ok(new SuccessResponse());
   }
 
-  @GetMapping(value = "/userBasicInfo")
-  public ResponseEntity<?> getUserBasicInfo(@LoginUser User loginUser) {
-    //UserValidator.validate(loginUser); 필요없는 것 같은데 ...
-    return ResponseEntity.ok(userCommandService.getUserBasicInfo(loginUser));
-  }
-
-  @GetMapping(value = "/userBasicInfoAndHabit")
-  public ResponseEntity<?> getUserBasicInfoAndHabit(@LoginUser User loginUser) {
-    return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit(loginUser));
-  }
+//  @GetMapping(value = "/userBasicInfo")
+//  public ResponseEntity<?> getUserBasicInfo(@LoginUser User loginUser) {
+//    //UserValidator.validate(loginUser); 필요없는 것 같은데 ...
+//    return ResponseEntity.ok(userCommandService.getUserBasicInfo(loginUser));
+//  }
+//
+//  @GetMapping(value = "/userBasicInfoAndHabit")
+//  public ResponseEntity<?> getUserBasicInfoAndHabit(@LoginUser User loginUser) {
+//    return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit(loginUser));
+//  }
 
   /**
    * 별자리 단일 조회 시 사용자 보유 여부 반환
