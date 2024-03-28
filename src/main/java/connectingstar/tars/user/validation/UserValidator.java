@@ -17,6 +17,12 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
  */
 @UtilityClass
 public class UserValidator {
+  /**
+   * userId 검증
+   */
+  public void validate(Integer userId) {
+    validateNull(userId, USER_PARAM_ID_EMPTY);
+  }
 
   /**
    * 회원 별자리(캐릭터) 등록 요청 검증
