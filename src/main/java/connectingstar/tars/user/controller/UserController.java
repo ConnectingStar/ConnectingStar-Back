@@ -41,8 +41,6 @@ public class UserController {
     return ResponseEntity.ok(new SuccessResponse());
   }
 
-  @PostMapping(value = "/constellation")
-  public ResponseEntity<?> postAsConstellation(@RequestBody UserConstellationSaveRequest param) {
   /**
    * 사용자 별자리 별 등록
    *
