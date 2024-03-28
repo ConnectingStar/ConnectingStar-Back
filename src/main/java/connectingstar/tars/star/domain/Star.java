@@ -13,10 +13,12 @@ public class Star {
     @Id
     @Column(name = "star_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
-    int cnt;
+    @Column(name = "cnt", nullable = false)
+    private Integer cnt;
 
-    @OneToOne(mappedBy = "star")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

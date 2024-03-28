@@ -10,17 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
-import connectingstar.tars.user.request.UserConstellationSaveRequest;
+import connectingstar.tars.user.request.UserConstellationStarRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
@@ -35,7 +33,7 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 public class UserCommandService {
 
   private final UserRepository userRepository;
-  private final ConstellationRepository constellationRepository;
+  private final ConstellationQueryService constellationQueryService;
   private final UserConstellationRepository userConstellationRepository;
   private final RunHabitRepository runHabitRepository;
 
@@ -54,12 +52,14 @@ public class UserCommandService {
    * @param param 등록 정보
    */
   @Transactional
-  public void saveConstellation(UserConstellationSaveRequest param) {
+  public void modifyStarCount(UserConstellationStarRequest param) {
     User user = getUser(param.getUserId());
-    Constellation constellation = getConstellation(param.getConstellationId());
-    verifyConstellationDuplicate(param.getUserId(), constellation.getConstellationId());
 
-    user.addUserConstellation(new UserConstellation(constellation));
+    // UserConstellation 조회
+    UserConstellation userConstellation = getUserConstellation(user, param.getConstellationId());
+
+    // 별 개수 1 증가
+    userConstellation.modifyStarCount(userConstellation.getStartCount() + 1);
   }
 
   private User getUser(Integer userId) {
@@ -99,13 +99,44 @@ public class UserCommandService {
     return runHabitRepository.findAllByUser(user);
   }
 
+  /**
+   * 사용자 별자리 엔티티 조회 or 생성
+   *
+   * @param user 사용자
+   * @param constellationId 별자리 ID
+   * @return 사용자 별자리 엔티티
+   */
+  private UserConstellation getUserConstellation(User user, Integer constellationId) {
+    // 별자리 조회
+    Constellation constellation = constellationQueryService.getConstellation(constellationId);
+
+    // 사용자 별자리 조회 or 생성
+    UserConstellation userConstellation = user.getUserConstellationList()
+                                              .stream()
+                                              .filter(it -> it.getConstellation()
+                                                              .getConstellationId()
+                                                              .equals(constellationId))
+                                              .findFirst()
+                                              .orElseGet(() -> {
+                                                UserConstellation addUserConstellation =
+                                                    new UserConstellation(constellation);
+                                                user.addUserConstellation(addUserConstellation);
+                                                return addUserConstellation;
+                                              });
+
+    if (userConstellation.getRegYn().equals(Boolean.TRUE)) {
+      throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
+    }
+
+    return userConstellation;
+  }
 
   /**
    * 이미 등록한 별자리인지 확인
    */
-  public UserHavingConstellationResponse getUserHavingConstellation(UserConstellationSaveRequest param) {
+  public UserHavingConstellationResponse getUserHavingConstellation(UserConstellationStarRequest param) {
     User user = getUser(param.getUserId());
-    Constellation constellation = getConstellation(param.getConstellationId());
+    Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
 
     return new UserHavingConstellationResponse(isHavingConstellation(user.getId(), constellation.getConstellationId()));
   }

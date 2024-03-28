@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.ErrorCode;
-import connectingstar.tars.user.request.UserConstellationSaveRequest;
+import connectingstar.tars.user.request.UserConstellationStarRequest;
 import lombok.experimental.UtilityClass;
 
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_PARAM_ID_EMPTY;
@@ -27,7 +27,7 @@ public class UserValidator {
   /**
    * 회원 별자리(캐릭터) 등록 요청 검증
    */
-  public void validate(UserConstellationSaveRequest param) {
+  public void validate(UserConstellationStarRequest param) {
     validateNull(param.getUserId(), USER_PARAM_ID_EMPTY);
     validateNull(param.getConstellationId(), CONSTELLATION_PARAM_ID_EMPTY);
   }
