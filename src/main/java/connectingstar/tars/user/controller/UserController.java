@@ -73,7 +73,7 @@ public class UserController {
    * @return 사용자 별자리 보유 여부
    */
   @GetMapping(value = "/one")
-  public ResponseEntity<?> getHavingUserConstellation(UserConstellationSaveRequest param) {
+  public ResponseEntity<?> getHavingUserConstellation(UserConstellationStarRequest param) {
     UserValidator.validate(param);
     return ResponseEntity.ok(userCommandService.getUserHavingConstellation(param));
   }

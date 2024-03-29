@@ -1,5 +1,6 @@
 package connectingstar.tars.user.command;
 
+import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
@@ -65,23 +66,6 @@ public class UserCommandService {
   private User getUser(Integer userId) {
     return userRepository.findById(userId)
          .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
-  }
-
-  private Constellation getConstellation(Integer constellationId) {
-    return constellationRepository.findById(constellationId)
-        .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
-  }
-
-  /**
-   * 이미 등록한 별자리인지 검증
-   *
-   * @param userId          회원 ID
-   * @param constellationId 별자리 ID
-   */
-  private void verifyConstellationDuplicate(Integer userId, Integer constellationId) {
-    if (userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId)) {
-      throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
-    }
   }
 
   public UserBasicInfoResponse getUserBasicInfo(User loginUser) {
