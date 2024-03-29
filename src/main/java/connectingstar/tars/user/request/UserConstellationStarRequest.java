@@ -16,7 +16,7 @@ public class UserConstellationStarRequest {
    * 회원 ID
    * 추후에 로그인이 구현되면 삭제
    */
-  private Long userId;
+  private Integer userId;
   /**
    * 별자리(캐릭터) ID
    */

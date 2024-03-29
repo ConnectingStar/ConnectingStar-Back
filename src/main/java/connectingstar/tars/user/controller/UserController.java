@@ -33,6 +33,14 @@ public class UserController {
   private final UserOutCommandService userOutCommandService;
   private final JwtCommandService jwtCommandService;
 
+  @DeleteMapping("/{userId}")
+  public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
+    UserValidator.validate(userId);
+    userCommandService.deleteUser(userId);
+
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
   /**
    * 사용자 별자리 별 등록
    *
@@ -65,7 +73,7 @@ public class UserController {
    * @return 사용자 별자리 보유 여부
    */
   @GetMapping(value = "/one")
-  public ResponseEntity<?> getHavingUserConstellation(@ModelAttribute UserConstellationStarRequest param) {
+  public ResponseEntity<?> getHavingUserConstellation(UserConstellationSaveRequest param) {
     UserValidator.validate(param);
     return ResponseEntity.ok(userCommandService.getUserHavingConstellation(param));
   }

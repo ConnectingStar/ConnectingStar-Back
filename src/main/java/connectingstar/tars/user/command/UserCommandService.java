@@ -1,6 +1,5 @@
 package connectingstar.tars.user.command;
 
-import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
@@ -27,6 +26,7 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
  *
  * @author 송병선
+ * @author 김규리
  */
 @RequiredArgsConstructor
 @Service
@@ -36,6 +36,15 @@ public class UserCommandService {
   private final ConstellationQueryService constellationQueryService;
   private final UserConstellationRepository userConstellationRepository;
   private final RunHabitRepository runHabitRepository;
+
+  /**
+   * 유저 삭제
+   * @param id
+   */
+  @Transactional
+  public void deleteUser(Integer id) {
+    userRepository.deleteById(id);
+  }
 
   /**
    * 회원 별자리(캐릭터) 등록
@@ -53,9 +62,26 @@ public class UserCommandService {
     userConstellation.modifyStarCount(userConstellation.getStartCount() + 1);
   }
 
-  private User getUser(Long userId) {
+  private User getUser(Integer userId) {
     return userRepository.findById(userId)
          .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+  }
+
+  private Constellation getConstellation(Integer constellationId) {
+    return constellationRepository.findById(constellationId)
+        .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
+  }
+
+  /**
+   * 이미 등록한 별자리인지 검증
+   *
+   * @param userId          회원 ID
+   * @param constellationId 별자리 ID
+   */
+  private void verifyConstellationDuplicate(Integer userId, Integer constellationId) {
+    if (userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId)) {
+      throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
+    }
   }
 
   public UserBasicInfoResponse getUserBasicInfo(User loginUser) {
@@ -115,7 +141,7 @@ public class UserCommandService {
     return new UserHavingConstellationResponse(isHavingConstellation(user.getId(), constellation.getConstellationId()));
   }
 
-  public boolean isHavingConstellation(Long userId, Integer constellationId) {
+  public boolean isHavingConstellation(Integer userId, Integer constellationId) {
       return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
   }
 }
