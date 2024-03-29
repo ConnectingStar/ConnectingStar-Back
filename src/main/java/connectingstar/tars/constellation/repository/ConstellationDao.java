@@ -65,7 +65,7 @@ public class ConstellationDao {
 
     Integer constellationTypeId = param.getConstellationTypeId();
     if (Objects.nonNull(constellationTypeId)) {
-      booleanBuilder.and(constellation.constellationType.constellationTypeId.eq(constellationTypeId));
+      booleanBuilder.and(constellation.type.constellationTypeId.eq(constellationTypeId));
     }
 
     return booleanBuilder;
@@ -77,7 +77,7 @@ public class ConstellationDao {
     return Projections.constructor(
         ConstellationListResponse.class,
         constellation.constellationId,
-        constellation.constellationType.name,
+        constellation.type.name,
         constellation.name,
         constellation.image,
         constellation.characterImage,

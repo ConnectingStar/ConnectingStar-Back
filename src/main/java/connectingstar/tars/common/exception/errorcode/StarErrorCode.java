@@ -15,7 +15,8 @@ public enum StarErrorCode implements ErrorCode {
   /**
    * not found
    */
-  STAR_NOT_FOUND(HttpStatus.BAD_REQUEST, "회원의 별을 찾을 수 없습니다.");
+  STAR_NOT_FOUND(HttpStatus.BAD_REQUEST, "회원의 별을 찾을 수 없습니다."),
+  STAR_ZERO_CNT(HttpStatus.BAD_REQUEST, "사용할 수 있는 별이 없습니다.");;
 
   /**
    * duplicate

@@ -23,17 +23,18 @@ public class ConstellationController {
     private final ConstellationQueryService constellationQueryService;
     private final ConstellationTypeQueryService constellationTypeQueryService;
 
+
     /**
-     * 별자리 단일 조회
+     * 별자리 메인 페이지 정보 조회
      *
      * @param constellationId 별자리 ID
-     * @return 별자리 단일 정보
+     * @return 별자리 메인 페이지 정보
      */
-    @GetMapping
-    public ResponseEntity<?> getOne(@RequestParam(required = false) Integer constellationId) {
+    @GetMapping("/main")
+    public ResponseEntity<?> getMain(@RequestParam(required = false) Integer constellationId) {
         ConstellationValidator.validate(constellationId);
 
-        return ResponseEntity.ok(constellationQueryService.getOne(constellationId));
+        return ResponseEntity.ok(constellationQueryService.getMain(constellationId));
     }
 
     /**

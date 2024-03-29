@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
@@ -54,13 +55,18 @@ public class UserCommandService {
    */
   @Transactional
   public void modifyStarCount(UserConstellationStarRequest param) {
-    User user = getUser(param.getUserId());
+    User user = getUser(2);
+    // 사용자 별 개수 존재여부 체크
+    verifyStarCount(user);
 
-    // UserConstellation 조회
     UserConstellation userConstellation = getUserConstellation(user, param.getConstellationId());
 
-    // 별 개수 1 증가
-    userConstellation.modifyStarCount(userConstellation.getStartCount() + 1);
+    // 이미 등록한 별자리인지 체크
+    verifyAlreadyRegister(userConstellation);
+
+    // 별 개수 수정
+    userConstellation.updateStarCount(userConstellation.getStartCount() + 1);
+    user.getStar().updateStarCnt();
   }
 
   private User getUser(Integer userId) {
@@ -95,7 +101,7 @@ public class UserCommandService {
     Constellation constellation = constellationQueryService.getConstellation(constellationId);
 
     // 사용자 별자리 조회 or 생성
-    UserConstellation userConstellation = user.getUserConstellationList()
+    return user.getUserConstellationList()
                                               .stream()
                                               .filter(it -> it.getConstellation()
                                                               .getConstellationId()
@@ -107,19 +113,35 @@ public class UserCommandService {
                                                 user.addUserConstellation(addUserConstellation);
                                                 return addUserConstellation;
                                               });
+  }
 
+  /**
+   * 사용자 별 개수 존재여부 체크
+   *
+   * @param user 사용자 엔티티
+   */
+  private void verifyStarCount(User user) {
+    if (user.getStar().getCnt().equals(0)) {
+      throw new ValidationException(STAR_ZERO_CNT);
+    }
+  }
+
+  /**
+   * 이미 등록한 별자리인지 체크
+   * 
+   * @param userConstellation 사용자 별자리 엔티티
+   */
+  private void verifyAlreadyRegister(UserConstellation userConstellation) {
     if (userConstellation.getRegYn().equals(Boolean.TRUE)) {
       throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
     }
-
-    return userConstellation;
   }
 
   /**
    * 이미 등록한 별자리인지 확인
    */
   public UserHavingConstellationResponse getUserHavingConstellation(UserConstellationStarRequest param) {
-    User user = getUser(param.getUserId());
+    User user = getUser(2);
     Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
 
     return new UserHavingConstellationResponse(isHavingConstellation(user.getId(), constellation.getConstellationId()));
