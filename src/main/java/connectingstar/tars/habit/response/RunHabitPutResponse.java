@@ -3,6 +3,7 @@ package connectingstar.tars.habit.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.habit.domain.RunHabit;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import lombok.Getter;
 
 
@@ -28,7 +29,7 @@ public class RunHabitPutResponse {
     /**
      * 사용자 PK
      */
-    private final Long userId;
+    private final Integer userId;
 
 
     /**

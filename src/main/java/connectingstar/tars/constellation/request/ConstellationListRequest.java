@@ -20,7 +20,7 @@ public class ConstellationListRequest {
      * 회원 ID
      * 추후에 로그인이 구현되면 삭제
      */
-    private Long userId;
+    private Integer userId;
     /**
      *
      */

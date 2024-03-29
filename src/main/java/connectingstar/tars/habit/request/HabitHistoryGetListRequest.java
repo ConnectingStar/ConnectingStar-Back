@@ -16,7 +16,7 @@ public class HabitHistoryGetListRequest {
     /**
      * 유저 ID
      */
-    private Long userId;
+    private Integer userId;
 
     /**
      * 진행중인 습관 ID

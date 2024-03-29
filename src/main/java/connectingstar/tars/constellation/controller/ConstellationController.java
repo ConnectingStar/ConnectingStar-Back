@@ -29,7 +29,7 @@ public class ConstellationController {
      * @param constellationId 별자리 ID
      * @return 별자리 단일 정보
      */
-    @GetMapping(value = "/one")
+    @GetMapping
     public ResponseEntity<?> getOne(@RequestParam(required = false) Integer constellationId) {
         ConstellationValidator.validate(constellationId);
 

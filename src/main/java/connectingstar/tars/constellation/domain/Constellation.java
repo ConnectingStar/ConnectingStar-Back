@@ -29,11 +29,6 @@ public class Constellation {
     @Column(name = "constellation_name", nullable = false)
     private String name;
     /**
-     * 설명
-     */
-    @Column(name = "constellation_description", nullable = false)
-    private String description;
-    /**
      * 스토리
      */
     @Column(name = "constellation_story", nullable = false)
@@ -63,9 +58,8 @@ public class Constellation {
     @JoinColumn(name = "constellation_type_id")
     private ConstellationType constellationType;
 
-    public Constellation(String name, String description, String story, String identity, String image, String characterImage, Integer starCount) {
+    public Constellation(String name, String story, String identity, String image, String characterImage, Integer starCount) {
         setName(name);
-        setDescription(description);
         setStory(story);
         setIdentity(identity);
         setImage(image);
@@ -75,10 +69,6 @@ public class Constellation {
 
     private void setName(String name) {
         this.name = name;
-    }
-
-    private void setDescription(String description) {
-        this.description = description;
     }
 
     private void setStory(String story) {
