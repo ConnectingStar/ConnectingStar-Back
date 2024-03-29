@@ -41,7 +41,7 @@ public class UserConstellation {
    * 사용한 별 개수
    */
   @Column(name = "start_count", nullable = false)
-  private Integer startCount;
+  private Integer startCount = 0;
   /**
    * 별자리 등록 여부
    */
@@ -67,7 +67,7 @@ public class UserConstellation {
   /**
    * 사용한 별 개수 수정
    */
-  public void modifyStarCount(Integer startCount) {
+  public void updateStarCount(Integer startCount) {
     setStartCount(startCount);
 
     if (startCount >= constellation.getStarCount()) {

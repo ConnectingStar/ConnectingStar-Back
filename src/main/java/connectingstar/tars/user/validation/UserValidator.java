@@ -28,7 +28,6 @@ public class UserValidator {
    * 회원 별자리(캐릭터) 등록 요청 검증
    */
   public void validate(UserConstellationStarRequest param) {
-    validateNull(param.getUserId(), USER_PARAM_ID_EMPTY);
     validateNull(param.getConstellationId(), CONSTELLATION_PARAM_ID_EMPTY);
   }
 

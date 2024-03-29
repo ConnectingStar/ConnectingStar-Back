@@ -21,4 +21,11 @@ public class Star {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    /**
+     * 별 사용
+     */
+    public void updateStarCnt() {
+        this.cnt -= 1;
+    }
 }

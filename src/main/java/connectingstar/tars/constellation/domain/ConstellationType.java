@@ -32,12 +32,4 @@ public class ConstellationType {
      */
     @Column(name = "constellation_type_name", nullable = false)
     private String name;
-
-    public ConstellationType(String name) {
-        setName(name);
-    }
-
-    private void setName(String name) {
-        this.name = name;
-    }
 }

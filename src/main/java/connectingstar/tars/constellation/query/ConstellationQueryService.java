@@ -7,7 +7,12 @@ import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.constellation.repository.ConstellationTypeRepository;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.response.ConstellationListResponse;
-import connectingstar.tars.constellation.response.ConstellationOneResponse;
+import connectingstar.tars.constellation.response.ConstellationDetailResponse;
+import connectingstar.tars.constellation.response.ConstellationMainResponse;
+import connectingstar.tars.user.command.UserQueryService;
+import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.domain.UserConstellation;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,14 +36,34 @@ public class ConstellationQueryService {
     private final ConstellationDao constellationDao;
     private final ConstellationTypeRepository constellationTypeRepository;
 
+    private final UserQueryService userQueryService;
+
+    /**
+     * 별자리 메인 페이지 정보 조회
+     *
+     * @param constellationId 별자리 ID
+     */
+    @Transactional(readOnly = true)
+    public ConstellationMainResponse getMain(Integer constellationId) {
+        User user = userQueryService.getUser(2);
+        Optional<UserConstellation> userConstellation = userQueryService.getUserConstellation(user, constellationId);
+        if (userConstellation.isPresent()) {
+            return new ConstellationMainResponse(user.getStar().getCnt(), userConstellation.get()
+                .getConstellation(), userConstellation.get().getStartCount());
+        } else {
+            Constellation constellation = getConstellation(constellationId);
+            return new ConstellationMainResponse(user.getStar().getCnt(), constellation, 0);
+        }
+    }
+
     /**
      * 별자리 단일 조회
      *
      * @param constellationId 별자리 ID
      */
     @Transactional(readOnly = true)
-    public ConstellationOneResponse getOne(Integer constellationId) {
-        return new ConstellationOneResponse(getConstellation(constellationId));
+    public ConstellationDetailResponse getOne(Integer constellationId) {
+        return new ConstellationDetailResponse(getConstellation(constellationId));
     }
 
     /**

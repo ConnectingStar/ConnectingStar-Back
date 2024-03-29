@@ -7,23 +7,18 @@ import connectingstar.tars.constellation.domain.Constellation;
 import lombok.Getter;
 
 /**
- * 별자리(캐릭터) 반환
+ * 별자리(캐릭터) 상세 정보 반환
  *
  * @author 송병선
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"constellationId", "name", "story", "identity", "image", "characterImage", "starCount"})
-public class ConstellationOneResponse {
+public class ConstellationDetailResponse {
 
     /**
      * 별자리(캐릭터) ID
      */
     private final Integer constellationId;
-    /**
-     * 별자리(캐릭터) 타입 ID
-     */
-    private final Integer constellationTypeId;
     /**
      * 이름
      */
@@ -49,9 +44,8 @@ public class ConstellationOneResponse {
      */
     private final Integer starCount;
 
-    public ConstellationOneResponse(Constellation constellation) {
+    public ConstellationDetailResponse(Constellation constellation) {
         this.constellationId = constellation.getConstellationId();
-        this.constellationTypeId = constellation.getConstellationType().getConstellationTypeId();
         this.name = constellation.getName();
         this.story = constellation.getStory();
         this.identity = constellation.getIdentity();

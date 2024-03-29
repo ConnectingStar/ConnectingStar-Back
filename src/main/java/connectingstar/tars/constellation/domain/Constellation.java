@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
+@Table(name = "constellation")
 public class Constellation {
 
     /**
@@ -54,40 +55,18 @@ public class Constellation {
     @Column(name = "constellation_star_count", nullable = false)
     private Integer starCount;
 
+    ///////////////////////////////////////////////////////////
+    // Relations
+    ///////////////////////////////////////////////////////////
+    /**
+     * 별자리 타입 정보
+     */
     @ManyToOne
     @JoinColumn(name = "constellation_type_id")
-    private ConstellationType constellationType;
-
-    public Constellation(String name, String story, String identity, String image, String characterImage, Integer starCount) {
-        setName(name);
-        setStory(story);
-        setIdentity(identity);
-        setImage(image);
-        setCharacterImage(characterImage);
-        setStarCount(starCount);
-    }
-
-    private void setName(String name) {
-        this.name = name;
-    }
-
-    private void setStory(String story) {
-        this.story = story;
-    }
-
-    private void setIdentity(String identity) {
-        this.identity = identity;
-    }
-
-    private void setImage(String image) {
-        this.image = image;
-    }
-
-    private void setCharacterImage(String characterImage) {
-        this.characterImage = characterImage;
-    }
-
-    private void setStarCount(Integer starCount) {
-        this.starCount = starCount;
-    }
+    private ConstellationType type;
+    /**
+     * 별자리 SVG 정보
+     */
+    @OneToOne(mappedBy = "constellation")
+    private ConstellationSvg svg;
 }
