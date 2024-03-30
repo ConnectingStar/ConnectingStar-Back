@@ -1,46 +1,62 @@
-name: Java CD with Gradle
- 
+name: CD with Gradle
+
+# 언제 이 파일의 내용이 실행될 것인지 정의합니다.
+# 여기서는 main 브랜치에 코드가 push 되거나 pull_request되었을 때 실행할 것을 말하고 있습니다.
 on:
   push:
-    branches: [ "dev" ] 
+    branches: [ "dev" ]
   pull_request:
-    branches: [ "main" ]
-    
+    branches: [ "dev" ]
+
+# 실제 실행될 내용들을 정의합니다.
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # ubuntu 최신 버전에서 script를 실행
+
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          token: ${{ secrets.GIT_TOKEN }}
+
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: "adopt"
+
+
+      # gradle을 통해 소스를 빌드.
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: cicdsample
-          path: build/libs/*.jar
- 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: cicdsample
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-      - name: SCP transfer
-        run: scp *.jar ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }}:~/cicd
-      - name: Execute remote commands
         run: |
-          ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo fuser -k 8080/tcp"
-          ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo nohup java -jar ~/cicd/*.jar &"
+          chmod +x ./gradlew
+          ./gradlew clean build -x test
+
+      # dockerfile을 통해 이미지를 빌드하고, 이를 docker repo로 push 합니다.
+      # 이 때 사용되는 ${{ secrets.DOCKER_REPO }}/directors-dev 가 위에서 만든 도커 repository 입니다.
+      - name: Docker build & push to docker repo
+
+        run: |
+          docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PWD }}
+          docker build \
+          -f Dockerfile-main -t ${{ secrets.DOCKER_REPO }} .
+          docker push ${{ secrets.DOCKER_REPO }}
+
+      # appleboy/ssh-action@master 액션을 사용하여 지정한 서버에 ssh로 접속하고, script를 실행합니다.
+      # script의 내용은 도커의 기존 프로세스들을 제거하고, docker repo로부터 방금 위에서 push한 내용을 pull 받아 실행하는 것
+      # 실행 시, docker-compose를 사용합니다.
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        id: deploy
+        with:
+          host: ${{ secrets.HOST }}
+          username: ec2-user
+          key: ${{ secrets.KEY }}
+          envs: GITHUB_SHA
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}
+            docker-compose up -d
+            docker image prune -f
