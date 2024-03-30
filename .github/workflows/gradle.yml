@@ -65,6 +65,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
+          envs: GITHUB_SHA
           script: |
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}
