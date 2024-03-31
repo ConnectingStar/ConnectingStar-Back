@@ -38,6 +38,19 @@ public class ConstellationController {
     }
 
     /**
+     * 별자리 상세 조회
+     *
+     * @param constellationId 별자리 ID
+     * @return 별자리 상세 정보
+     */
+    @GetMapping
+    public ResponseEntity<?> getOne(@RequestParam(required = false) Integer constellationId) {
+        ConstellationValidator.validate(constellationId);
+
+        return ResponseEntity.ok(constellationQueryService.getOne(constellationId));
+    }
+
+    /**
      * 별자리 목록 조회
      *
      * @param param 조회 조건
