@@ -17,11 +17,6 @@ public class ConstellationListRequest {
      */
     private Integer constellationTypeId;
     /**
-     * 회원 ID
-     * 추후에 로그인이 구현되면 삭제
-     */
-    private Integer userId;
-    /**
      *
      */
     private Boolean own;
