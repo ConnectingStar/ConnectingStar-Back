@@ -38,34 +38,33 @@ public class ConstellationDao {
     QConstellation constellation = QConstellation.constellation;
     QUserConstellation userConstellation = QUserConstellation.userConstellation;
 
-    // 타입별 회원이 보유중인 별자리 조회
-    if (Objects.nonNull(param.getOwn()) && param.getOwn()) {
-      return queryFactory
-          .select(getConstructorExpression())
-          .from(userConstellation)
-          .join(constellation)
-          .on(userConstellation.constellation.constellationId.eq(constellation.constellationId))
-          .where(getPredicate(param))
-          .fetch();
-    } else { // 타입별 모든 별자리 조회
-      return queryFactory
-          .select(getConstructorExpression())
-          .from(constellation)
-          .where(getPredicate(param))
-          .fetch();
-    }
+    return queryFactory
+        .select(getConstructorExpression())
+        .from(constellation)
+        .leftJoin(userConstellation)
+        .on(userConstellation.constellation.constellationId.eq(constellation.constellationId))
+        .where(getPredicate(param, constellation, userConstellation))
+        .fetch();
   }
 
   /**
    * 조회할 별자리 타입 파라미터에 대한 동작 쿼리
    */
-  private BooleanBuilder getPredicate(ConstellationListRequest param) {
+  private BooleanBuilder getPredicate(ConstellationListRequest param, QConstellation constellation,
+      QUserConstellation userConstellation) {
     BooleanBuilder booleanBuilder = new BooleanBuilder();
-    QConstellation constellation = QConstellation.constellation;
 
     Integer constellationTypeId = param.getConstellationTypeId();
     if (Objects.nonNull(constellationTypeId)) {
       booleanBuilder.and(constellation.type.constellationTypeId.eq(constellationTypeId));
+    }
+
+    Boolean own = param.getOwn();
+    if (Objects.nonNull(own) && own) {
+      // TODO: 로그인 기능이 구현되면 변경 예정
+      booleanBuilder.and(userConstellation.user.Id.eq(2));
+      booleanBuilder.and(userConstellation.user.Id.isNotNull());
+      booleanBuilder.and(userConstellation.regYn.eq(Boolean.TRUE));
     }
 
     return booleanBuilder;
