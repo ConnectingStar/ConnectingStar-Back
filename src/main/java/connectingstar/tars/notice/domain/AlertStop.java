@@ -1,12 +1,15 @@
 package connectingstar.tars.notice.domain;
 
 
-import connectingstar.tars.user.domain.User;
+import connectingstar.tars.habit.domain.RunHabit;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * 약속 전체 일시 알람 엔티티
@@ -15,10 +18,10 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-public class AlertAllStop {
+public class AlertStop {
 
     @Id
-    @Column(name = "alert_all_stop_id", nullable = false)
+    @Column(name = "aler_stop_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -26,11 +29,17 @@ public class AlertAllStop {
      * 알람 전체 일시종료 시작날짜
      */
     @Column(name = "start_date",nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     /**
      * 알람 전체 일시종료 종료날짜
      */
     @Column(name = "end_date",nullable = false)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
+
+    @Builder
+    public AlertStop(LocalDate startTime, LocalDate endTime) {
+        this.startDate = startTime;
+        this.endDate = endTime;
+    }
 }

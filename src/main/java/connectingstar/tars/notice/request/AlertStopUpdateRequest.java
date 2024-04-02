@@ -1,4 +1,4 @@
 package connectingstar.tars.notice.request;
 
-public class AlertAllStopUpdateRequest {
+public class AlertStopUpdateRequest {
 }
