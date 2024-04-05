@@ -2,20 +2,16 @@ package connectingstar.tars.constellation.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ConstructorExpression;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Objects;
-
 import connectingstar.tars.constellation.domain.QConstellation;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.response.ConstellationListResponse;
 import connectingstar.tars.user.domain.QUserConstellation;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 /**
  * 별자리(캐릭터) Repository
@@ -32,7 +28,7 @@ public class ConstellationDao {
    * 별자리 목록 조회
    *
    * @param param 조회 조건
-   * @return      조회 결과
+   * @return 조회 결과
    */
   public List<ConstellationListResponse> getList(ConstellationListRequest param) {
     QConstellation constellation = QConstellation.constellation;
@@ -62,8 +58,8 @@ public class ConstellationDao {
     Boolean own = param.getOwn();
     if (Objects.nonNull(own) && own) {
       // TODO: 로그인 기능이 구현되면 변경 예정
-      booleanBuilder.and(userConstellation.user.Id.eq(2));
-      booleanBuilder.and(userConstellation.user.Id.isNotNull());
+      booleanBuilder.and(userConstellation.user.id.eq(2));
+      booleanBuilder.and(userConstellation.user.id.isNotNull());
       booleanBuilder.and(userConstellation.regYn.eq(Boolean.TRUE));
     }
 
