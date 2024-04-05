@@ -16,16 +16,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserOutCommandService {
 
-    private final UserOutRepository userOutRepository;
-    public void saveUserOut(UserOutReasonRequest param) {
+  private final UserOutRepository userOutRepository;
 
-        UserOut userOut = UserOut.builder()
-                .reason(param.getReason())
-                .ageRange(param.getAgeRange())
-                .gender(param.getGender())
-                .createDate(param.getCreateDate())
-                .deleteDate(param.getDeleteDate())
-                .build();
-        userOutRepository.save(userOut);
-    }
+  public void saveUserOut(UserOutReasonRequest param) {
+
+    UserOut userOut = UserOut.builder()
+        .reason(param.getReason())
+        .ageRange(param.getAgeRange())
+        .genderType(param.getGenderType())
+        .createDate(param.getCreateDate())
+        .deleteDate(param.getDeleteDate())
+        .build();
+    userOutRepository.save(userOut);
+  }
 }

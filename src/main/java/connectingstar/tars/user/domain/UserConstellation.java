@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 사용자가 보유한 별자리(캐릭터)
+ * 회원이 보유한 별자리(캐릭터)
  *
  * @author 송병선
  */
@@ -31,14 +31,14 @@ import lombok.NoArgsConstructor;
 public class UserConstellation {
 
   /**
-   * 사용자 별자리 ID
+   * 회원 별자리 ID
    */
   @Id
   @Column(name = "user_constellation_id", nullable = false)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long userConstellationId;
   /**
-   * 사용한 별 개수
+   * 회원이 사용한 별 개수
    */
   @Column(name = "start_count", nullable = false)
   private Integer startCount = 0;
@@ -48,7 +48,7 @@ public class UserConstellation {
   @Column(name = "reg_yn", nullable = false)
   private Boolean regYn = Boolean.FALSE;
   /**
-   * 사용자
+   * 회원
    */
   @ManyToOne
   @JoinColumn(name = "user_id")
