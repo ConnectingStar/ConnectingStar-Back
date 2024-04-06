@@ -1,19 +1,27 @@
 package connectingstar.tars.user.domain.enums;
 
+import connectingstar.tars.common.domain.converter.AbstractEnumCodeConverter;
+import connectingstar.tars.common.domain.enums.Codable;
+import jakarta.persistence.Converter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-
+@Getter
 @RequiredArgsConstructor
-public enum GenderType {
-  M("MALE"),
-  F("FEMALE"),
-  N("NONE");
+public enum GenderType implements Codable {
 
-  private final String type;
+  MALE("M"),
+  FEMALE("F"),
+  NONE("N");
 
-  public String getType() {
-    return type;
+  private final String code;
+
+  @Converter
+  public static class TypeCodeConverter extends AbstractEnumCodeConverter<GenderType> {
+
+    @Override
+    public GenderType convertToEntityAttribute(String dbData) {
+      return this.toEntityAttribute(GenderType.class, dbData);
+    }
   }
-
-
 }

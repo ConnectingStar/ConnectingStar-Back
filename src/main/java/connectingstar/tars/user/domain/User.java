@@ -1,11 +1,14 @@
 package connectingstar.tars.user.domain;
 
+import connectingstar.tars.common.domain.BaseTimeEntity;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.user.domain.enums.GenderType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class User {
+public class User extends BaseTimeEntity {
 
   /**
    * 보유한 별자리(캐릭터) 목록
@@ -34,6 +37,12 @@ public class User {
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
       CascadeType.MERGE})
   private final List<UserConstellation> userConstellationList = new ArrayList<>();
+  /**
+   * 성별 타입
+   */
+  @Convert(converter = GenderType.TypeCodeConverter.class)
+  @Column(name = "gender_type")
+  private final GenderType genderType = GenderType.NONE;
   /**
    * 회원 ID
    */
@@ -57,11 +66,6 @@ public class User {
   @Column(name = "ageRange")
   private String ageRange;
   /**
-   * 성별
-   */
-  @Column(name = "gender")
-  private GenderType genderType;
-  /**
    * 정체성
    */
   @Column(name = "identity")
@@ -80,7 +84,17 @@ public class User {
    * 보유 별 개수
    */
   @Column(name = "star", nullable = false)
-  private Integer star;
+  private Integer star = 0;
+  /**
+   * Resource Server 타입
+   */
+  @Convert(converter = SocialType.TypeCodeConverter.class)
+  @Column(name = "social_type", nullable = false)
+  private SocialType socialType;
+
+  ///////////////////////////////////////////////////////////
+  // Relations
+  ///////////////////////////////////////////////////////////
   /**
    * 습관 기록 리스트
    */
@@ -100,8 +114,9 @@ public class User {
       CascadeType.MERGE})
   private List<QuitHabit> quitHabits = new ArrayList<>();
 
-  public User(String email) {
+  public User(String email, SocialType socialType) {
     this.email = email;
+    this.socialType = socialType;
   }
 
   /**
