@@ -1,6 +1,5 @@
 package connectingstar.tars.oauth.controller;
 
-import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.oauth.validation.OAuthValidator;
@@ -26,6 +25,11 @@ public class OAuthController {
 
   private final OAuthService oauthService;
 
+  /**
+   * 소셜 타입에 따른 AuthCode 요청 Url 반환
+   *
+   * @param socialType 소셜 타입
+   */
   @SneakyThrows
   @GetMapping("/code/url")
   public void getAuthCodeUrl(@RequestParam(required = false) String socialType,
@@ -46,7 +50,6 @@ public class OAuthController {
       @RequestParam(required = false) String authCode) {
     OAuthValidator.validate(socialType, authCode);
 
-    oauthService.login(SocialType.fromCode(socialType), authCode);
-    return ResponseEntity.ok(new SuccessResponse());
+    return ResponseEntity.ok(oauthService.login(SocialType.fromCode(socialType), authCode));
   }
 }

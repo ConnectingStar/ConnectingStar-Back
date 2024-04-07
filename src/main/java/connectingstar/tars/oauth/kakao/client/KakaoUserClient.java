@@ -29,6 +29,6 @@ public class KakaoUserClient implements SocialUserClient {
   public SocialUserResponse fetch(String authCode) {
     KakaoTokenResponse tokenInfo = kakaoApiClient.getToken(authCode);
     return kakaoApiClient.getUser(
-        kakaoOAuthConfig.authorizationHeader() + tokenInfo.accessToken());
+        kakaoOAuthConfig.authorizationPrefix() + tokenInfo.accessToken());
   }
 }

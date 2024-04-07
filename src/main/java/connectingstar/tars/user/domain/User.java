@@ -32,18 +32,6 @@ import lombok.NoArgsConstructor;
 public class User extends BaseTimeEntity {
 
   /**
-   * 보유한 별자리(캐릭터) 목록
-   */
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE})
-  private final List<UserConstellation> userConstellationList = new ArrayList<>();
-  /**
-   * 성별 타입
-   */
-  @Convert(converter = GenderType.TypeCodeConverter.class)
-  @Column(name = "gender_type")
-  private final GenderType genderType = GenderType.NONE;
-  /**
    * 회원 ID
    */
   @Id
@@ -65,6 +53,12 @@ public class User extends BaseTimeEntity {
    */
   @Column(name = "ageRange")
   private String ageRange;
+  /**
+   * 성별 타입
+   */
+  @Convert(converter = GenderType.TypeCodeConverter.class)
+  @Column(name = "gender_type")
+  private final GenderType genderType = GenderType.NONE;
   /**
    * 정체성
    */
@@ -113,6 +107,12 @@ public class User extends BaseTimeEntity {
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
       CascadeType.MERGE})
   private List<QuitHabit> quitHabits = new ArrayList<>();
+  /**
+   * 보유한 별자리(캐릭터) 목록
+   */
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
+      CascadeType.MERGE})
+  private final List<UserConstellation> userConstellationList = new ArrayList<>();
 
   public User(String email, SocialType socialType) {
     this.email = email;
