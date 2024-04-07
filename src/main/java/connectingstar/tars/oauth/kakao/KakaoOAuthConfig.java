@@ -17,7 +17,7 @@ public record KakaoOAuthConfig(
     String authorizeUri,
     String tokenUri,
     String userInfoUri,
-    String authorizationHeader
+    String authorizationPrefix
 ) {
 
 }

@@ -1,5 +1,7 @@
 package connectingstar.tars.oauth.service;
 
+import connectingstar.tars.auth.JwtService;
+import connectingstar.tars.auth.response.TokenResponse;
 import connectingstar.tars.oauth.domain.client.SocialUserClientComposite;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.oauth.domain.provider.AuthCodeRequestUrlProviderComposite;
@@ -23,6 +25,8 @@ public class OAuthService {
   private final AuthCodeRequestUrlProviderComposite authCodeRequestUrlProvider;
   private final SocialUserClientComposite socialUserClient;
 
+  private final JwtService jwtService;
+
   private final UserRepository userRepository;
 
   /**
@@ -42,12 +46,14 @@ public class OAuthService {
    * @param authCode   AccessToken을 발급 받기 위한 코드
    */
   @Transactional
-  public void login(SocialType socialType, String authCode) {
+  public TokenResponse login(SocialType socialType, String authCode) {
     SocialUserResponse userInfo = socialUserClient.fetch(socialType, authCode);
 
-    Optional<User> optionalUser = userRepository.findByEmail(userInfo.email());
-    if (optionalUser.isEmpty()) {
-      userRepository.save(new User(userInfo.email(), socialType));
+    Optional<User> user = userRepository.findByEmail(userInfo.email());
+    if (user.isEmpty()) {
+      user = Optional.of(userRepository.save(new User(userInfo.email(), socialType)));
     }
+
+    return new TokenResponse(jwtService.generateToken(user.get()));
   }
 }
