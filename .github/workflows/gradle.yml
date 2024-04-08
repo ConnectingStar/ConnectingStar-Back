@@ -67,4 +67,7 @@ jobs:
           ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
       - name: Execute remote commands
         run: |
-            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo ./rundocker.sh"
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo docker rm -f $(docker ps -qa)"
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo docker pull ${{ secrets.DOCKER_REPO }}"
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "docker-compose up -d"
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "docker image prune -f"
