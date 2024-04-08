@@ -60,7 +60,7 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.KEY }}
+          ssh-private-key: ${{ secrets.SSH_KEY }}
       - name: Setup SSH directory and add host key
         run: |
           mkdir -p ~/.ssh
