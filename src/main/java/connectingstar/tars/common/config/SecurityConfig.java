@@ -1,7 +1,5 @@
 package connectingstar.tars.common.config;
 
-import connectingstar.tars.auth.filter.JwtAuthenticationFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +8,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import connectingstar.tars.auth.filter.JwtAuthenticationFilter;
+import connectingstar.tars.auth.filter.JwtExceptionFilter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Security Configuration
@@ -22,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final JwtExceptionFilter jwtExceptionFilter;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -31,17 +34,17 @@ public class SecurityConfig {
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         // 세션을 생성하지 않게 설정
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
-            (authorize) -> authorize.requestMatchers("/static/**", "/error", "/accessDenied",
-                    "/health", "/oauth/**", "/")
-                .permitAll()
-                .requestMatchers("/user/**", "/constellation/**", "/alert/**", "/habit/**")
-                .authenticated()
-                .anyRequest()
-                .denyAll())
+            (authorize) -> authorize.requestMatchers("/static/**", "/error", "/accessDenied", "/health", "/oauth/**",
+                                        "/")
+                                    .permitAll()
+                                    .requestMatchers("/user/**", "/constellation/**", "/alert/**", "/habit/**")
+                                    .authenticated()
+                                    .anyRequest()
+                                    .denyAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
         .securityContext((securityContext) -> securityContext.requireExplicitSave(false));
 
     return http.build();
