@@ -63,9 +63,7 @@ jobs:
           ssh-private-key: ${{ secrets.KEY }}
       - name: Execute remote commands
         run: |
-            cd /home/ec2-user
-            sudo docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PWD }}
-            sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}
-            docker-compose up -d
-            docker image prune -f
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo docker rm -f $(docker ps -qa)"
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo docker pull ${{ secrets.DOCKER_REPO }}"
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "docker-compose up -d"
+            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "docker image prune -f"
