@@ -63,6 +63,7 @@ jobs:
           ssh-private-key: ${{ secrets.KEY }}
       - name: Execute remote commands
         run: |
+            ls
             sudo docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PWD }}
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}
