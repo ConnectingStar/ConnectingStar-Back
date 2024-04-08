@@ -1,6 +1,7 @@
 package connectingstar.tars.auth.filter;
 
 import connectingstar.tars.auth.JwtService;
+import connectingstar.tars.common.exception.errorcode.AuthErrorCode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
