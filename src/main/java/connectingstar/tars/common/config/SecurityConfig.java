@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import connectingstar.tars.auth.filter.JwtAuthenticationFilter;
 import connectingstar.tars.auth.filter.JwtExceptionFilter;
+import connectingstar.tars.common.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -25,6 +26,7 @@ public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final JwtExceptionFilter jwtExceptionFilter;
+  private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -36,15 +38,17 @@ public class SecurityConfig {
         // 세션을 생성하지 않게 설정
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
-            (authorize) -> authorize.requestMatchers("/static/**", "/error", "/accessDenied", "/health", "/oauth/**",
-                                        "/")
+            (authorize) -> authorize.requestMatchers("/static/**", "/error", "/accessDenied", "/health",
+                                        "/oauth/code/url", "/oauth/login", "/")
                                     .permitAll()
-                                    .requestMatchers("/user/**", "/constellation/**", "/alert/**", "/habit/**")
+                                    .requestMatchers("/user/**", "/constellation/**", "/alert/**", "/habit/**",
+                                        "/oauth/logout")
                                     .authenticated()
                                     .anyRequest()
                                     .denyAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
+        .exceptionHandling(it -> it.authenticationEntryPoint(customAuthenticationEntryPoint))
         .securityContext((securityContext) -> securityContext.requireExplicitSave(false));
 
     return http.build();

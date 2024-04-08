@@ -1,11 +1,14 @@
 package connectingstar.tars.auth;
 
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.EXPIRED_TOKEN;
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.ILLEGAL_ARGUMENT_TOKEN;
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.INVALID_TOKEN;
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.UNSUPPORTED_TOKEN;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
-import connectingstar.tars.common.config.JwtConfig;
+import java.security.Key;
+import java.util.Date;
+import java.util.Map;
+
+import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.user.command.UserQueryService;
 import connectingstar.tars.user.domain.User;
@@ -19,16 +22,13 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
-import java.security.Key;
-import java.util.Date;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.EXPIRED_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.ILLEGAL_ARGUMENT_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.INVALID_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.UNSUPPORTED_TOKEN;
 
 /**
  * Jwt 서비스
@@ -40,17 +40,10 @@ import org.springframework.util.StringUtils;
 @Component
 public class JwtService {
 
-  private final JwtConfig jwtConfig;
+  private final JwtProperties jwtProperties;
   private final UserQueryService userQueryService;
 
   private Key key;
-
-  @PostConstruct
-  public void init() {
-    // 시크릿 값을 decode해서 키 변수에 할당
-    byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.secretKey());
-    this.key = Keys.hmacShaKeyFor(keyBytes);
-  }
 
   /**
    * 엑세스 토큰 생성
@@ -61,28 +54,12 @@ public class JwtService {
   public String generateToken(User user) {
     final Map<String, Object> claims = Map.of("email", user.getEmail());
     return Jwts.builder()
-        .setClaims(claims)
-        .setSubject(user.getId().toString())
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.accessExpiration()))
-        .signWith(key, SignatureAlgorithm.HS512)
-        .compact();
-  }
-
-  /**
-   * 요청 헤더에서 토큰 정보 추출
-   *
-   * @param request 요청 헤더
-   * @return 토큰 정보
-   */
-  public String resolveToken(HttpServletRequest request) {
-    String bearerToken = request.getHeader(jwtConfig.authorizationHeader());
-
-    if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(
-        jwtConfig.authorizationPrefix())) {
-      return bearerToken.substring(7);
-    }
-    return null;
+               .setClaims(claims)
+               .setSubject(user.getId().toString())
+               .setIssuedAt(new Date(System.currentTimeMillis()))
+               .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.accessExpiration()))
+               .signWith(key, SignatureAlgorithm.HS512)
+               .compact();
   }
 
   /**
@@ -92,18 +69,19 @@ public class JwtService {
    * @return Authentication
    */
   public Authentication getAuthentication(String token) {
-    Claims claims = Jwts
-        .parserBuilder()
-        .setSigningKey(key)
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
+    Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
     // userId로 조회하여 userDetail 생성
-    UserDetail userDetail = new UserDetail(
-        userQueryService.getUser(Integer.valueOf(claims.getSubject())));
+    UserDetail userDetail = new UserDetail(userQueryService.getUser(Integer.valueOf(claims.getSubject())));
 
     return new UsernamePasswordAuthenticationToken(userDetail, token, userDetail.getAuthorities());
+  }
+
+  @PostConstruct
+  public void init() {
+    // 시크릿 값을 decode해서 키 변수에 할당
+    byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secretKey());
+    this.key = Keys.hmacShaKeyFor(keyBytes);
   }
 
   /**
@@ -118,7 +96,7 @@ public class JwtService {
       return true;
     } catch (SecurityException | MalformedJwtException e) {
       log.info("유효하지 않은 JWT 서명입니다.");
-        throw new ValidationException(INVALID_TOKEN);
+      throw new ValidationException(INVALID_TOKEN);
     } catch (ExpiredJwtException e) {
       log.info("만료된 JWT 토큰입니다.");
       throw new ValidationException(EXPIRED_TOKEN);

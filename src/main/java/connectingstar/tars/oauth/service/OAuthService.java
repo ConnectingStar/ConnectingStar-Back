@@ -1,17 +1,18 @@
 package connectingstar.tars.oauth.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
 import connectingstar.tars.auth.JwtService;
-import connectingstar.tars.auth.response.TokenResponse;
 import connectingstar.tars.oauth.domain.client.SocialUserClientComposite;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.oauth.domain.provider.AuthCodeRequestUrlProviderComposite;
 import connectingstar.tars.oauth.response.SocialUserResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * OAuth 서비스
@@ -46,7 +47,7 @@ public class OAuthService {
    * @param authCode   AccessToken을 발급 받기 위한 코드
    */
   @Transactional
-  public TokenResponse login(SocialType socialType, String authCode) {
+  public String login(SocialType socialType, String authCode) {
     SocialUserResponse userInfo = socialUserClient.fetch(socialType, authCode);
 
     Optional<User> user = userRepository.findByEmail(userInfo.email());
@@ -54,6 +55,6 @@ public class OAuthService {
       user = Optional.of(userRepository.save(new User(userInfo.email(), socialType)));
     }
 
-    return new TokenResponse(jwtService.generateToken(user.get()));
+    return jwtService.generateToken(user.get());
   }
 }

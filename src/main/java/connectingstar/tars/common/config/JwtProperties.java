@@ -8,15 +8,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author 송병선
  */
 @ConfigurationProperties(prefix = "jwt")
-public record JwtConfig(
+public record JwtProperties(
 
     String secretKey,
 
     Long accessExpiration,
 
-    String authorizationHeader,
-
-    String authorizationPrefix
-) {
+    String cookieName) {
 
 }
