@@ -57,17 +57,17 @@ jobs:
       # appleboy/ssh-action@master 액션을 사용하여 지정한 서버에 ssh로 접속하고, script를 실행합니다.
       # script의 내용은 도커의 기존 프로세스들을 제거하고, docker repo로부터 방금 위에서 push한 내용을 pull 받아 실행하는 것
       # 실행 시, docker-compose를 사용합니다.
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.4
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        id: deploy
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
-      - name: Setup SSH directory and add host key
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-      - name: Execute remote commands
-        run: |
-            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo docker rm -f $(docker ps -qa)"
-            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "sudo docker pull ${{ secrets.DOCKER_REPO }}"
-            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "docker-compose up -d"
-            ssh ${{ secrets.USER_ID }}@${{ secrets.SERVER_IP }} "docker image prune -f"
+          host: ${{ secrets.HOST }}
+          username: ec2-user
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          envs: GITHUB_SHA
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}
+            docker-compose up -d
+            docker image prune -f
