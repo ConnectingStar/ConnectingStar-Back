@@ -1,18 +1,23 @@
 package connectingstar.tars.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.AuthErrorCode;
 import connectingstar.tars.common.response.ErrorResponse;
+import connectingstar.tars.common.utils.CookieUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * JwtExceptionFilter
@@ -24,12 +29,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
+  private final JwtProperties jwtProperties;
+
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    try{
+    try {
       filterChain.doFilter(request, response);
-    } catch (ValidationException e){
+    } catch (ValidationException e) {
+      // 쿠키 삭제
+      CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
       AuthErrorCode authErrorCode = (AuthErrorCode) e.getErrorCode();
       setErrorResponse(response, authErrorCode);
     }

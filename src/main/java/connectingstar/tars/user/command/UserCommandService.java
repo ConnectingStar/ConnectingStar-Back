@@ -1,10 +1,12 @@
 package connectingstar.tars.user.command;
 
-import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
@@ -17,10 +19,11 @@ import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 /**
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -39,12 +42,36 @@ public class UserCommandService {
 
   /**
    * 유저 삭제
-   *
-   * @param id
    */
   @Transactional
-  public void deleteUser(Integer id) {
-    userRepository.deleteById(id);
+  public void deleteUser() {
+    userRepository.deleteById(UserUtils.getUser().getUserId());
+  }
+
+  public UserBasicInfoResponse getUserBasicInfo() {
+    User getUser = getUser();
+    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity());
+  }
+
+  public Object getUserBasicInfoAndHabit() {
+    User getUser = getUser();
+    List<RunHabit> runHabitList = getRunHabit(getUser);
+    return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(), runHabitList);
+  }
+
+  /**
+   * 이미 등록한 별자리인지 확인
+   */
+  public UserHavingConstellationResponse getUserHavingConstellation(UserConstellationStarRequest param) {
+
+    Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
+
+    return new UserHavingConstellationResponse(
+        isHavingConstellation(UserUtils.getUser().getUserId(), constellation.getConstellationId()));
+  }
+
+  public boolean isHavingConstellation(Integer userId, Integer constellationId) {
+    return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
   }
 
   /**
@@ -54,7 +81,7 @@ public class UserCommandService {
    */
   @Transactional
   public void modifyStarCount(UserConstellationStarRequest param) {
-    User user = getUser(2);
+    User user = getUser();
     // 사용자 별 개수 존재여부 체크
     verifyStarCount(user);
 
@@ -68,25 +95,13 @@ public class UserCommandService {
     user.updateStar();
   }
 
-  private User getUser(Integer userId) {
-    return userRepository.findById(userId)
-        .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
-  }
-
-  public UserBasicInfoResponse getUserBasicInfo(User loginUser) {
-    User getUser = getUser(loginUser.getId());
-    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity());
-  }
-
-  public Object getUserBasicInfoAndHabit(User loginUser) {
-    User getUser = getUser(loginUser.getId());
-    List<RunHabit> runHabitList = getRunHabit(getUser);
-    return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(),
-        runHabitList);
-  }
-
   private List<RunHabit> getRunHabit(User user) {
     return runHabitRepository.findAllByUser(user);
+  }
+
+  private User getUser() {
+    return userRepository.findById(UserUtils.getUser().getUserId())
+                         .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
   }
 
   /**
@@ -102,28 +117,14 @@ public class UserCommandService {
 
     // 사용자 별자리 조회 or 생성
     return user.getUserConstellationList()
-        .stream()
-        .filter(it -> it.getConstellation()
-            .getConstellationId()
-            .equals(constellationId))
-        .findFirst()
-        .orElseGet(() -> {
-          UserConstellation addUserConstellation =
-              new UserConstellation(constellation);
-          user.addUserConstellation(addUserConstellation);
-          return addUserConstellation;
-        });
-  }
-
-  /**
-   * 사용자 별 개수 존재여부 체크
-   *
-   * @param user 사용자 엔티티
-   */
-  private void verifyStarCount(User user) {
-    if (user.getStar().equals(0)) {
-      throw new ValidationException(STAR_ZERO_CNT);
-    }
+               .stream()
+               .filter(it -> it.getConstellation().getConstellationId().equals(constellationId))
+               .findFirst()
+               .orElseGet(() -> {
+                 UserConstellation addUserConstellation = new UserConstellation(constellation);
+                 user.addUserConstellation(addUserConstellation);
+                 return addUserConstellation;
+               });
   }
 
   /**
@@ -138,20 +139,13 @@ public class UserCommandService {
   }
 
   /**
-   * 이미 등록한 별자리인지 확인
+   * 사용자 별 개수 존재여부 체크
+   *
+   * @param user 사용자 엔티티
    */
-  public UserHavingConstellationResponse getUserHavingConstellation(
-      UserConstellationStarRequest param) {
-    User user = getUser(2);
-    Constellation constellation = constellationQueryService.getConstellation(
-        param.getConstellationId());
-
-    return new UserHavingConstellationResponse(
-        isHavingConstellation(user.getId(), constellation.getConstellationId()));
-  }
-
-  public boolean isHavingConstellation(Integer userId, Integer constellationId) {
-    return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId,
-        constellationId);
+  private void verifyStarCount(User user) {
+    if (user.getStar().equals(0)) {
+      throw new ValidationException(STAR_ZERO_CNT);
+    }
   }
 }

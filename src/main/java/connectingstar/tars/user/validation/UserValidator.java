@@ -8,7 +8,6 @@ import connectingstar.tars.user.request.UserConstellationStarRequest;
 import lombok.experimental.UtilityClass;
 
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_PARAM_ID_EMPTY;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_PARAM_ID_EMPTY;
 
 /**
  * 회원 요청 파라미터 검증
@@ -17,12 +16,6 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
  */
 @UtilityClass
 public class UserValidator {
-  /**
-   * userId 검증
-   */
-  public void validate(Integer userId) {
-    validateNull(userId, USER_PARAM_ID_EMPTY);
-  }
 
   /**
    * 회원 별자리(캐릭터) 등록 요청 검증
