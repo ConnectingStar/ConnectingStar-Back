@@ -37,15 +37,15 @@ public class SecurityConfig {
         .httpBasic(AbstractHttpConfigurer::disable)
         // 세션을 생성하지 않게 설정
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(
-            (authorize) -> authorize.requestMatchers("/static/**", "/error", "/accessDenied", "/health",
-                                        "/oauth/code/url", "/oauth/login", "/")
-                                    .permitAll()
-                                    .requestMatchers("/user/**", "/constellation/**", "/alert/**", "/habit/**",
-                                        "/oauth/logout")
-                                    .authenticated()
-                                    .anyRequest()
-                                    .denyAll())
+        .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/static/**", "/error", "/health", "/")
+                                                       .permitAll()
+                                                       .requestMatchers("/oauth/code/url", "/oauth/login", "/oauth2/**")
+                                                       .anonymous()
+                                                       .requestMatchers("/user/**", "/constellation/**", "/alert/**",
+                                                           "/habit/**", "/oauth/logout")
+                                                       .authenticated()
+                                                       .anyRequest()
+                                                       .denyAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
         .exceptionHandling(it -> it.authenticationEntryPoint(customAuthenticationEntryPoint))

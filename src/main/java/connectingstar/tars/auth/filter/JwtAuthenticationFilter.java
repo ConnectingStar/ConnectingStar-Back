@@ -33,11 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     String accessToken = CookieUtils.getCookie(request, jwtProperties.cookieName());
 
+    if (!StringUtils.hasText(accessToken)) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     // 유효성 체크
-    if (StringUtils.hasText(accessToken) && jwtService.validateToken(accessToken)) {
+    if (jwtService.validateToken(accessToken)) {
       SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessToken));
-    } else {
-      CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
     }
 
     filterChain.doFilter(request, response);
