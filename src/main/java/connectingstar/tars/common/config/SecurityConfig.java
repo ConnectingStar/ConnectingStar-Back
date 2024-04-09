@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import connectingstar.tars.auth.filter.JwtAuthenticationFilter;
 import connectingstar.tars.auth.filter.JwtExceptionFilter;
+import connectingstar.tars.common.handler.CustomAccessDeniedHandler;
 import connectingstar.tars.common.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +28,7 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final JwtExceptionFilter jwtExceptionFilter;
   private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+  private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,7 +50,10 @@ public class SecurityConfig {
                                                        .denyAll())
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
-        .exceptionHandling(it -> it.authenticationEntryPoint(customAuthenticationEntryPoint))
+        .exceptionHandling(it -> {
+          it.authenticationEntryPoint(customAuthenticationEntryPoint);
+          it.accessDeniedHandler(customAccessDeniedHandler);
+        })
         .securityContext((securityContext) -> securityContext.requireExplicitSave(false));
 
     return http.build();
