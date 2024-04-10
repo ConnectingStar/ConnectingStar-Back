@@ -1,11 +1,7 @@
 package connectingstar.tars.constellation.query;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
+import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_TYPE_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
@@ -20,10 +16,12 @@ import connectingstar.tars.constellation.response.ConstellationMainResponse;
 import connectingstar.tars.user.command.UserQueryService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-
-import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
-import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_TYPE_NOT_FOUND;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 별자리(캐릭터) 정보 조회 서비스
@@ -49,7 +47,7 @@ public class ConstellationQueryService {
   @Transactional(readOnly = true)
   public Constellation getConstellation(Integer constellationId) {
     return constellationRepository.findById(constellationId)
-                                  .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
+        .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
   }
 
   /**
@@ -71,10 +69,12 @@ public class ConstellationQueryService {
   @Transactional(readOnly = true)
   public ConstellationMainResponse getMain(Integer constellationId) {
     User user = userQueryService.getUser(UserUtils.getUser().getUserId());
-    Optional<UserConstellation> userConstellation = userQueryService.getUserConstellation(user, constellationId);
+    Optional<UserConstellation> userConstellation = userQueryService.getUserConstellation(user,
+        constellationId);
     if (userConstellation.isPresent()) {
-      return new ConstellationMainResponse(user.getStar(), userConstellation.get().getConstellation(),
-          userConstellation.get().getStartCount());
+      return new ConstellationMainResponse(user.getStar(),
+          userConstellation.get().getConstellation(),
+          userConstellation.get().getStarCount());
     } else {
       Constellation constellation = getConstellation(constellationId);
       return new ConstellationMainResponse(user.getStar(), constellation, 0);

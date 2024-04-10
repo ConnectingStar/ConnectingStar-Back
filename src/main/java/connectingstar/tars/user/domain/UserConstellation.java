@@ -36,12 +36,12 @@ public class UserConstellation {
   @Id
   @Column(name = "user_constellation_id", nullable = false)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long userConstellationId;
+  private Integer userConstellationId;
   /**
    * 회원이 사용한 별 개수
    */
-  @Column(name = "start_count", nullable = false)
-  private Integer startCount = 0;
+  @Column(name = "star_count", nullable = false)
+  private Integer starCount = 0;
   /**
    * 별자리 등록 여부
    */
@@ -67,10 +67,10 @@ public class UserConstellation {
   /**
    * 사용한 별 개수 수정
    */
-  public void updateStarCount(Integer startCount) {
-    setStartCount(startCount);
+  public void updateStarCount(Integer starCount) {
+    setStarCount(starCount);
 
-    if (startCount >= constellation.getStarCount()) {
+    if (starCount >= constellation.getStarCount()) {
       setRegYn(Boolean.TRUE);
     }
   }
@@ -83,8 +83,8 @@ public class UserConstellation {
     this.constellation = constellation;
   }
 
-  private void setStartCount(Integer startCount) {
-    this.startCount = startCount;
+  private void setStarCount(Integer starCount) {
+    this.starCount = starCount;
   }
 
   private void setRegYn(Boolean regYn) {
