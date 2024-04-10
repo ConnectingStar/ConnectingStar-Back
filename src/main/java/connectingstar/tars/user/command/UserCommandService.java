@@ -18,6 +18,7 @@ import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
+import connectingstar.tars.user.response.UserStarResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -157,5 +158,9 @@ public class UserCommandService {
     if (user.getStar().equals(0)) {
       throw new ValidationException(STAR_ZERO_CNT);
     }
+  }
+
+  public UserStarResponse getUserStar() {
+    return new UserStarResponse(getUser().getStar());
   }
 }

@@ -70,6 +70,20 @@ public class UserController {
     return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit());
   }
 
+  /*
+  별 관련 Controller
+   */
+
+  /**
+   * 유저가 총 몇 개의 별을 가지고 있는지
+   *
+   * @return 유저 보유 별 갯수
+   */
+  @GetMapping(value = "/star")
+  public ResponseEntity<?> getUserStar() {
+    return ResponseEntity.ok(userCommandService.getUserStar());
+  }
+
   /**
    * 사용자 별자리 별 등록
    *
