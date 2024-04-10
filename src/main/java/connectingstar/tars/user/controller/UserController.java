@@ -1,5 +1,12 @@
 package connectingstar.tars.user.controller;
 
+import connectingstar.tars.common.response.SuccessResponse;
+import connectingstar.tars.user.command.UserCommandService;
+import connectingstar.tars.user.command.UserOutCommandService;
+import connectingstar.tars.user.request.UserConstellationStarRequest;
+import connectingstar.tars.user.request.UserOutReasonRequest;
+import connectingstar.tars.user.validation.UserValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,14 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import connectingstar.tars.common.response.SuccessResponse;
-import connectingstar.tars.user.command.UserCommandService;
-import connectingstar.tars.user.command.UserOutCommandService;
-import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.request.UserOutReasonRequest;
-import connectingstar.tars.user.validation.UserValidator;
-import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -51,11 +50,21 @@ public class UserController {
     return ResponseEntity.ok(userCommandService.getUserHavingConstellation(param));
   }
 
+  /**
+   * 유저 기본 정보 반환
+   *
+   * @return 유저 닉네임 + 정체성
+   */
   @GetMapping(value = "/userBasicInfo")
   public ResponseEntity<?> getUserBasicInfo() {
     return ResponseEntity.ok(userCommandService.getUserBasicInfo());
   }
 
+  /**
+   * 유저 기본 정보 반환
+   *
+   * @return 유저 닉네임 + 정체성 + 습관
+   */
   @GetMapping(value = "/userBasicInfoAndHabit")
   public ResponseEntity<?> getUserBasicInfoAndHabit() {
     return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit());
@@ -68,7 +77,8 @@ public class UserController {
    * @return 요청 결과
    */
   @PostMapping(value = "/constellation/star")
-  public ResponseEntity<?> postAsConstellationStar(@RequestBody UserConstellationStarRequest param) {
+  public ResponseEntity<?> postAsConstellationStar(
+      @RequestBody UserConstellationStarRequest param) {
     UserValidator.validate(param);
 
     userCommandService.modifyStarCount(param);
