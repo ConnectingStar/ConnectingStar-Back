@@ -101,7 +101,7 @@ public class UserCommandService {
     verifyAlreadyRegister(userConstellation);
 
     // 별 개수 수정
-    userConstellation.updateStarCount(userConstellation.getStartCount() + 1);
+    userConstellation.updateStarCount(userConstellation.getStarCount() + 1);
     user.updateStar();
   }
 
