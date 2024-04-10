@@ -1,10 +1,9 @@
 package connectingstar.tars.user.request;
 
-import connectingstar.tars.user.domain.Gender;
+import connectingstar.tars.user.domain.enums.GenderType;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 /**
  * 회원 탈퇴 요청
@@ -15,13 +14,13 @@ import java.time.LocalDateTime;
 @Setter
 public class UserOutReasonRequest {
 
-    private String reason;
+  private String reason;
 
-    private Gender gender;
+  private GenderType genderType;
 
-    private String ageRange;
+  private String ageRange;
 
-    private LocalDateTime createDate;
+  private LocalDateTime createDate;
 
-    private LocalDateTime deleteDate;
+  private LocalDateTime deleteDate;
 }

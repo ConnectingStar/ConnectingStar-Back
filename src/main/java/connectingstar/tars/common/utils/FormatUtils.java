@@ -2,10 +2,11 @@ package connectingstar.tars.common.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import lombok.experimental.UtilityClass;
 
 /**
- * 데이터 포맷 관련 유틸
+ * 데이터 포맷 유틸
  *
  * @author 송병선
  */
