@@ -6,11 +6,14 @@ import lombok.Getter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserBasicInfoResponse {
-    String nickname;
-    String identity;
 
-    public UserBasicInfoResponse(String nickname, String identity) {
-        this.nickname = nickname;
-        this.identity = identity;
-    }
+  String nickname;
+  String identity;
+  String profileCharacter;
+
+  public UserBasicInfoResponse(String nickname, String identity, String profileCharacter) {
+    this.nickname = nickname;
+    this.identity = identity;
+    this.profileCharacter = profileCharacter;
+  }
 }

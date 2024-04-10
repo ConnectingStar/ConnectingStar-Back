@@ -1,9 +1,8 @@
 package connectingstar.tars.user.command;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
@@ -19,11 +18,10 @@ import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-
-import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -48,30 +46,42 @@ public class UserCommandService {
     userRepository.deleteById(UserUtils.getUser().getUserId());
   }
 
+  /**
+   * 닉네임 + 정체성 + 캐릭터 이미지
+   */
   public UserBasicInfoResponse getUserBasicInfo() {
     User getUser = getUser();
-    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity());
+    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity(),
+        getUser.getProfileCharacter());
   }
 
+  /**
+   * 닉네임 + 정체성 + 캐릭터 이미지 + 습관
+   */
   public Object getUserBasicInfoAndHabit() {
     User getUser = getUser();
     List<RunHabit> runHabitList = getRunHabit(getUser);
-    return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(), runHabitList);
+    return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(),
+        getUser.getProfileCharacter(),
+        runHabitList);
   }
 
   /**
    * 이미 등록한 별자리인지 확인
    */
-  public UserHavingConstellationResponse getUserHavingConstellation(UserConstellationStarRequest param) {
+  public UserHavingConstellationResponse getUserHavingConstellation(
+      UserConstellationStarRequest param) {
 
-    Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
+    Constellation constellation = constellationQueryService.getConstellation(
+        param.getConstellationId());
 
     return new UserHavingConstellationResponse(
         isHavingConstellation(UserUtils.getUser().getUserId(), constellation.getConstellationId()));
   }
 
   public boolean isHavingConstellation(Integer userId, Integer constellationId) {
-    return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
+    return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId,
+        constellationId);
   }
 
   /**
@@ -101,7 +111,7 @@ public class UserCommandService {
 
   private User getUser() {
     return userRepository.findById(UserUtils.getUser().getUserId())
-                         .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+        .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
   }
 
   /**
@@ -117,14 +127,14 @@ public class UserCommandService {
 
     // 사용자 별자리 조회 or 생성
     return user.getUserConstellationList()
-               .stream()
-               .filter(it -> it.getConstellation().getConstellationId().equals(constellationId))
-               .findFirst()
-               .orElseGet(() -> {
-                 UserConstellation addUserConstellation = new UserConstellation(constellation);
-                 user.addUserConstellation(addUserConstellation);
-                 return addUserConstellation;
-               });
+        .stream()
+        .filter(it -> it.getConstellation().getConstellationId().equals(constellationId))
+        .findFirst()
+        .orElseGet(() -> {
+          UserConstellation addUserConstellation = new UserConstellation(constellation);
+          user.addUserConstellation(addUserConstellation);
+          return addUserConstellation;
+        });
   }
 
   /**
