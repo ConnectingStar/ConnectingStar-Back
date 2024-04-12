@@ -74,7 +74,7 @@ public class ConstellationQueryService {
     if (userConstellation.isPresent()) {
       return new ConstellationMainResponse(user.getStar(),
           userConstellation.get().getConstellation(),
-          userConstellation.get().getStartCount());
+          userConstellation.get().getStarCount());
     } else {
       Constellation constellation = getConstellation(constellationId);
       return new ConstellationMainResponse(user.getStar(), constellation, 0);
