@@ -44,7 +44,7 @@ public class UserConstellationCommandService {
     verifyAlreadyRegister(userConstellation);
 
     // 별 개수 수정
-    userConstellation.updateStarCount(userConstellation.getStartCount() + 1);
+    userConstellation.updateStarCount(userConstellation.getStarCount() + 1);
     user.updateStar();
   }
 
@@ -101,7 +101,7 @@ public class UserConstellationCommandService {
   public UserConstellationResponse getWorkingUserConstellation(Integer constellationId) {
     UserConstellation userConstellation = getUserConstellation(constellationId);
     return new UserConstellationResponse(userConstellation.getConstellation(),
-        userConstellation.getStartCount());
+        userConstellation.getStarCount());
   }
 
   private UserConstellation getUserConstellation(Integer constellationId) {
