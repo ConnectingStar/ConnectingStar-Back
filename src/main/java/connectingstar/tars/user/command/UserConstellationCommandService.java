@@ -105,9 +105,8 @@ public class UserConstellationCommandService {
   }
 
   private UserConstellation getUserConstellation(Integer constellationId) {
-    UserConstellation userConstellation = userConstellationRepository.findByUserConstellationId(
+    return userConstellationRepository.findByUserConstellationId(
             constellationId)
         .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
-    return userConstellation;
   }
 }
