@@ -4,13 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 진행중인 별자리 별 등록
+ * 별자리 선택 요청
  *
  * @author 송병선
  */
 @Getter
 @Setter
-public class UserConstellationStarRequest {
+public class UserConstellationCreateRequest {
 
   /**
    * 별자리 ID

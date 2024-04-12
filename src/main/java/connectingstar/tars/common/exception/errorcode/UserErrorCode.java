@@ -1,9 +1,8 @@
 package connectingstar.tars.common.exception.errorcode;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 /**
  * 회원 관련 에러 코드
@@ -12,7 +11,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum UserErrorCode implements ErrorCode{
+public enum UserErrorCode implements ErrorCode {
 
   /**
    * empty
@@ -27,7 +26,9 @@ public enum UserErrorCode implements ErrorCode{
   /**
    * duplicate
    */
-  USER_CONSTELLATION_DUPLICATE(HttpStatus.BAD_REQUEST, "이미 등록된 별자리입니다.");
+  USER_CONSTELLATION_DUPLICATE(HttpStatus.BAD_REQUEST, "이미 등록된 별자리입니다."),
+  USER_CONSTELLATION_ALREADY_PROGRESS(HttpStatus.BAD_REQUEST, "이미 진행중인 별자리가 존재합니다."),
+  USER_CONSTELLATION_NOT_PROGRESS(HttpStatus.BAD_REQUEST, "진행중인 별자리가 아닙니다.");
 
   private final HttpStatus httpStatus;
   private final String message;
