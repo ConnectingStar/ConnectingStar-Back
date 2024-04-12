@@ -2,6 +2,7 @@ package connectingstar.tars.user.controller;
 
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.UserCommandService;
+import connectingstar.tars.user.command.UserConstellationCommandService;
 import connectingstar.tars.user.command.UserOutCommandService;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserOutReasonRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserCommandService userCommandService;
+  private final UserConstellationCommandService userConstellationCommandService;
   private final UserOutCommandService userOutCommandService;
 
   @DeleteMapping
@@ -85,6 +88,20 @@ public class UserController {
   }
 
   /**
+   * 진행 중인 별자리와 사용중인 별 갯수 조회
+   *
+   * @param constellationId 별자리 아이디
+   * @return
+   */
+
+  @GetMapping(value = "/constellation")
+  public ResponseEntity<?> getUserConstellation(
+      @RequestParam(required = false) Integer constellationId) {
+    return ResponseEntity.ok(
+        userConstellationCommandService.getWorkingUserConstellation(constellationId));
+  }
+
+  /**
    * 사용자 별자리 별 등록
    *
    * @param param 별자리 정보
@@ -95,7 +112,7 @@ public class UserController {
       @RequestBody UserConstellationStarRequest param) {
     UserValidator.validate(param);
 
-    userCommandService.modifyStarCount(param);
+    userConstellationCommandService.modifyStarCount(param);
     return ResponseEntity.ok(new SuccessResponse());
   }
 
