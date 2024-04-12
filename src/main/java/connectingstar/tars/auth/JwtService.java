@@ -1,18 +1,15 @@
 package connectingstar.tars.auth;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-
-import java.security.Key;
-import java.util.Date;
-import java.util.Map;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.EXPIRED_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.ILLEGAL_ARGUMENT_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.INVALID_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.UNSUPPORTED_TOKEN;
 
 import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.exception.ValidationException;
-import connectingstar.tars.user.command.UserQueryService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserDetail;
+import connectingstar.tars.user.query.UserQueryService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -22,13 +19,14 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.security.Key;
+import java.util.Date;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.EXPIRED_TOKEN;
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.ILLEGAL_ARGUMENT_TOKEN;
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.INVALID_TOKEN;
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.UNSUPPORTED_TOKEN;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 /**
  * Jwt 서비스
@@ -54,12 +52,12 @@ public class JwtService {
   public String generateToken(User user) {
     final Map<String, Object> claims = Map.of("email", user.getEmail());
     return Jwts.builder()
-               .setClaims(claims)
-               .setSubject(user.getId().toString())
-               .setIssuedAt(new Date(System.currentTimeMillis()))
-               .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.accessExpiration()))
-               .signWith(key, SignatureAlgorithm.HS512)
-               .compact();
+        .setClaims(claims)
+        .setSubject(user.getId().toString())
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.accessExpiration()))
+        .signWith(key, SignatureAlgorithm.HS512)
+        .compact();
   }
 
   /**

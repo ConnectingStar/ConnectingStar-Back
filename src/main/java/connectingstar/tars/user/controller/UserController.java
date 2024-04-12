@@ -4,6 +4,7 @@ import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.command.UserConstellationCommandService;
 import connectingstar.tars.user.command.UserOutCommandService;
+import connectingstar.tars.user.request.UserConstellationCreateRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserOutReasonRequest;
 import connectingstar.tars.user.validation.UserValidator;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,26 +95,36 @@ public class UserController {
    * @param constellationId 별자리 아이디
    * @return
    */
-
   @GetMapping(value = "/constellation")
-  public ResponseEntity<?> getUserConstellation(
-      @RequestParam(required = false) Integer constellationId) {
-    return ResponseEntity.ok(
-        userConstellationCommandService.getWorkingUserConstellation(constellationId));
+  public ResponseEntity<?> getUserConstellation(@RequestParam(required = false) Integer constellationId) {
+    return ResponseEntity.ok(userConstellationCommandService.getWorkingUserConstellation(constellationId));
   }
 
   /**
-   * 사용자 별자리 별 등록
+   * 진행중인 별자리 별 등록
    *
    * @param param 별자리 정보
    * @return 요청 결과
    */
-  @PostMapping(value = "/constellation/star")
-  public ResponseEntity<?> postAsConstellationStar(
-      @RequestBody UserConstellationStarRequest param) {
+  @PutMapping(value = "/constellation/star")
+  public ResponseEntity<?> putAsConstellationStar(@RequestBody UserConstellationStarRequest param) {
     UserValidator.validate(param);
 
     userConstellationCommandService.modifyStarCount(param);
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
+   * 별자리 선택
+   *
+   * @param param 별자리 정보
+   * @return 요청 결과
+   */
+  @PostMapping(value = "/constellation")
+  public ResponseEntity<?> postAsConstellation(@RequestBody UserConstellationCreateRequest param) {
+    UserValidator.validate(param);
+
+    userConstellationCommandService.create(param);
     return ResponseEntity.ok(new SuccessResponse());
   }
 

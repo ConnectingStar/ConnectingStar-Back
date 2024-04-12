@@ -1,8 +1,9 @@
-package connectingstar.tars.user.command;
+package connectingstar.tars.user.query;
 
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.repository.UserRepository;
@@ -24,7 +25,7 @@ public class UserQueryService {
 
   /**
    * 사용자 엔티티 조회
-   * 
+   *
    * @param userId 사용자 ID
    * @return 사용자 엔티티
    */
@@ -35,9 +36,20 @@ public class UserQueryService {
   }
 
   /**
+   * 로그인 회원 엔티티 조회
+   *
+   * @return 회원 엔티티
+   */
+  @Transactional(readOnly = true)
+  public User getUser() {
+    return userRepository.findById(UserUtils.getUser().getUserId())
+        .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+  }
+
+  /**
    * 사용자 별자리 엔티티 조회
    *
-   * @param user 사용자 엔티티
+   * @param user            사용자 엔티티
    * @param constellationId 별자리 ID
    * @return 사용자 별자리 엔티티
    */
