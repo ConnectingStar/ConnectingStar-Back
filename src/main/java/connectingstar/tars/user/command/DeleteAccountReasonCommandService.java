@@ -1,6 +1,6 @@
 package connectingstar.tars.user.command;
 
-import connectingstar.tars.user.domain.UserOut;
+import connectingstar.tars.user.domain.DeleteAccountReason;
 import connectingstar.tars.user.repository.UserOutRepository;
 import connectingstar.tars.user.request.UserOutReasonRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +14,19 @@ import org.springframework.stereotype.Service;
  */
 @RequiredArgsConstructor
 @Service
-public class UserOutCommandService {
+public class DeleteAccountReasonCommandService {
 
   private final UserOutRepository userOutRepository;
 
-  public void saveUserOut(UserOutReasonRequest param) {
+  public void saveDeleteAccountReason(UserOutReasonRequest param) {
 
-    UserOut userOut = UserOut.builder()
+    DeleteAccountReason deleteAccountReason = DeleteAccountReason.builder()
         .reason(param.getReason())
         .ageRange(param.getAgeRange())
         .genderType(param.getGenderType())
         .createDate(param.getCreateDate())
         .deleteDate(param.getDeleteDate())
         .build();
-    userOutRepository.save(userOut);
+    userOutRepository.save(deleteAccountReason);
   }
 }
