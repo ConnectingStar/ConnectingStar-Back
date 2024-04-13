@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "out", catalog = "tars")
-public class UserOut {
+public class DeleteAccountReason {
 
   @Id
-  @Column(name = "out_id", nullable = false)
+  @Column(name = "delete_account_reason_id", nullable = false)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer outId;
+  private Integer deleteAccountReasonId;
 
   /**
    * 탈퇴 이유
@@ -55,7 +55,8 @@ public class UserOut {
   private LocalDateTime deleteDate;
 
   @Builder
-  public UserOut(String reason, GenderType genderType, String ageRange, LocalDateTime createDate,
+  public DeleteAccountReason(String reason, GenderType genderType, String ageRange,
+      LocalDateTime createDate,
       LocalDateTime deleteDate) {
     this.reason = reason;
     this.genderType = genderType;
