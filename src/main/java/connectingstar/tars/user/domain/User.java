@@ -54,12 +54,6 @@ public class User extends BaseTimeEntity {
   @Column(name = "ageRange")
   private String ageRange;
   /**
-   * 성별 타입
-   */
-  @Convert(converter = GenderType.TypeCodeConverter.class)
-  @Column(name = "gender_type")
-  private final GenderType genderType = GenderType.NONE;
-  /**
    * 정체성
    */
   @Column(name = "identity")
@@ -85,39 +79,44 @@ public class User extends BaseTimeEntity {
   @Convert(converter = SocialType.TypeCodeConverter.class)
   @Column(name = "social_type", nullable = false)
   private SocialType socialType;
+  /**
+   * 습관 기록 리스트
+   */
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
+      CascadeType.MERGE}, orphanRemoval = true)
+  private List<HabitHistory> habitHistories = new ArrayList<>();
 
   ///////////////////////////////////////////////////////////
   // Relations
   ///////////////////////////////////////////////////////////
   /**
-   * 습관 기록 리스트
-   */
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE})
-  private List<HabitHistory> habitHistories = new ArrayList<>();
-  /**
    * 진행중인 습관 리스트
    */
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE})
+      CascadeType.MERGE}, orphanRemoval = true)
   private List<RunHabit> runHabits = new ArrayList<>();
   /**
    * 종료한 습관 리스트
    */
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE})
+      CascadeType.MERGE}, orphanRemoval = true)
   private List<QuitHabit> quitHabits = new ArrayList<>();
-  /**
-   * 보유한 별자리(캐릭터) 목록
-   */
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE})
-  private final List<UserConstellation> userConstellationList = new ArrayList<>();
-
   public User(String email, SocialType socialType) {
     this.email = email;
     this.socialType = socialType;
   }
+  /**
+   * 성별 타입
+   */
+  @Convert(converter = GenderType.TypeCodeConverter.class)
+  @Column(name = "gender_type")
+  private final GenderType genderType = GenderType.NONE;
+  /**
+   * 보유한 별자리(캐릭터) 목록
+   */
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
+      CascadeType.MERGE}, orphanRemoval = true)
+  private final List<UserConstellation> userConstellationList = new ArrayList<>();
 
   /**
    * 별자리(캐릭터) 추가

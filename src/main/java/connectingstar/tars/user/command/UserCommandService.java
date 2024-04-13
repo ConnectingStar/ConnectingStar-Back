@@ -8,6 +8,7 @@ import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
+import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserCommandService {
 
+  private final OAuthService oAuthService;
   private final UserRepository userRepository;
   private final ConstellationQueryService constellationQueryService;
   private final UserConstellationRepository userConstellationRepository;
@@ -40,7 +42,10 @@ public class UserCommandService {
    * 유저 삭제
    */
   @Transactional
-  public void deleteUser() {
+  public void deleteUser(String accessToken) {
+    //(1)카제오 계정과 연동 해제
+    oAuthService.unlinkKaKao(accessToken);
+    //(2)사용자 데이터 삭
     userRepository.deleteById(UserUtils.getUser().getUserId());
   }
 
