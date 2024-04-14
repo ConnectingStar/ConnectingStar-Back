@@ -1,12 +1,12 @@
 package connectingstar.tars.user.controller;
 
 import connectingstar.tars.common.response.SuccessResponse;
+import connectingstar.tars.user.command.DeleteAccountReasonCommandService;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.command.UserConstellationCommandService;
-import connectingstar.tars.user.command.UserOutCommandService;
+import connectingstar.tars.user.request.DeleteAccountReasonRequest;
 import connectingstar.tars.user.request.UserConstellationCreateRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.request.UserOutReasonRequest;
 import connectingstar.tars.user.validation.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class UserController {
 
   private final UserCommandService userCommandService;
   private final UserConstellationCommandService userConstellationCommandService;
-  private final UserOutCommandService userOutCommandService;
+  private final DeleteAccountReasonCommandService deleteAccountReasonCommandService;
 
   @DeleteMapping
   public ResponseEntity<?> deleteUser() {
@@ -96,8 +96,10 @@ public class UserController {
    * @return
    */
   @GetMapping(value = "/constellation")
-  public ResponseEntity<?> getUserConstellation(@RequestParam(required = false) Integer constellationId) {
-    return ResponseEntity.ok(userConstellationCommandService.getWorkingUserConstellation(constellationId));
+  public ResponseEntity<?> getUserConstellation(
+      @RequestParam(required = false) Integer constellationId) {
+    return ResponseEntity.ok(
+        userConstellationCommandService.getWorkingUserConstellation(constellationId));
   }
 
   /**
@@ -129,8 +131,8 @@ public class UserController {
   }
 
   @PostMapping(value = "/out")
-  public ResponseEntity<?> postUserOutReason(@RequestBody UserOutReasonRequest param) {
-    userOutCommandService.saveUserOut(param);
+  public ResponseEntity<?> postUserOutReason(@RequestBody DeleteAccountReasonRequest param) {
+    deleteAccountReasonCommandService.saveDeleteAccountReason(param);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 }
