@@ -3,13 +3,10 @@ package connectingstar.tars.user.controller;
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.command.UserConstellationCommandService;
-import connectingstar.tars.user.command.UserOutCommandService;
 import connectingstar.tars.user.request.UserConstellationCreateRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.request.UserOutReasonRequest;
 import connectingstar.tars.user.validation.UserValidator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +32,6 @@ public class UserController {
 
   private final UserCommandService userCommandService;
   private final UserConstellationCommandService userConstellationCommandService;
-  private final UserOutCommandService userOutCommandService;
 
   @DeleteMapping
   public ResponseEntity<?> deleteUser() {
@@ -128,9 +124,9 @@ public class UserController {
     return ResponseEntity.ok(new SuccessResponse());
   }
 
-  @PostMapping(value = "/out")
-  public ResponseEntity<?> postUserOutReason(@RequestBody UserOutReasonRequest param) {
-    userOutCommandService.saveUserOut(param);
-    return new ResponseEntity<>(HttpStatus.CREATED);
-  }
+//  @PostMapping(value = "/out")
+//  public ResponseEntity<?> postUserOutReason(@RequestBody UserOutReasonRequest param) {
+//    userOutCommandService.saveUserOut(param);
+//    return new ResponseEntity<>(HttpStatus.CREATED);
+//  }
 }
