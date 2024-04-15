@@ -12,12 +12,10 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * OAuth 서비스
@@ -34,9 +32,6 @@ public class OAuthService {
   private final JwtService jwtService;
 
   private final UserRepository userRepository;
-
-  private final RestTemplate restTemplate;
-
 
   /**
    * 소셜 타입에 따른 AuthCode 요청 Url 반환
@@ -73,10 +68,20 @@ public class OAuthService {
   public void unlinkKaKao(String accessToken) {
     try {
       String kakaoUnlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
-      HttpHeaders headers = new HttpHeaders();
-      headers.setBearerAuth(accessToken);
-      HttpEntity<?> entity = new HttpEntity<>(headers);
-      restTemplate.exchange(kakaoUnlinkUrl, HttpMethod.POST, entity, String.class);
+      WebClient webClient = WebClient.builder()
+          .baseUrl(kakaoUnlinkUrl)
+          .defaultHeader("Authorization", "Bearer " + accessToken)
+          .build();
+
+      String response = webClient
+          .post()   //POST 요청을 보냄
+          .uri(kakaoUnlinkUrl)
+          .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+          .retrieve()
+          .bodyToMono(String.class)   //응답본문을 String으로 변환
+          .block(); //비동기 요청을 동기적으로 처리
+
+      System.out.println(response);
     } catch (Exception e) {
       throw new ValidationException(INVALID_TOKEN);
     }

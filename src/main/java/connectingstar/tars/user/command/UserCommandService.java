@@ -45,7 +45,7 @@ public class UserCommandService {
   public void deleteUser(String accessToken) {
     //(1)카제오 계정과 연동 해제
     oAuthService.unlinkKaKao(accessToken);
-    //(2)사용자 데이터 삭
+    //(2)사용자 데이터 삭제
     userRepository.deleteById(UserUtils.getUser().getUserId());
   }
 
