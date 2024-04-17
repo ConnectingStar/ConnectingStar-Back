@@ -1,6 +1,9 @@
 package connectingstar.tars.user.command;
 
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
@@ -9,17 +12,19 @@ import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.domain.UserConstellation;
+import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
+import connectingstar.tars.user.request.UserProfileConstellationRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
 import connectingstar.tars.user.response.UserStarResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
 
 /**
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -32,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserCommandService {
 
   private final UserRepository userRepository;
+  private final UserQueryService userQueryService;
   private final ConstellationQueryService constellationQueryService;
   private final UserConstellationRepository userConstellationRepository;
   private final RunHabitRepository runHabitRepository;
@@ -48,50 +54,62 @@ public class UserCommandService {
    * 닉네임 + 정체성 + 캐릭터 이미지
    */
   public UserBasicInfoResponse getUserBasicInfo() {
-    User getUser = getUser();
-    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity(),
-        getUser.getProfileCharacter());
+    User getUser = userQueryService.getUser();
+    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity(), getUser.getProfileCharacter());
   }
 
   /**
    * 닉네임 + 정체성 + 캐릭터 이미지 + 습관
    */
   public Object getUserBasicInfoAndHabit() {
-    User getUser = getUser();
+    User getUser = userQueryService.getUser();
     List<RunHabit> runHabitList = getRunHabit(getUser);
     return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(),
-        getUser.getProfileCharacter(),
-        runHabitList);
+        getUser.getProfileCharacter(), runHabitList);
   }
 
   /**
    * 이미 등록한 별자리인지 확인
    */
-  public UserHavingConstellationResponse getUserHavingConstellation(
-      UserConstellationStarRequest param) {
+  public UserHavingConstellationResponse getUserHavingConstellation(UserConstellationStarRequest param) {
 
-    Constellation constellation = constellationQueryService.getConstellation(
-        param.getConstellationId());
+    Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
 
     return new UserHavingConstellationResponse(
         isHavingConstellation(UserUtils.getUser().getUserId(), constellation.getConstellationId()));
   }
 
+  public UserStarResponse getUserStar() {
+    return new UserStarResponse(userQueryService.getUser().getStar());
+  }
+
   public boolean isHavingConstellation(Integer userId, Integer constellationId) {
-    return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId,
-        constellationId);
+    return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
+  }
+
+  /**
+   * 프로필 별자리 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserProfileConstellationRequest param) {
+    User user = userQueryService.getUser();
+
+    UserConstellation userConstellation = user.getUserConstellationList()
+                                              .stream()
+                                              .filter(it -> it.getConstellation()
+                                                              .getConstellationId()
+                                                              .equals(param.getConstellationId()) &&
+                                                  it.getRegYn().equals(Boolean.TRUE))
+                                              .findFirst()
+                                              .orElseThrow(
+                                                  () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
+
+    user.updateConstellation(userConstellation.getConstellation());
   }
 
   private List<RunHabit> getRunHabit(User user) {
     return runHabitRepository.findAllByUser(user);
-  }
-
-  public UserStarResponse getUserStar() {
-    return new UserStarResponse(getUser().getStar());
-  }
-
-  private User getUser() {
-    return userRepository.findById(UserUtils.getUser().getUserId())
-        .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
   }
 }
