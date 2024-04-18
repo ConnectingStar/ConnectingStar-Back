@@ -68,10 +68,7 @@ public class OAuthService {
   public void unlinkKaKao(String accessToken) {
     try {
       String kakaoUnlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
-      WebClient webClient = WebClient.builder()
-          .baseUrl(kakaoUnlinkUrl)
-          .defaultHeader("Authorization", "Bearer " + accessToken)
-          .build();
+      WebClient webClient = WebClient.builder().build();
 
       String response = webClient
           .post()   //POST 요청을 보냄
@@ -81,7 +78,7 @@ public class OAuthService {
           .bodyToMono(String.class)   //응답본문을 String으로 변환
           .block(); //비동기 요청을 동기적으로 처리
 
-      System.out.println(response);
+      System.out.println(">>>>>>>>>>>> response = " + response);
     } catch (Exception e) {
       throw new ValidationException(INVALID_TOKEN);
     }

@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserCommandService {
 
-  private final OAuthService oAuthService;
+  private final OAuthService oauthService;
   private final UserRepository userRepository;
   private final ConstellationQueryService constellationQueryService;
   private final UserConstellationRepository userConstellationRepository;
@@ -42,9 +42,9 @@ public class UserCommandService {
    * 유저 삭제
    */
   @Transactional
-  public void deleteUser(String accessToken) {
+  public void deleteUser() {
     //(1)카제오 계정과 연동 해제
-    oAuthService.unlinkKaKao(accessToken);
+    //oauthService.unlinkKaKao(accessToken);
     //(2)사용자 데이터 삭제
     userRepository.deleteById(UserUtils.getUser().getUserId());
   }

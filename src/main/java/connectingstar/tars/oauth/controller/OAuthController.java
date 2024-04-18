@@ -9,11 +9,11 @@ import connectingstar.tars.oauth.validation.OAuthValidator;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/oauth")
 @RestController
+@Slf4j
 public class OAuthController {
 
   private final OAuthService oauthService;
@@ -77,7 +78,8 @@ public class OAuthController {
    * 소셜 로그인 해제
    */
   @DeleteMapping("/unlink/kakao")
-  public ResponseEntity<?> unlinkKakao(@RequestHeader("Authorization") String accessToken) {
+  public ResponseEntity<?> unlinkKakao(@RequestParam(required = false) String accessToken) {
+    log.info("accessToken = ", accessToken);
     oauthService.unlinkKaKao(accessToken);
     return ResponseEntity.ok(new SuccessResponse());
   }

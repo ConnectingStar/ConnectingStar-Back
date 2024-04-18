@@ -8,7 +8,6 @@ import connectingstar.tars.user.request.UserConstellationCreateRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserOutReasonRequest;
 import connectingstar.tars.user.validation.UserValidator;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,9 +38,8 @@ public class UserController {
   private final DeleteAccountReasonCommandService deleteAccountReasonCommandService;
 
   @DeleteMapping
-  public ResponseEntity<?> deleteUser(HttpServletRequest request) {
-    String accessToken = request.getHeader("Authorization");
-    userCommandService.deleteUser(accessToken);
+  public ResponseEntity<?> deleteUser() {
+    userCommandService.deleteUser();
     return ResponseEntity.ok(new SuccessResponse());
   }
 
