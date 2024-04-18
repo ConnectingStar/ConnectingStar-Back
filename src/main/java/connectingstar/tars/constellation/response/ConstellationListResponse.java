@@ -23,25 +23,19 @@ public class ConstellationListResponse {
    */
   private final String name;
   /**
-   * 별자리 이미지
+   * 이미지
    */
   private final String image;
-  /**
-   * 캐릭터 이미지
-   */
-  private final String characterImage;
   /**
    * 별 개수
    */
   private final Integer starCount;
 
-  public ConstellationListResponse(Integer constellationId, String typeName, String name, String image,
-      String characterImage, Integer starCount) {
+  public ConstellationListResponse(Integer constellationId, String typeName, String name, String image, Integer starCount) {
     this.constellationId = constellationId;
     this.typeName = typeName;
     this.name = name;
     this.image = image;
-    this.characterImage = characterImage;
     this.starCount = starCount;
   }
 }

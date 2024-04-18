@@ -68,11 +68,6 @@ public class User extends BaseTimeEntity {
   @Column(name = "referrer")
   private String referrer;
   /**
-   * 프로필 캐릭터
-   */
-  @Column(name = "profile_character")
-  private String profileCharacter;
-  /**
    * 보유 별 개수
    */
   @Column(name = "star", nullable = false)
@@ -108,10 +103,12 @@ public class User extends BaseTimeEntity {
    */
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private List<QuitHabit> quitHabits = new ArrayList<>();
+
   public User(String email, SocialType socialType) {
     this.email = email;
     this.socialType = socialType;
   }
+
   /**
    * 성별 타입
    */

@@ -4,6 +4,8 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.QConstellation;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.response.ConstellationListResponse;
@@ -57,9 +59,7 @@ public class ConstellationDao {
 
     Boolean own = param.getOwn();
     if (Objects.nonNull(own) && own) {
-      // TODO: 로그인 기능이 구현되면 변경 예정
-      booleanBuilder.and(userConstellation.user.id.eq(2));
-      booleanBuilder.and(userConstellation.user.id.isNotNull());
+      booleanBuilder.and(userConstellation.user.id.eq(UserUtils.getUserId()));
       booleanBuilder.and(userConstellation.regYn.eq(Boolean.TRUE));
     }
 

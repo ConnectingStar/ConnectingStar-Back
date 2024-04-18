@@ -24,4 +24,16 @@ public class UserUtils {
     }
     return null;
   }
+
+  /**
+   * 로그인 회원 ID 조회
+   *
+   * @return 로그인 회원 ID
+   */
+  public Integer getUserId() {
+    if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserDetail user) {
+      return user.getUserId();
+    }
+    return null;
+  }
 }

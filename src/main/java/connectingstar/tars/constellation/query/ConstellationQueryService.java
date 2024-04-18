@@ -99,9 +99,11 @@ public class ConstellationQueryService {
       if (it.getConstellation().getConstellationId().equals(constellationId)) {
         return it.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
       } else {
+        // 다른 별자리 해금 진행 중
         return ConstellationProgressStatus.OTHER;
       }
-    }).orElse(ConstellationProgressStatus.NONE);
+      // 해금 시작 가능
+    }).orElse(ConstellationProgressStatus.SELECT);
 
     return new ConstellationDetailResponse(getConstellation(constellationId), progressStatus);
   }
