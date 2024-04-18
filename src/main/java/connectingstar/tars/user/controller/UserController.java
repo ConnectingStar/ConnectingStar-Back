@@ -130,8 +130,10 @@ public class UserController {
    * @return
    */
   @GetMapping(value = "/constellation")
-  public ResponseEntity<?> getUserConstellation(@RequestParam(required = false) Integer constellationId) {
-    return ResponseEntity.ok(userConstellationCommandService.getWorkingUserConstellation(constellationId));
+  public ResponseEntity<?> getUserConstellation(
+      @RequestParam(required = false) Integer constellationId) {
+    return ResponseEntity.ok(
+        userConstellationCommandService.getWorkingUserConstellation(constellationId));
   }
 
   /**
@@ -144,8 +146,8 @@ public class UserController {
     return ResponseEntity.ok(userCommandService.getUserStar());
   }
 
-  @PostMapping(value = "/out")
-  public ResponseEntity<?> postUserOutReason(@RequestBody DeleteAccountReasonRequest param) {
+  @PostMapping(value = "/deleteAccountReason")
+  public ResponseEntity<?> postDeleteAccountReason(@RequestBody UserOutReasonRequest param) {
     deleteAccountReasonCommandService.saveDeleteAccountReason(param);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }

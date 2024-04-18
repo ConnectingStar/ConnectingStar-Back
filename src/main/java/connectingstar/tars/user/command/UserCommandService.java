@@ -11,6 +11,7 @@ import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
+import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.query.UserQueryService;
@@ -36,6 +37,7 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 @Service
 public class UserCommandService {
 
+  private final OAuthService oauthService;
   private final UserRepository userRepository;
   private final UserQueryService userQueryService;
   private final ConstellationQueryService constellationQueryService;
@@ -47,6 +49,9 @@ public class UserCommandService {
    */
   @Transactional
   public void deleteUser() {
+    //(1)카제오 계정과 연동 해제
+    //oauthService.unlinkKaKao(accessToken);
+    //(2)사용자 데이터 삭제
     userRepository.deleteById(UserUtils.getUser().getUserId());
   }
 

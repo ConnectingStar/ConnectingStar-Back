@@ -1,18 +1,21 @@
 package connectingstar.tars.oauth.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.INVALID_TOKEN;
 
 import connectingstar.tars.auth.JwtService;
+import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.oauth.domain.client.SocialUserClientComposite;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.oauth.domain.provider.AuthCodeRequestUrlProviderComposite;
 import connectingstar.tars.oauth.response.SocialUserResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * OAuth 서비스
@@ -56,5 +59,28 @@ public class OAuthService {
     }
 
     return jwtService.generateToken(user.get());
+  }
+
+  /**
+   * 소셜 로그인 연동 해제
+   */
+  @Transactional
+  public void unlinkKaKao(String accessToken) {
+    try {
+      String kakaoUnlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
+      WebClient webClient = WebClient.builder().build();
+
+      String response = webClient
+          .post()   //POST 요청을 보냄
+          .uri(kakaoUnlinkUrl)
+          .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+          .retrieve()
+          .bodyToMono(String.class)   //응답본문을 String으로 변환
+          .block(); //비동기 요청을 동기적으로 처리
+
+      System.out.println(">>>>>>>>>>>> response = " + response);
+    } catch (Exception e) {
+      throw new ValidationException(INVALID_TOKEN);
+    }
   }
 }
