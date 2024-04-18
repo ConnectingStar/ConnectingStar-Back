@@ -5,11 +5,8 @@ import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -33,66 +30,66 @@ import lombok.NoArgsConstructor;
 @Table(name = "constellation_svg")
 public class ConstellationSvg {
 
-    /**
-     * 별자리 ID
-     */
-    @Id
-    @Column(name = "constellation_id")
-    private Integer constellationId;
-    /**
-     * fill
-     */
-    @Column(name = "svg_fill", nullable = false)
-    private String fill;
-    /**
-     * stroke
-     */
-    @Column(name = "svg_stroke", nullable = false)
-    private String stroke;
-    /**
-     * strokeWidth
-     */
-    @Column(name = "svg_stroke_width", nullable = false)
-    private BigDecimal strokeWitdh;
-    /**
-     * opacity
-     */
-    @Column(name = "svg_opacity", nullable = false)
-    private BigDecimal opacity;
-    /**
-     * width
-     */
-    @Column(name = "svg_width", nullable = false)
-    private BigDecimal width;
-    /**
-     * height
-     */
-    @Column(name = "svg_height", nullable = false)
-    private BigDecimal height;
-    /**
-     * viewBox
-     */
-    @Column(name = "svg_view_box", nullable = false)
-    private String viewBox;
+  /**
+   * 별자리 svg circle 목록
+   */
+  @OneToMany(mappedBy = "svg", fetch = FetchType.LAZY)
+  private final List<ConstellationCircle> circleList = new ArrayList<>();
+  /**
+   * 별자리 ID
+   */
+  @Id
+  @Column(name = "constellation_id")
+  private Integer constellationId;
+  /**
+   * fill
+   */
+  @Column(name = "fill", nullable = false)
+  private String fill;
+  /**
+   * stroke
+   */
+  @Column(name = "stroke", nullable = false)
+  private String stroke;
+  /**
+   * strokeWidth
+   */
+  @Column(name = "stroke_width", nullable = false)
+  private BigDecimal strokeWitdh;
+  /**
+   * opacity
+   */
+  @Column(name = "opacity", nullable = false)
+  private BigDecimal opacity;
+  /**
+   * width
+   */
+  @Column(name = "width", nullable = false)
+  private BigDecimal width;
+  /**
+   * height
+   */
+  @Column(name = "height", nullable = false)
+  private BigDecimal height;
+  /**
+   * viewBox
+   */
+  @Column(name = "view_box", nullable = false)
+  private String viewBox;
 
-    ///////////////////////////////////////////////////////////
-    // Relations
-    ///////////////////////////////////////////////////////////
-    /**
-     * 별자리 정보
-     */
-    @MapsId
-    @OneToOne
-    @JoinColumn(name = "constellation_id", nullable = false)
-    private Constellation constellation;
-    /**
-     * 별자리 svg path 목록
-     */
-    @OneToMany(mappedBy = "svg", fetch = FetchType.LAZY)
-    private final List<ConstellationPath> pathList = new ArrayList<>();
-    /**
-     * 별자리 svg circle 목록
-     */
-    @OneToMany(mappedBy = "svg", fetch = FetchType.LAZY)
-    private final List<ConstellationCircle> circleList = new ArrayList<>();
+  ///////////////////////////////////////////////////////////
+  // Relations
+  ///////////////////////////////////////////////////////////
+  /**
+   * path
+   */
+  @Column(name = "path", nullable = false)
+  private String path;
+  /**
+   * 별자리 정보
+   */
+  @MapsId
+  @OneToOne
+  @JoinColumn(name = "constellation_id", nullable = false)
+  private Constellation constellation;
 }

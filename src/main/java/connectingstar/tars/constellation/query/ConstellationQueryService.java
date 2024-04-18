@@ -6,6 +6,7 @@ import static connectingstar.tars.common.exception.errorcode.ConstellationErrorC
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.Constellation;
+import connectingstar.tars.constellation.domain.enums.ConstellationProgressStatus;
 import connectingstar.tars.constellation.repository.ConstellationDao;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.constellation.repository.ConstellationTypeRepository;
@@ -82,13 +83,27 @@ public class ConstellationQueryService {
   }
 
   /**
-   * 별자리 단일 조회
+   * 별자리 카드 상세 조회
    *
    * @param constellationId 별자리 ID
    */
   @Transactional(readOnly = true)
   public ConstellationDetailResponse getOne(Integer constellationId) {
-    return new ConstellationDetailResponse(getConstellation(constellationId));
+    User user = userQueryService.getUser();
+    Optional<UserConstellation> userConstellation = user.getUserConstellationList().stream()
+        .filter(it -> it.getConstellation().getConstellationId().equals(constellationId) ||
+            !it.getRegYn())
+        .findFirst();
+
+    ConstellationProgressStatus progressStatus = userConstellation.map(it -> {
+      if (it.getConstellation().getConstellationId().equals(constellationId)) {
+        return it.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
+      } else {
+        return ConstellationProgressStatus.OTHER;
+      }
+    }).orElse(ConstellationProgressStatus.NONE);
+
+    return new ConstellationDetailResponse(getConstellation(constellationId), progressStatus);
   }
 
   private void verifyTypeIdNotFound(Integer typeId) {

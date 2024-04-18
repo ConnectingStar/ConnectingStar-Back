@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class UserOutReasonRequest {
+public class DeleteAccountReasonRequest {
 
   private String reason;
 

@@ -3,11 +3,8 @@ package connectingstar.tars.constellation.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import connectingstar.tars.common.utils.FormatUtils;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.constellation.domain.ConstellationPath;
 import connectingstar.tars.constellation.domain.ConstellationSvg;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.List;
 import lombok.Getter;
 
@@ -74,7 +71,7 @@ public class ConstellationMainResponse {
     /**
      * pathList
      */
-    private List<String> pathList;
+    private String path;
     /**
      * circleList
      */
@@ -88,7 +85,7 @@ public class ConstellationMainResponse {
       this.width = FormatUtils.format(svg.getWidth());
       this.height = FormatUtils.format(svg.getHeight());
       this.viewBox = svg.getViewBox();
-      this.pathList = svg.getPathList().stream().map(ConstellationPath::getPath).toList();
+      this.path = svg.getPath();
       this.circleList = svg.getCircleList().stream()
           .map(circle -> new Circle(circle.getCx(), circle.getCy(), circle.getR()))
           .toList();
@@ -121,7 +118,7 @@ public class ConstellationMainResponse {
       public Circle(BigDecimal cx, BigDecimal cy, BigDecimal r) {
         this.cx = FormatUtils.format(cx);
         this.cy = FormatUtils.format(cy);
-        this.r =  FormatUtils.format(r);
+        this.r = FormatUtils.format(r);
       }
 
       void setFilled(Boolean filled) {

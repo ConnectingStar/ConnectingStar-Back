@@ -1,6 +1,11 @@
 package connectingstar.tars.user.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import connectingstar.tars.common.domain.BaseTimeEntity;
+import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
@@ -14,10 +19,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -80,10 +84,15 @@ public class User extends BaseTimeEntity {
   @Column(name = "social_type", nullable = false)
   private SocialType socialType;
   /**
+   * 프로필로 설정한 별자리
+   */
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "constellation_id")
+  private Constellation constellation;
+  /**
    * 습관 기록 리스트
    */
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE}, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private List<HabitHistory> habitHistories = new ArrayList<>();
 
   ///////////////////////////////////////////////////////////
@@ -92,14 +101,12 @@ public class User extends BaseTimeEntity {
   /**
    * 진행중인 습관 리스트
    */
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE}, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private List<RunHabit> runHabits = new ArrayList<>();
   /**
    * 종료한 습관 리스트
    */
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE}, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private List<QuitHabit> quitHabits = new ArrayList<>();
   public User(String email, SocialType socialType) {
     this.email = email;
@@ -114,8 +121,7 @@ public class User extends BaseTimeEntity {
   /**
    * 보유한 별자리(캐릭터) 목록
    */
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
-      CascadeType.MERGE}, orphanRemoval = true)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private final List<UserConstellation> userConstellationList = new ArrayList<>();
 
   /**
@@ -128,6 +134,10 @@ public class User extends BaseTimeEntity {
 
     this.userConstellationList.add(userConstellation);
     userConstellation.setUser(this);
+  }
+
+  public void updateConstellation(Constellation constellation) {
+    this.constellation = constellation;
   }
 
   /**

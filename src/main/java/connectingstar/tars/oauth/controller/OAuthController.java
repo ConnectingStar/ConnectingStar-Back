@@ -39,8 +39,7 @@ public class OAuthController {
    */
   @SneakyThrows
   @GetMapping(value = "/code/url")
-  public void getAuthCodeUrl(@RequestParam(required = false) String socialType,
-      HttpServletResponse response) {
+  public void doGetCodeUrl(@RequestParam(required = false) String socialType, HttpServletResponse response) {
     OAuthValidator.validate(socialType);
 
     response.sendRedirect(oauthService.getAuthCodeRequestUrl(SocialType.fromCode(socialType)));
@@ -52,7 +51,7 @@ public class OAuthController {
    * @param response 응답 객체
    */
   @GetMapping(value = "/logout")
-  public ResponseEntity<?> getLogout(HttpServletResponse response) {
+  public ResponseEntity<?> doGetLogout(HttpServletResponse response) {
     CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
     return ResponseEntity.ok(new SuccessResponse());
   }
@@ -64,7 +63,7 @@ public class OAuthController {
    * @param authCode   AccessToken을 발급 받기 위한 코드
    */
   @PostMapping(value = "/login")
-  public ResponseEntity<?> postLogin(@RequestParam(required = false) String socialType,
+  public ResponseEntity<?> doPostLogin(@RequestParam(required = false) String socialType,
       @RequestParam(required = false) String authCode, HttpServletResponse response) {
     OAuthValidator.validate(socialType, authCode);
 
