@@ -1,11 +1,14 @@
 package connectingstar.tars.constellation.query;
 
+import com.querydsl.core.Tuple;
+
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_TYPE_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.Constellation;
+import connectingstar.tars.constellation.domain.QConstellation;
 import connectingstar.tars.constellation.domain.enums.ConstellationProgressStatus;
 import connectingstar.tars.constellation.repository.ConstellationDao;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
@@ -14,6 +17,7 @@ import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.response.ConstellationDetailResponse;
 import connectingstar.tars.constellation.response.ConstellationListResponse;
 import connectingstar.tars.constellation.response.ConstellationMainResponse;
+import connectingstar.tars.user.domain.QUserConstellation;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.query.UserQueryService;
@@ -52,13 +56,14 @@ public class ConstellationQueryService {
   }
 
   /**
-   * 별자리 타입별 목록 조회 추후에 QueryDSL을 도입하면 그때 동적쿼리를 적용해 전체 조회 기능 추가 예정
+   * 별자리 타입별 목록 조회
    *
-   * @param param {@link ConstellationListRequest}
+   * @param param 요청 파라미터
    */
   @Transactional(readOnly = true)
   public List<ConstellationListResponse> getList(ConstellationListRequest param) {
     verifyTypeIdNotFound(param.getConstellationTypeId());
+
     return constellationDao.getList(param);
   }
 
@@ -95,17 +100,30 @@ public class ConstellationQueryService {
             !it.getRegYn())
         .findFirst();
 
-    ConstellationProgressStatus progressStatus = userConstellation.map(it -> {
-      if (it.getConstellation().getConstellationId().equals(constellationId)) {
-        return it.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
+    ConstellationProgressStatus progressStatus = getProgressStatus(userConstellation.get(), constellationId);
+
+    return new ConstellationDetailResponse(getConstellation(constellationId), progressStatus);
+  }
+
+  /**
+   * 별자리 진행 상태 추출
+   *
+   * @param userConstellation 사용자 별자리
+   * @param constellationId 별자리 ID
+   * @return 별자리 진행 상태
+   */
+  private ConstellationProgressStatus getProgressStatus(UserConstellation userConstellation, Integer constellationId) {
+    if (Objects.isNull(userConstellation)) {
+      // 해금 시작 가능
+      return ConstellationProgressStatus.SELECT;
+    } else {
+      if (userConstellation.getConstellation().getConstellationId().equals(constellationId)) {
+        return userConstellation.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
       } else {
         // 다른 별자리 해금 진행 중
         return ConstellationProgressStatus.OTHER;
       }
-      // 해금 시작 가능
-    }).orElse(ConstellationProgressStatus.SELECT);
-
-    return new ConstellationDetailResponse(getConstellation(constellationId), progressStatus);
+    }
   }
 
   private void verifyTypeIdNotFound(Integer typeId) {

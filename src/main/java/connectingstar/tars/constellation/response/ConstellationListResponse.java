@@ -1,5 +1,7 @@
 package connectingstar.tars.constellation.response;
 
+import connectingstar.tars.constellation.domain.Constellation;
+import java.util.Objects;
 import lombok.Getter;
 
 /**
@@ -23,19 +25,29 @@ public class ConstellationListResponse {
    */
   private final String name;
   /**
-   * 이미지
+   * 이미지 url
    */
-  private final String image;
+  private final String imageUrl;
   /**
    * 별 개수
    */
   private final Integer starCount;
+  /**
+   * 별자리 진행중 여부
+   */
+  private final Boolean isProgress;
+  /**
+   * 별자리 보유 여부
+   */
+  private final Boolean isRegistered;
 
-  public ConstellationListResponse(Integer constellationId, String typeName, String name, String image, Integer starCount) {
-    this.constellationId = constellationId;
-    this.typeName = typeName;
-    this.name = name;
-    this.image = image;
-    this.starCount = starCount;
+  public ConstellationListResponse(Constellation constellation, Boolean isRegistered) {
+    this.constellationId = constellation.getConstellationId();
+    this.typeName = constellation.getType().getName();
+    this.name = constellation.getName();
+    this.starCount = constellation.getStarCount();
+    this.isProgress = Objects.nonNull(isRegistered) && !isRegistered ? Boolean.TRUE : Boolean.FALSE;
+    this.isRegistered = Objects.isNull(isRegistered) ? Boolean.FALSE : isRegistered;
+    this.imageUrl = this.isRegistered ? constellation.getCharacterImage() : constellation.getImage();
   }
 }

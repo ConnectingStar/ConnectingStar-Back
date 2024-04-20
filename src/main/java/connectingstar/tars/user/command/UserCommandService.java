@@ -60,7 +60,7 @@ public class UserCommandService {
    */
   public UserBasicInfoResponse getUserBasicInfo() {
     User getUser = userQueryService.getUser();
-    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity(), getUser.getProfileCharacter());
+    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity(), getUser.getConstellation().getCharacterImage());
   }
 
   /**
@@ -70,7 +70,7 @@ public class UserCommandService {
     User getUser = userQueryService.getUser();
     List<RunHabit> runHabitList = getRunHabit(getUser);
     return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(),
-        getUser.getProfileCharacter(), runHabitList);
+        getUser.getConstellation().getCharacterImage(), runHabitList);
   }
 
   /**

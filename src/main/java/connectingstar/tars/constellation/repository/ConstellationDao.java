@@ -1,10 +1,8 @@
 package connectingstar.tars.constellation.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.QConstellation;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
@@ -37,10 +35,11 @@ public class ConstellationDao {
     QUserConstellation userConstellation = QUserConstellation.userConstellation;
 
     return queryFactory
-        .select(getConstructorExpression())
+        .select(Projections.constructor(ConstellationListResponse.class, constellation, userConstellation.regYn))
         .from(constellation)
         .leftJoin(userConstellation)
-        .on(userConstellation.constellation.constellationId.eq(constellation.constellationId))
+        .on(userConstellation.constellation.constellationId.eq(constellation.constellationId)
+            .and(userConstellation.user.id.eq(UserUtils.getUserId())))
         .where(getPredicate(param, constellation, userConstellation))
         .fetch();
   }
@@ -57,26 +56,11 @@ public class ConstellationDao {
       booleanBuilder.and(constellation.type.constellationTypeId.eq(constellationTypeId));
     }
 
-    Boolean own = param.getOwn();
-    if (Objects.nonNull(own) && own) {
-      booleanBuilder.and(userConstellation.user.id.eq(UserUtils.getUserId()));
+    Boolean isRegistered = param.getIsRegistered();
+    if (Objects.nonNull(isRegistered) && isRegistered) {
       booleanBuilder.and(userConstellation.regYn.eq(Boolean.TRUE));
     }
 
     return booleanBuilder;
-  }
-
-  private ConstructorExpression<ConstellationListResponse> getConstructorExpression() {
-    QConstellation constellation = QConstellation.constellation;
-
-    return Projections.constructor(
-        ConstellationListResponse.class,
-        constellation.constellationId,
-        constellation.type.name,
-        constellation.name,
-        constellation.image,
-        constellation.characterImage,
-        constellation.starCount
-    );
   }
 }
