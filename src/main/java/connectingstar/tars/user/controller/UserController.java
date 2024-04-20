@@ -1,9 +1,11 @@
 package connectingstar.tars.user.controller;
 
+import connectingstar.tars.common.response.ListResponse;
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.DeleteAccountReasonCommandService;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.command.UserConstellationCommandService;
+import connectingstar.tars.user.query.UserConstellationQueryService;
 import connectingstar.tars.user.request.DeleteAccountReasonRequest;
 import connectingstar.tars.user.request.UserConstellationCreateRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserCommandService userCommandService;
+  private final UserConstellationQueryService userConstellationQueryService;
   private final UserConstellationCommandService userConstellationCommandService;
   private final DeleteAccountReasonCommandService deleteAccountReasonCommandService;
 
@@ -56,6 +59,16 @@ public class UserController {
 
     userConstellationCommandService.save(param);
     return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
+   * 회원이 보유한 별자리 목록 조회
+   *
+   * @return 요청 결과
+   */
+  @GetMapping(value = "/constellation/list")
+  public ResponseEntity<?> doGetConstellationList() {
+    return ResponseEntity.ok(new ListResponse(userConstellationQueryService.getList()));
   }
 
   /**

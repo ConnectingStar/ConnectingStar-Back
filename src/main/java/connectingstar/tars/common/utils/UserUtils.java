@@ -1,9 +1,8 @@
 package connectingstar.tars.common.utils;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import connectingstar.tars.user.domain.UserDetail;
 import lombok.experimental.UtilityClass;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * 회원 유틸

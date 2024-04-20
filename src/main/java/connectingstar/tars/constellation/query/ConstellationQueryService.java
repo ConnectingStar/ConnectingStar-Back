@@ -1,14 +1,11 @@
 package connectingstar.tars.constellation.query;
 
-import com.querydsl.core.Tuple;
-
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_TYPE_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.constellation.domain.QConstellation;
 import connectingstar.tars.constellation.domain.enums.ConstellationProgressStatus;
 import connectingstar.tars.constellation.repository.ConstellationDao;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
@@ -17,7 +14,6 @@ import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.response.ConstellationDetailResponse;
 import connectingstar.tars.constellation.response.ConstellationListResponse;
 import connectingstar.tars.constellation.response.ConstellationMainResponse;
-import connectingstar.tars.user.domain.QUserConstellation;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.query.UserQueryService;
@@ -74,7 +70,7 @@ public class ConstellationQueryService {
    */
   @Transactional(readOnly = true)
   public ConstellationMainResponse getMain(Integer constellationId) {
-    User user = userQueryService.getUser(UserUtils.getUser().getUserId());
+    User user = userQueryService.getUser(UserUtils.getUserId());
     Optional<UserConstellation> userConstellation = userQueryService.getUserConstellation(user,
         constellationId);
     if (userConstellation.isPresent()) {
@@ -109,7 +105,7 @@ public class ConstellationQueryService {
    * 별자리 진행 상태 추출
    *
    * @param userConstellation 사용자 별자리
-   * @param constellationId 별자리 ID
+   * @param constellationId   별자리 ID
    * @return 별자리 진행 상태
    */
   private ConstellationProgressStatus getProgressStatus(UserConstellation userConstellation, Integer constellationId) {

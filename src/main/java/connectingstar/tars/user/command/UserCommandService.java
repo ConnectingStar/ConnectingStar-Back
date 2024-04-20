@@ -1,9 +1,6 @@
 package connectingstar.tars.user.command;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
@@ -23,9 +20,10 @@ import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
 import connectingstar.tars.user.response.UserStarResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -52,7 +50,7 @@ public class UserCommandService {
     //(1)카제오 계정과 연동 해제
     //oauthService.unlinkKaKao(accessToken);
     //(2)사용자 데이터 삭제
-    userRepository.deleteById(UserUtils.getUser().getUserId());
+    userRepository.deleteById(UserUtils.getUserId());
   }
 
   /**
@@ -81,7 +79,7 @@ public class UserCommandService {
     Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
 
     return new UserHavingConstellationResponse(
-        isHavingConstellation(UserUtils.getUser().getUserId(), constellation.getConstellationId()));
+        isHavingConstellation(UserUtils.getUserId(), constellation.getConstellationId()));
   }
 
   public UserStarResponse getUserStar() {
@@ -102,14 +100,14 @@ public class UserCommandService {
     User user = userQueryService.getUser();
 
     UserConstellation userConstellation = user.getUserConstellationList()
-                                              .stream()
-                                              .filter(it -> it.getConstellation()
-                                                              .getConstellationId()
-                                                              .equals(param.getConstellationId()) &&
-                                                  it.getRegYn().equals(Boolean.TRUE))
-                                              .findFirst()
-                                              .orElseThrow(
-                                                  () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
+        .stream()
+        .filter(it -> it.getConstellation()
+            .getConstellationId()
+            .equals(param.getConstellationId()) &&
+            it.getRegYn().equals(Boolean.TRUE))
+        .findFirst()
+        .orElseThrow(
+            () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
 
     user.updateConstellation(userConstellation.getConstellation());
   }
