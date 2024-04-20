@@ -1,5 +1,6 @@
 package connectingstar.tars.user.domain;
 
+import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,10 @@ public class UserDetail implements UserDetails {
    * 보유 별 개수
    */
   private final Integer star;
+  /**
+   * 프로필로 설정한 별자리
+   */
+  private final Constellation constellation;
 
   public UserDetail(User user) {
     this.userId = user.getId();
@@ -38,6 +43,7 @@ public class UserDetail implements UserDetails {
     this.nickname = user.getNickname();
     this.socialType = user.getSocialType();
     this.star = user.getStar();
+    this.constellation = user.getConstellation();
   }
 
   @Override

@@ -1,5 +1,11 @@
 package connectingstar.tars.constellation.controller;
 
+import connectingstar.tars.common.response.ListResponse;
+import connectingstar.tars.constellation.query.ConstellationQueryService;
+import connectingstar.tars.constellation.query.ConstellationTypeQueryService;
+import connectingstar.tars.constellation.request.ConstellationListRequest;
+import connectingstar.tars.constellation.validation.ConstellationValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,12 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import connectingstar.tars.constellation.query.ConstellationQueryService;
-import connectingstar.tars.constellation.query.ConstellationTypeQueryService;
-import connectingstar.tars.constellation.request.ConstellationListRequest;
-import connectingstar.tars.constellation.validation.ConstellationValidator;
-import lombok.RequiredArgsConstructor;
 
 
 /**
@@ -36,7 +36,7 @@ public class ConstellationController {
    */
   @GetMapping(value = "/list")
   public ResponseEntity<?> doGetList(@ModelAttribute ConstellationListRequest param) {
-    return ResponseEntity.ok(constellationQueryService.getList(param));
+    return ResponseEntity.ok(new ListResponse(constellationQueryService.getList(param)));
   }
 
   /**
@@ -72,6 +72,6 @@ public class ConstellationController {
    */
   @GetMapping(value = "/type/list")
   public ResponseEntity<?> doGetTypeList() {
-    return ResponseEntity.ok(constellationTypeQueryService.getList());
+    return ResponseEntity.ok(new ListResponse(constellationTypeQueryService.getList()));
   }
 }

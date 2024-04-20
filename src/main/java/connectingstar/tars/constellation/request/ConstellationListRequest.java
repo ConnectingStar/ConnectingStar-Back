@@ -12,12 +12,12 @@ import lombok.Setter;
 @Setter
 public class ConstellationListRequest {
 
-    /**
-     * 별자리(캐릭터) 타입 ID
-     */
-    private Integer constellationTypeId;
-    /**
-     *
-     */
-    private Boolean own;
+  /**
+   * 별자리(캐릭터) 타입 ID
+   */
+  private Integer constellationTypeId;
+  /**
+   * 별자리 보유 여부
+   */
+  private Boolean isRegistered;
 }
