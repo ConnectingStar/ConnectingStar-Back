@@ -1,9 +1,10 @@
 package connectingstar.tars.user.command;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_ALREADY_PROGRESS;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_PROGRESS;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.constellation.domain.Constellation;
@@ -12,16 +13,13 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
-import connectingstar.tars.user.request.UserConstellationCreateRequest;
+import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.response.UserConstellationResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-
-import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_ALREADY_PROGRESS;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_PROGRESS;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -42,7 +40,7 @@ public class UserConstellationCommandService {
    * @param param 등록 정보
    */
   @Transactional
-  public void save(UserConstellationCreateRequest param) {
+  public void save(UserConstellationRequest param) {
     User user = userQueryService.getUser();
     Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
 
@@ -74,7 +72,7 @@ public class UserConstellationCommandService {
 
   private UserConstellation getUserConstellation(Integer constellationId) {
     return userConstellationRepository.findByUserConstellationId(constellationId)
-                                      .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+        .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
   }
 
   /**
@@ -87,11 +85,11 @@ public class UserConstellationCommandService {
   private UserConstellation getWorkingUserConstellation(User user, Integer constellationId) {
     // 별자리 추출
     return user.getUserConstellationList()
-               .stream()
-               .filter(it -> it.getConstellation().getConstellationId().equals(constellationId) &&
-                   it.getRegYn().equals(Boolean.FALSE))
-               .findFirst()
-               .orElseThrow(() -> new ValidationException(USER_CONSTELLATION_NOT_PROGRESS));
+        .stream()
+        .filter(it -> it.getConstellation().getConstellationId().equals(constellationId) &&
+            it.getRegYn().equals(Boolean.FALSE))
+        .findFirst()
+        .orElseThrow(() -> new ValidationException(USER_CONSTELLATION_NOT_PROGRESS));
   }
 
   /**

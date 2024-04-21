@@ -1,9 +1,8 @@
 package connectingstar.tars.common.exception.errorcode;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 /**
  * 회원 관련 에러 코드
@@ -15,9 +14,14 @@ import lombok.RequiredArgsConstructor;
 public enum UserErrorCode implements ErrorCode {
 
   /**
-   * empty
+   * param
    */
   USER_PARAM_ID_EMPTY(HttpStatus.BAD_REQUEST, "회원 ID는 필수 입력값입니다."),
+  USER_PARAM_NICKNAME_EMPTY(HttpStatus.BAD_REQUEST, "닉네임은 필수 입력값입니다."),
+  USER_PARAM_GENDER_TYPE_EMPTY(HttpStatus.BAD_REQUEST, "성별 타입은 필수 입력값입니다."),
+  USER_PARAM_GENDER_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 성별 타입입니다."),
+  USER_PARAM_AGE_RANGE_TYPE_EMPTY(HttpStatus.BAD_REQUEST, "나이대 타입은 필수 입력값입니다."),
+  USER_PARAM_AGE_RANGE_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 나이대 타입입니다."),
 
   /**
    * not found

@@ -11,11 +11,16 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
+import connectingstar.tars.user.domain.enums.AgeRangeType;
+import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.request.UserAgeRangeRequest;
+import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.request.UserProfileConstellationRequest;
+import connectingstar.tars.user.request.UserGenderRequest;
+import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
@@ -96,7 +101,7 @@ public class UserCommandService {
    * @param param 수정 정보
    */
   @Transactional
-  public void update(UserProfileConstellationRequest param) {
+  public void update(UserConstellationRequest param) {
     User user = userQueryService.getUser();
 
     UserConstellation userConstellation = user.getUserConstellationList()
@@ -110,6 +115,42 @@ public class UserCommandService {
             () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
 
     user.updateConstellation(userConstellation.getConstellation());
+  }
+
+  /**
+   * 회원 닉네임 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserNicknameRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateNickname(param.getNickname());
+  }
+
+  /**
+   * 회원 성별 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserGenderRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateGender(GenderType.fromCode(param.getGenderType()));
+  }
+
+  /**
+   * 회원 나이대 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserAgeRangeRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateAgeRange(AgeRangeType.fromCode(param.getAgeRangeType()));
   }
 
   private List<RunHabit> getRunHabit(User user) {
