@@ -11,11 +11,13 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
+import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
+import connectingstar.tars.user.request.UserGenderRequest;
 import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
@@ -123,6 +125,18 @@ public class UserCommandService {
     User user = userQueryService.getUser();
 
     user.updateNickname(param.getNickname());
+  }
+
+  /**
+   * 회원 성별 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserGenderRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateGenderType(GenderType.fromCode(param.getGenderType()));
   }
 
   private List<RunHabit> getRunHabit(User user) {

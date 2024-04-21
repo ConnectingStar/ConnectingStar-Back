@@ -82,7 +82,7 @@ public class User extends BaseTimeEntity {
    */
   @Convert(converter = GenderType.TypeCodeConverter.class)
   @Column(name = "gender_type")
-  private final GenderType genderType = GenderType.NONE;
+  private GenderType genderType = GenderType.NONE;
 
   ///////////////////////////////////////////////////////////
   // Relations
@@ -144,6 +144,10 @@ public class User extends BaseTimeEntity {
 
   public void updateNickname(String nickname) {
     this.nickname = nickname;
+  }
+
+  public void updateGenderType(GenderType genderType) {
+    this.genderType = genderType;
   }
 
   /**

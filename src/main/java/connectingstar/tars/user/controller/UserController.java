@@ -5,10 +5,12 @@ import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.DeleteAccountReasonCommandService;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.command.UserConstellationCommandService;
+import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.query.UserConstellationQueryService;
 import connectingstar.tars.user.request.DeleteAccountReasonRequest;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
+import connectingstar.tars.user.request.UserGenderRequest;
 import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.validation.UserValidator;
 import lombok.RequiredArgsConstructor;
@@ -114,6 +116,20 @@ public class UserController {
   }
 
   /**
+   * 성별 수정
+   *
+   * @param param 수정 정보
+   * @return 요청 결과
+   */
+  @PutMapping(value = "/gender")
+  public ResponseEntity<?> doPutGender(@RequestBody UserGenderRequest param) {
+    UserValidator.validate(param);
+
+    userCommandService.update(param);
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
    * 별자리 단일 조회 시 사용자 보유 여부 반환
    *
    * @param param 별자리 ID, 사용자 ID
@@ -147,6 +163,16 @@ public class UserController {
   @GetMapping(value = "/userBasicInfoAndHabit")
   public ResponseEntity<?> getUserBasicInfoAndHabit() {
     return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit());
+  }
+
+  /**
+   * 회원 성별 타입 목록 조회
+   *
+   * @return 요청 결과
+   */
+  @GetMapping(value = "/gender/type/list")
+  public ResponseEntity<?> doGetGenderTypeList() {
+    return ResponseEntity.ok(new ListResponse(GenderType.getTypeList()));
   }
 
   /**
