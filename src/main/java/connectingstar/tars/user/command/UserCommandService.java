@@ -14,8 +14,9 @@ import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.request.UserProfileConstellationRequest;
+import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
@@ -96,7 +97,7 @@ public class UserCommandService {
    * @param param 수정 정보
    */
   @Transactional
-  public void update(UserProfileConstellationRequest param) {
+  public void update(UserConstellationRequest param) {
     User user = userQueryService.getUser();
 
     UserConstellation userConstellation = user.getUserConstellationList()
@@ -110,6 +111,18 @@ public class UserCommandService {
             () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
 
     user.updateConstellation(userConstellation.getConstellation());
+  }
+
+  /**
+   * 회원 닉네임 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserNicknameRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateNickname(param.getNickname());
   }
 
   private List<RunHabit> getRunHabit(User user) {
