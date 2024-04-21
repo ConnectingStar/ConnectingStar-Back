@@ -6,6 +6,7 @@ import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.oauth.domain.enums.SocialType;
+import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -54,8 +55,9 @@ public class User extends BaseTimeEntity {
   /**
    * 연령대
    */
-  @Column(name = "ageRange")
-  private String ageRange;
+  @Convert(converter = AgeRangeType.TypeCodeConverter.class)
+  @Column(name = "age_range", nullable = false)
+  private AgeRangeType ageRange;
   /**
    * 정체성
    */
@@ -81,8 +83,8 @@ public class User extends BaseTimeEntity {
    * 성별 타입
    */
   @Convert(converter = GenderType.TypeCodeConverter.class)
-  @Column(name = "gender_type")
-  private GenderType genderType = GenderType.NONE;
+  @Column(name = "gender")
+  private GenderType gender = GenderType.NONE;
 
   ///////////////////////////////////////////////////////////
   // Relations
@@ -146,8 +148,12 @@ public class User extends BaseTimeEntity {
     this.nickname = nickname;
   }
 
-  public void updateGenderType(GenderType genderType) {
-    this.genderType = genderType;
+  public void updateGender(GenderType genderType) {
+    this.gender = genderType;
+  }
+
+  public void updateAgeRange(AgeRangeType ageRangeType) {
+    this.ageRange = ageRangeType;
   }
 
   /**

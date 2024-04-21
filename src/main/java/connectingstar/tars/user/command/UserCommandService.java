@@ -11,10 +11,12 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
+import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.request.UserAgeRangeRequest;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserGenderRequest;
@@ -136,7 +138,19 @@ public class UserCommandService {
   public void update(UserGenderRequest param) {
     User user = userQueryService.getUser();
 
-    user.updateGenderType(GenderType.fromCode(param.getGenderType()));
+    user.updateGender(GenderType.fromCode(param.getGenderType()));
+  }
+
+  /**
+   * 회원 나이대 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserAgeRangeRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateAgeRange(AgeRangeType.fromCode(param.getAgeRangeType()));
   }
 
   private List<RunHabit> getRunHabit(User user) {

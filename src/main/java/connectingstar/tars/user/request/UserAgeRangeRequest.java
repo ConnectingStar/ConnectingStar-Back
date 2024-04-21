@@ -4,16 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 회원 성별 수정
+ * 회원 나이대 수정
  *
  * @author 송병선
  */
 @Getter
 @Setter
-public class UserGenderRequest {
+public class UserAgeRangeRequest {
 
   /**
-   * 변경할 성별
+   * 변경할 나이대
    */
-  private String genderType;
+  private String ageRangeType;
 }

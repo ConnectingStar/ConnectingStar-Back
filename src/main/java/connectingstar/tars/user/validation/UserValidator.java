@@ -1,13 +1,17 @@
 package connectingstar.tars.user.validation;
 
 import static connectingstar.tars.common.exception.errorcode.ConstellationErrorCode.CONSTELLATION_PARAM_ID_EMPTY;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_PARAM_AGE_RANGE_TYPE_EMPTY;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_PARAM_AGE_RANGE_TYPE_INVALID;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_PARAM_GENDER_TYPE_EMPTY;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_PARAM_GENDER_TYPE_INVALID;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_PARAM_NICKNAME_EMPTY;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.ErrorCode;
+import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
+import connectingstar.tars.user.request.UserAgeRangeRequest;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserGenderRequest;
@@ -23,6 +27,19 @@ import org.springframework.util.StringUtils;
  */
 @UtilityClass
 public class UserValidator {
+
+  /**
+   * 회원 나이대 수정 유효성 체크
+   *
+   * @param param 요청 파라미터
+   */
+  public void validate(UserAgeRangeRequest param) {
+    validateEmpty(param.getAgeRangeType(), USER_PARAM_AGE_RANGE_TYPE_EMPTY);
+
+    if (!AgeRangeType.containCode(param.getAgeRangeType())) {
+      throw new ValidationException(USER_PARAM_AGE_RANGE_TYPE_INVALID);
+    }
+  }
 
   /**
    * 회원 성별 수정 유효성 체크
