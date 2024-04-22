@@ -107,7 +107,7 @@ public class UserController {
    *
    * @return 유저 닉네임 + 정체성
    */
-  @GetMapping(value = "/basic-info")
+  @GetMapping(value = "/userBasicInfo")
   public ResponseEntity<?> getUserBasicInfo() {
     return ResponseEntity.ok(userCommandService.getUserBasicInfo());
   }
@@ -117,7 +117,7 @@ public class UserController {
    *
    * @return 유저 닉네임 + 정체성 + 습관
    */
-  @GetMapping(value = "/basic-info-habit")
+  @GetMapping(value = "/userBasicInfoAndHabit")
   public ResponseEntity<?> getUserBasicInfoAndHabit() {
     return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit());
   }
