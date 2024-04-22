@@ -1,9 +1,6 @@
 package connectingstar.tars.user.command;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
@@ -14,18 +11,24 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
+import connectingstar.tars.user.domain.enums.AgeRangeType;
+import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.request.UserAgeRangeRequest;
+import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.request.UserProfileConstellationRequest;
+import connectingstar.tars.user.request.UserGenderRequest;
+import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
 import connectingstar.tars.user.response.UserStarResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -52,7 +55,7 @@ public class UserCommandService {
     //(1)카제오 계정과 연동 해제
     //oauthService.unlinkKaKao(accessToken);
     //(2)사용자 데이터 삭제
-    userRepository.deleteById(UserUtils.getUser().getUserId());
+    userRepository.deleteById(UserUtils.getUserId());
   }
 
   /**
@@ -60,7 +63,7 @@ public class UserCommandService {
    */
   public UserBasicInfoResponse getUserBasicInfo() {
     User getUser = userQueryService.getUser();
-    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity(), getUser.getProfileCharacter());
+    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity(), getUser.getConstellation().getCharacterImage());
   }
 
   /**
@@ -70,7 +73,7 @@ public class UserCommandService {
     User getUser = userQueryService.getUser();
     List<RunHabit> runHabitList = getRunHabit(getUser);
     return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity(),
-        getUser.getProfileCharacter(), runHabitList);
+        getUser.getConstellation().getCharacterImage(), runHabitList);
   }
 
   /**
@@ -81,7 +84,7 @@ public class UserCommandService {
     Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
 
     return new UserHavingConstellationResponse(
-        isHavingConstellation(UserUtils.getUser().getUserId(), constellation.getConstellationId()));
+        isHavingConstellation(UserUtils.getUserId(), constellation.getConstellationId()));
   }
 
   public UserStarResponse getUserStar() {
@@ -98,20 +101,56 @@ public class UserCommandService {
    * @param param 수정 정보
    */
   @Transactional
-  public void update(UserProfileConstellationRequest param) {
+  public void update(UserConstellationRequest param) {
     User user = userQueryService.getUser();
 
     UserConstellation userConstellation = user.getUserConstellationList()
-                                              .stream()
-                                              .filter(it -> it.getConstellation()
-                                                              .getConstellationId()
-                                                              .equals(param.getConstellationId()) &&
-                                                  it.getRegYn().equals(Boolean.TRUE))
-                                              .findFirst()
-                                              .orElseThrow(
-                                                  () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
+        .stream()
+        .filter(it -> it.getConstellation()
+            .getConstellationId()
+            .equals(param.getConstellationId()) &&
+            it.getRegYn().equals(Boolean.TRUE))
+        .findFirst()
+        .orElseThrow(
+            () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
 
     user.updateConstellation(userConstellation.getConstellation());
+  }
+
+  /**
+   * 회원 닉네임 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserNicknameRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateNickname(param.getNickname());
+  }
+
+  /**
+   * 회원 성별 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserGenderRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateGender(GenderType.fromCode(param.getGenderType()));
+  }
+
+  /**
+   * 회원 나이대 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserAgeRangeRequest param) {
+    User user = userQueryService.getUser();
+
+    user.updateAgeRange(AgeRangeType.fromCode(param.getAgeRangeType()));
   }
 
   private List<RunHabit> getRunHabit(User user) {

@@ -16,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 public enum ConstellationProgressStatus implements Codable {
 
   /**
-   * 진행중인 별자리
+   * 미보유, 특정 별자리 해금 미 진행 중
    */
-  NONE("N"),
+  SELECT("S"),
   /**
-   * 진행중인 별자리
+   * 다른 별자리 해금 진행 중
    */
   OTHER("O"),
   /**
@@ -28,18 +28,9 @@ public enum ConstellationProgressStatus implements Codable {
    */
   PROGRESS("P"),
   /**
-   * 진행중인 별자리
+   * 해금된 별자리
    */
   COMPLETE("C");
 
   private final String code;
-
-  @Converter
-  public static class TypeCodeConverter extends AbstractEnumCodeConverter<ConstellationProgressStatus> {
-
-    @Override
-    public ConstellationProgressStatus convertToEntityAttribute(String dbData) {
-      return this.toEntityAttribute(ConstellationProgressStatus.class, dbData);
-    }
-  }
 }

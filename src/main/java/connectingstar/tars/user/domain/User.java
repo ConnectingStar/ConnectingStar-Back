@@ -1,15 +1,12 @@
 package connectingstar.tars.user.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import connectingstar.tars.common.domain.BaseTimeEntity;
 import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.oauth.domain.enums.SocialType;
+import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,6 +19,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -55,8 +55,9 @@ public class User extends BaseTimeEntity {
   /**
    * 연령대
    */
-  @Column(name = "ageRange")
-  private String ageRange;
+  @Convert(converter = AgeRangeType.TypeCodeConverter.class)
+  @Column(name = "age_range", nullable = false)
+  private AgeRangeType ageRange;
   /**
    * 정체성
    */
@@ -67,11 +68,6 @@ public class User extends BaseTimeEntity {
    */
   @Column(name = "referrer")
   private String referrer;
-  /**
-   * 프로필 캐릭터
-   */
-  @Column(name = "profile_character")
-  private String profileCharacter;
   /**
    * 보유 별 개수
    */
@@ -84,6 +80,16 @@ public class User extends BaseTimeEntity {
   @Column(name = "social_type", nullable = false)
   private SocialType socialType;
   /**
+   * 성별 타입
+   */
+  @Convert(converter = GenderType.TypeCodeConverter.class)
+  @Column(name = "gender")
+  private GenderType gender = GenderType.NONE;
+
+  ///////////////////////////////////////////////////////////
+  // Relations
+  ///////////////////////////////////////////////////////////
+  /**
    * 프로필로 설정한 별자리
    */
   @OneToOne(fetch = FetchType.LAZY)
@@ -94,10 +100,6 @@ public class User extends BaseTimeEntity {
    */
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private List<HabitHistory> habitHistories = new ArrayList<>();
-
-  ///////////////////////////////////////////////////////////
-  // Relations
-  ///////////////////////////////////////////////////////////
   /**
    * 진행중인 습관 리스트
    */
@@ -108,21 +110,20 @@ public class User extends BaseTimeEntity {
    */
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private List<QuitHabit> quitHabits = new ArrayList<>();
-  public User(String email, SocialType socialType) {
-    this.email = email;
-    this.socialType = socialType;
-  }
-  /**
-   * 성별 타입
-   */
-  @Convert(converter = GenderType.TypeCodeConverter.class)
-  @Column(name = "gender_type")
-  private final GenderType genderType = GenderType.NONE;
   /**
    * 보유한 별자리(캐릭터) 목록
    */
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
   private final List<UserConstellation> userConstellationList = new ArrayList<>();
+
+  public User(String email, SocialType socialType) {
+    this.email = email;
+    this.socialType = socialType;
+  }
+
+  ///////////////////////////////////////////////////////////
+  // Method
+  ///////////////////////////////////////////////////////////
 
   /**
    * 별자리(캐릭터) 추가
@@ -136,8 +137,23 @@ public class User extends BaseTimeEntity {
     userConstellation.setUser(this);
   }
 
+  /**
+   * 프로필 별자리 수정
+   */
   public void updateConstellation(Constellation constellation) {
     this.constellation = constellation;
+  }
+
+  public void updateNickname(String nickname) {
+    this.nickname = nickname;
+  }
+
+  public void updateGender(GenderType genderType) {
+    this.gender = genderType;
+  }
+
+  public void updateAgeRange(AgeRangeType ageRangeType) {
+    this.ageRange = ageRangeType;
   }
 
   /**

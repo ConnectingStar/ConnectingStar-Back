@@ -52,13 +52,14 @@ public class ConstellationQueryService {
   }
 
   /**
-   * 별자리 타입별 목록 조회 추후에 QueryDSL을 도입하면 그때 동적쿼리를 적용해 전체 조회 기능 추가 예정
+   * 별자리 타입별 목록 조회
    *
-   * @param param {@link ConstellationListRequest}
+   * @param param 요청 파라미터
    */
   @Transactional(readOnly = true)
   public List<ConstellationListResponse> getList(ConstellationListRequest param) {
     verifyTypeIdNotFound(param.getConstellationTypeId());
+
     return constellationDao.getList(param);
   }
 
@@ -69,7 +70,7 @@ public class ConstellationQueryService {
    */
   @Transactional(readOnly = true)
   public ConstellationMainResponse getMain(Integer constellationId) {
-    User user = userQueryService.getUser(UserUtils.getUser().getUserId());
+    User user = userQueryService.getUser(UserUtils.getUserId());
     Optional<UserConstellation> userConstellation = userQueryService.getUserConstellation(user,
         constellationId);
     if (userConstellation.isPresent()) {
@@ -95,15 +96,30 @@ public class ConstellationQueryService {
             !it.getRegYn())
         .findFirst();
 
-    ConstellationProgressStatus progressStatus = userConstellation.map(it -> {
-      if (it.getConstellation().getConstellationId().equals(constellationId)) {
-        return it.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
-      } else {
-        return ConstellationProgressStatus.OTHER;
-      }
-    }).orElse(ConstellationProgressStatus.NONE);
+    ConstellationProgressStatus progressStatus = getProgressStatus(userConstellation.get(), constellationId);
 
     return new ConstellationDetailResponse(getConstellation(constellationId), progressStatus);
+  }
+
+  /**
+   * 별자리 진행 상태 추출
+   *
+   * @param userConstellation 사용자 별자리
+   * @param constellationId   별자리 ID
+   * @return 별자리 진행 상태
+   */
+  private ConstellationProgressStatus getProgressStatus(UserConstellation userConstellation, Integer constellationId) {
+    if (Objects.isNull(userConstellation)) {
+      // 해금 시작 가능
+      return ConstellationProgressStatus.SELECT;
+    } else {
+      if (userConstellation.getConstellation().getConstellationId().equals(constellationId)) {
+        return userConstellation.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
+      } else {
+        // 다른 별자리 해금 진행 중
+        return ConstellationProgressStatus.OTHER;
+      }
+    }
   }
 
   private void verifyTypeIdNotFound(Integer typeId) {

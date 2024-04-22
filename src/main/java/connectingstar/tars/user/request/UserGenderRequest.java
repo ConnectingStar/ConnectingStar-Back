@@ -4,16 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 별자리 선택 요청
+ * 회원 성별 수정
  *
  * @author 송병선
  */
 @Getter
 @Setter
-public class UserConstellationCreateRequest {
+public class UserGenderRequest {
 
   /**
-   * 별자리 ID
+   * 변경할 성별
    */
-  private Integer constellationId;
+  private String genderType;
 }

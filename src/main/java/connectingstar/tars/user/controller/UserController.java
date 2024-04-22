@@ -1,13 +1,19 @@
 package connectingstar.tars.user.controller;
 
+import connectingstar.tars.common.response.ListResponse;
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.DeleteAccountReasonCommandService;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.command.UserConstellationCommandService;
+import connectingstar.tars.user.domain.enums.AgeRangeType;
+import connectingstar.tars.user.domain.enums.GenderType;
+import connectingstar.tars.user.query.UserConstellationQueryService;
 import connectingstar.tars.user.request.DeleteAccountReasonRequest;
-import connectingstar.tars.user.request.UserConstellationCreateRequest;
+import connectingstar.tars.user.request.UserAgeRangeRequest;
+import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.request.UserProfileConstellationRequest;
+import connectingstar.tars.user.request.UserGenderRequest;
+import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.validation.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserCommandService userCommandService;
+  private final UserConstellationQueryService userConstellationQueryService;
   private final UserConstellationCommandService userConstellationCommandService;
   private final DeleteAccountReasonCommandService deleteAccountReasonCommandService;
 
@@ -51,11 +58,21 @@ public class UserController {
    * @return 요청 결과
    */
   @PostMapping(value = "/constellation")
-  public ResponseEntity<?> doPostConstellation(@RequestBody UserConstellationCreateRequest param) {
+  public ResponseEntity<?> doPostConstellation(@RequestBody UserConstellationRequest param) {
     UserValidator.validate(param);
 
     userConstellationCommandService.save(param);
     return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
+   * 회원이 보유한 별자리 목록 조회
+   *
+   * @return 요청 결과
+   */
+  @GetMapping(value = "/constellation/list")
+  public ResponseEntity<?> doGetConstellationList() {
+    return ResponseEntity.ok(new ListResponse(userConstellationQueryService.getList()));
   }
 
   /**
@@ -78,8 +95,50 @@ public class UserController {
    * @param param 수정 정보
    * @return 요청 결과
    */
-  @PutMapping(value = "/profile/constellation")
-  public ResponseEntity<?> doPutProfileConstellation(@RequestBody UserProfileConstellationRequest param) {
+  @PutMapping(value = "/constellation")
+  public ResponseEntity<?> doPutConstellation(@RequestBody UserConstellationRequest param) {
+    UserValidator.validate(param);
+
+    userCommandService.update(param);
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
+   * 닉네임 수정
+   *
+   * @param param 수정 정보
+   * @return 요청 결과
+   */
+  @PutMapping(value = "/nickname")
+  public ResponseEntity<?> doPutNickname(@RequestBody UserNicknameRequest param) {
+    UserValidator.validate(param);
+
+    userCommandService.update(param);
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
+   * 성별 수정
+   *
+   * @param param 수정 정보
+   * @return 요청 결과
+   */
+  @PutMapping(value = "/gender")
+  public ResponseEntity<?> doPutGender(@RequestBody UserGenderRequest param) {
+    UserValidator.validate(param);
+
+    userCommandService.update(param);
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
+   * 나이대 수정
+   *
+   * @param param 수정 정보
+   * @return 요청 결과
+   */
+  @PutMapping(value = "/age-range")
+  public ResponseEntity<?> doPutAgeRange(@RequestBody UserAgeRangeRequest param) {
     UserValidator.validate(param);
 
     userCommandService.update(param);
@@ -120,6 +179,26 @@ public class UserController {
   @GetMapping(value = "/userBasicInfoAndHabit")
   public ResponseEntity<?> getUserBasicInfoAndHabit() {
     return ResponseEntity.ok(userCommandService.getUserBasicInfoAndHabit());
+  }
+
+  /**
+   * 회원 성별 타입 목록 조회
+   *
+   * @return 요청 결과
+   */
+  @GetMapping(value = "/gender/type/list")
+  public ResponseEntity<?> doGetGenderTypeList() {
+    return ResponseEntity.ok(new ListResponse(GenderType.getTypeList()));
+  }
+
+  /**
+   * 회원 나이대 타입 목록 조회
+   *
+   * @return 요청 결과
+   */
+  @GetMapping(value = "/age-range/type/list")
+  public ResponseEntity<?> doGetAgeRangeTypeList() {
+    return ResponseEntity.ok(new ListResponse(AgeRangeType.getTypeList()));
   }
 
   /**

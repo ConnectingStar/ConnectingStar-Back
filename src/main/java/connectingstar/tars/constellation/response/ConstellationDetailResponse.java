@@ -31,13 +31,9 @@ public class ConstellationDetailResponse {
    */
   private final String identity;
   /**
-   * 별자리 이미지
+   * 이미지
    */
   private final String image;
-  /**
-   * 캐릭터 이미지
-   */
-  private final String characterImage;
   /**
    * 별 개수
    */
@@ -52,8 +48,7 @@ public class ConstellationDetailResponse {
     this.name = constellation.getName();
     this.story = constellation.getStory();
     this.identity = constellation.getIdentity();
-    this.image = constellation.getImage();
-    this.characterImage = constellation.getCharacterImage();
+    this.image = progressStatus == ConstellationProgressStatus.COMPLETE ? constellation.getCharacterImage() : constellation.getImage();
     this.starCount = constellation.getStarCount();
     this.progressStatus = progressStatus.getCode();
   }

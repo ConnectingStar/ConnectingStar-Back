@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 사용자 조회 서비스
+ * 회원 조회 서비스
  *
  * @author 송병선
  */
@@ -42,7 +42,7 @@ public class UserQueryService {
    */
   @Transactional(readOnly = true)
   public User getUser() {
-    return userRepository.findById(UserUtils.getUser().getUserId())
+    return userRepository.findById(UserUtils.getUserId())
         .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
   }
 
