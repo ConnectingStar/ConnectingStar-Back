@@ -25,7 +25,7 @@ public class QuitListResponse {
     /**
      * 사용자 PK
      */
-    private final Long userId;
+    private final Integer userId;
 
 
     /**
@@ -73,7 +73,7 @@ public class QuitListResponse {
      */
     private final LocalDateTime quitDate;
 
-    public QuitListResponse(Integer quitHabitId, Long userId, String userNickname, LocalTime runTime,
+    public QuitListResponse(Integer quitHabitId, Integer userId, String userNickname, LocalTime runTime,
                                  String place, String action, Integer value, Integer restValue, String reasonOfQuit,
                                  LocalDateTime startDate, LocalDateTime quitDate) {
         this.quitHabitId = quitHabitId;

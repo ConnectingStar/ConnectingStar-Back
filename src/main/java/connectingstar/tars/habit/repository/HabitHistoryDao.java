@@ -35,9 +35,9 @@ public class HabitHistoryDao {
 
   private static BooleanExpression isSameDate(HistoryCreateCheckRequest param,
       QHabitHistory habitHistory) {
-    return habitHistory.runDate.year().eq(param.getDate().getYear())
-        .and(habitHistory.runDate.month().eq(param.getDate().getMonthValue()))
-        .and(habitHistory.runDate.dayOfMonth().eq(param.getDate().getDayOfMonth()));
+    return habitHistory.runDate.year().eq(param.getReferenceDate().getYear())
+        .and(habitHistory.runDate.month().eq(param.getReferenceDate().getMonthValue()))
+        .and(habitHistory.runDate.dayOfMonth().eq(param.getReferenceDate().getDayOfMonth()));
   }
 
   /**

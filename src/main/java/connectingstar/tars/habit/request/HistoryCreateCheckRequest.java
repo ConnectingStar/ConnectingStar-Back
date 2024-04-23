@@ -29,6 +29,6 @@ public class HistoryCreateCheckRequest {
      * 조회 기준 날짜
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    private LocalDate referenceDate;
 
 }

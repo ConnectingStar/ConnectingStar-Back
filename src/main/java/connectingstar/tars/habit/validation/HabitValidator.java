@@ -79,7 +79,7 @@ public class HabitValidator {
      * 특정기간 습관 기록 생성여부 조회 요청 검증
      */
     public void validate(HistoryCreateCheckRequest param) {
-        validateNull(param.getDate(), PARAM_DATE_EMPTY);
+        validateNull(param.getReferenceDate(), PARAM_DATE_EMPTY);
         validateNull(param.getUserId(), USER_NOT_FOUND);
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
     }

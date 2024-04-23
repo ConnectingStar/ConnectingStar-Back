@@ -96,7 +96,7 @@ public class HabitController {
      * @param param 습관월간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
-    @GetMapping(value = "/history/month")
+    @GetMapping(value = "/history/monthly")
     public ResponseEntity<?> doGetHistoryMonthlyList(HistoryListRequest param){
         HabitValidator.validate(param);
         return ResponseEntity.ok(habitHistoryQueryService.getMonthList(param));
