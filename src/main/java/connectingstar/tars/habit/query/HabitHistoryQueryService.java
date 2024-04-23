@@ -47,7 +47,7 @@ public class HabitHistoryQueryService {
      */
     public List<HistoryListResponse> getWeeklyList(HistoryListRequest param) {
         LocalDate referenceDate = param.getReferenceDate();
-        LocalDate thisWeekSunday = referenceDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        LocalDate thisWeekSunday = referenceDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDateTime startDateTime = thisWeekSunday.atStartOfDay();
         LocalDate thisWeekSat = thisWeekSunday.plusDays(DAYS_TO_ADD);
         LocalDateTime endDateTime = thisWeekSat.atTime(23, 59, 59);

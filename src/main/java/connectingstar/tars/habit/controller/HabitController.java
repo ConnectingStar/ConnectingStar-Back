@@ -4,6 +4,7 @@ import connectingstar.tars.habit.command.HabitHistoryCommandService;
 import connectingstar.tars.habit.command.RunHabitCommandService;
 import connectingstar.tars.habit.query.HabitHistoryQueryService;
 import connectingstar.tars.habit.query.QuitHabitQueryService;
+import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.*;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class HabitController {
     private final HabitHistoryCommandService habitHistoryCommandService;
     private final QuitHabitQueryService quitHabitQueryService;
     private final HabitHistoryQueryService habitHistoryQueryService;
+    private final RunHabitQueryService runHabitQueryService;
 
     /**
      * 진행중인 습관 생성
@@ -52,6 +54,18 @@ public class HabitController {
         HabitValidator.validate(param);
         habitHistoryCommandService.saveHistory(param);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    /**
+     *  내 진행중인 습관 조회 (*임시 추후 고치겠습니다)
+     *
+     * @param param 진행중인 습관 조회를 위한 위한 유저 ID
+     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     */
+    @GetMapping
+    public ResponseEntity<?> doGetRunList(RunListRequest param) {
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(runHabitQueryService.getList(param));
     }
 
     /**

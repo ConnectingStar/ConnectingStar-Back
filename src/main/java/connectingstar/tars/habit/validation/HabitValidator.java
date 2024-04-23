@@ -58,6 +58,13 @@ public class HabitValidator {
     }
 
     /**
+     * 진행중인 습관목록 조회 요청 검증
+     */
+    public void validate(RunListRequest param) {
+        validateNull(param.getUserId(), USER_NOT_FOUND);
+    }
+
+    /**
      * 습관 기록 조회 요청 검증
      */
     public void validate(HistoryGetListRequest param) {
