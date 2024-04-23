@@ -7,7 +7,7 @@ import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
-import connectingstar.tars.habit.request.HabitHistoryPostRequest;
+import connectingstar.tars.habit.request.HistoryPostRequest;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,12 @@ public class HabitHistoryCommandService {
     private final RunHabitRepository runHabitRepository;
     private final UserRepository userRepository;
 
-    public void saveHistoryHabit(HabitHistoryPostRequest param) {
+    /**
+     * 습관기록 저장
+     *
+     * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
+     */
+    public void saveHistory(HistoryPostRequest param) {
         User user = findUserByUserId(param);
 
         checkTodayCreateHistoryHabit(user);
@@ -51,12 +56,13 @@ public class HabitHistoryCommandService {
         habitHistoryRepository.save(build);
     }
 
-    private RunHabit findRunHabitByRunHabitId(HabitHistoryPostRequest param) {
+
+    private RunHabit findRunHabitByRunHabitId(HistoryPostRequest param) {
         return runHabitRepository.findById(param.getRunHabitId()).orElseThrow(()
                 -> new ValidationException(HabitErrorCode.RUN_HABIT_NOT_FOUND));
     }
 
-    private User findUserByUserId(HabitHistoryPostRequest param) {
+    private User findUserByUserId(HistoryPostRequest param) {
         return userRepository.findById(param.getUserId()).orElseThrow(()
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }

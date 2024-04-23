@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class QuitHabitListRequest {
+public class QuitListRequest {
 
     /**
      * 유저 ID

@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RunHabitDeleteRequest {
+public class RunDeleteRequest {
 
     /**
      * 사용자 PK

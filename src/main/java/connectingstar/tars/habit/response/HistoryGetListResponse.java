@@ -1,20 +1,13 @@
 package connectingstar.tars.habit.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-/**
- * 습관 기록 조회 응답
- *
- * @author 김성수
- */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"runDate","achievement","runValue"})
-public class HabitHistoryListResponse {
+public class HistoryGetListResponse {
 
     /**
      * 습관 수행 날짜
@@ -22,18 +15,30 @@ public class HabitHistoryListResponse {
     private final LocalDateTime runDate;
 
     /**
-     * 만족도
+     * 실천한 장소
      */
-    private final Integer achievement;
+    private final String runPlace;
 
     /**
      * 실천량
      */
     private final Integer runValue;
 
-    public HabitHistoryListResponse(LocalDateTime runDate, Integer achievement, Integer runValue) {
+    /**
+     * 단위
+     */
+    private final String unit;
+
+    /**
+     * 느낀점
+     */
+    private final String review;
+
+    public HistoryGetListResponse(LocalDateTime runDate, String runPlace, Integer runValue, String unit, String review) {
         this.runDate = runDate;
-        this.achievement = achievement;
+        this.runPlace = runPlace;
         this.runValue = runValue;
+        this.unit = unit;
+        this.review = review;
     }
 }

@@ -3,7 +3,6 @@ package connectingstar.tars.habit.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.habit.domain.RunHabit;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import lombok.Getter;
 
 
@@ -18,7 +17,7 @@ import java.time.LocalTime;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"runHabitId", "userId","userName","identity", "runTime", "place", "action", "value", "unit", "firstAlert","secondAlert"})
-public class RunHabitPutResponse {
+public class RunPutResponse {
 
 
     /**
@@ -77,7 +76,7 @@ public class RunHabitPutResponse {
      */
     private final LocalTime secondAlert;
 
-    public RunHabitPutResponse(RunHabit runHabit,LocalTime firstAlert,LocalTime secondAlert) {
+    public RunPutResponse(RunHabit runHabit,LocalTime firstAlert,LocalTime secondAlert) {
         this.runHabitId = runHabit.getRunHabitId();
         this.userId = runHabit.getUser().getId();
         this.userNickname = runHabit.getUser().getNickname();
@@ -90,4 +89,5 @@ public class RunHabitPutResponse {
         this.firstAlert = firstAlert;
         this.secondAlert = secondAlert;
     }
+
 }

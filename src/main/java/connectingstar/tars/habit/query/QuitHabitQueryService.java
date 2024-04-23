@@ -1,8 +1,8 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.habit.repository.QuitHabitDao;
-import connectingstar.tars.habit.request.QuitHabitListRequest;
-import connectingstar.tars.habit.response.QuitHabitListResponse;
+import connectingstar.tars.habit.request.QuitListRequest;
+import connectingstar.tars.habit.response.QuitListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +23,10 @@ public class QuitHabitQueryService {
     /**
      * 종료 습관 목록 조회
      *
-     * @return 요청 결과
+     * @param param 종료습관 조회를 위한 위한 유저 ID
+     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
      */
-
-    public List<QuitHabitListResponse> getList(QuitHabitListRequest param) {
+    public List<QuitListResponse> getList(QuitListRequest param) {
         return quitHabitDao.getList(param);
     }
 }

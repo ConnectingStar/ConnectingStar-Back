@@ -7,13 +7,13 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 /**
- * 내 습관 기록 기간 조회 요청
+ * 습관 작성 여부 확인
  *
  * @author 김성수
  */
 @Getter
 @Setter
-public class HabitHistoryListRequest {
+public class HistoryCreateCheckRequest {
 
     /**
      * 유저 ID
@@ -30,4 +30,5 @@ public class HabitHistoryListRequest {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate referenceDate;
+
 }
