@@ -1,7 +1,5 @@
 package connectingstar.tars.user.domain;
 
-import static connectingstar.tars.user.domain.enums.AgeRangeType.AGE_15;
-
 import connectingstar.tars.common.domain.BaseTimeEntity;
 import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.habit.domain.HabitHistory;
