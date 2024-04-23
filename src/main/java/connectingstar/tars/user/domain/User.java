@@ -121,7 +121,6 @@ public class User extends BaseTimeEntity {
   public User(String email, SocialType socialType) {
     this.email = email;
     this.socialType = socialType;
-    this.ageRange = AGE_15;
   }
 
   ///////////////////////////////////////////////////////////
