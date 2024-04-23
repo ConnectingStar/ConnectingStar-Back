@@ -10,10 +10,10 @@ import connectingstar.tars.habit.repository.HabitAlertRepository;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
 import connectingstar.tars.habit.repository.QuitHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
-import connectingstar.tars.habit.request.RunHabitDeleteRequest;
-import connectingstar.tars.habit.request.RunHabitPostRequest;
-import connectingstar.tars.habit.request.RunHabitPutRequest;
-import connectingstar.tars.habit.response.RunHabitPutResponse;
+import connectingstar.tars.habit.request.RunDeleteRequest;
+import connectingstar.tars.habit.request.RunPostRequest;
+import connectingstar.tars.habit.request.RunPutRequest;
+import connectingstar.tars.habit.response.RunPutResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,10 +54,10 @@ public class RunHabitCommandService {
     /**
      * 진행중인 습관 생성
      *
-     * @param param {@link RunHabitPostRequest}
+     * @param param 진행중인 습관 생성을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
      */
     @Transactional
-    public void saveRunHabit(RunHabitPostRequest param) {
+    public void saveRun(RunPostRequest param) {
         User user = findUserByUserId(param.getUserId());
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
@@ -74,6 +74,51 @@ public class RunHabitCommandService {
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         runHabitRepository.save(runHabit);
         //추후 필요시 Return 값 추가 예정
+    }
+
+    /**
+     * 진행중인 습관 수정
+     *
+     * @param param 진행중인 습관 수정을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
+     * @return 입력값을 그대로 반환합니다.(추후 필요한 값만 반환하도록 수정필요)
+     */
+    @Transactional
+    public RunPutResponse updateRun(RunPutRequest param) {
+        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
+
+        runHabit.updateData(param);
+        List<HabitAlert> alerts = runHabit.getAlerts();
+        LocalTime firstAlertTime = updateHabitAlert(param.getFirstAlert(), alerts, FIRST_ALERT_STATUS);
+        LocalTime secondAlertTime = updateHabitAlert(param.getSecondAlert(), alerts, SECOND_ALERT_STATUS);
+        return new RunPutResponse(runHabit, firstAlertTime, secondAlertTime);
+
+    }
+
+    /**
+     * 진행중인 습관 삭제
+     *
+     * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
+     */
+    public void deleteRun(RunDeleteRequest param) {
+        User user = findUserByUserId(param.getUserId());
+        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
+        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
+
+
+        QuitHabit quitHabit = QuitHabit.postQuitHabit()
+            .runTime(runHabit.getRunTime())
+            .user(user)
+            .place(runHabit.getPlace())
+            .action(runHabit.getAction())
+            .value(findValue(habitHistories, NOT_REST))
+            .restValue(findValue(habitHistories, REST))
+            .reasonOfQuit(param.getReason())
+            .startDate(runHabit.getCreatedAt())
+            .quitDate(LocalDateTime.now())
+            .build();
+        quitHabitRepository.save(quitHabit);
+        habitHistoryRepository.deleteAll(habitHistories);
+        runHabitRepository.delete(runHabit);
     }
 
     private User findUserByUserId(Integer userId) {
@@ -108,23 +153,6 @@ public class RunHabitCommandService {
         throw new ValidationException(ALERT_ORDER_NOT_FOUND);
     }
 
-    /**
-     * 진행중인 습관 수정
-     *
-     * @param param {@link RunHabitPutRequest}
-     */
-    @Transactional
-    public RunHabitPutResponse modifyRunHabit(RunHabitPutRequest param) {
-        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
-
-        runHabit.updateData(param);
-        List<HabitAlert> alerts = runHabit.getAlerts();
-        LocalTime firstAlertTime = updateHabitAlert(param.getFirstAlert(), alerts, FIRST_ALERT_STATUS);
-        LocalTime secondAlertTime = updateHabitAlert(param.getSecondAlert(), alerts, SECOND_ALERT_STATUS);
-        return new RunHabitPutResponse(runHabit, firstAlertTime, secondAlertTime);
-
-    }
-
     private RunHabit findRunHabitByRunHabitId(Integer runHabitId) {
         return runHabitRepository.findById(runHabitId).orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
     }
@@ -137,33 +165,6 @@ public class RunHabitCommandService {
                 .orElseThrow(() -> new ValidationException(ALERT_NOT_FOUND));
         habitAlert.updateAlertTime(changeTime);
         return habitAlert.getAlertTime();
-    }
-
-    /**
-     * 진행중인 습관 삭제
-     *
-     * @param param {@link RunHabitDeleteRequest}
-     */
-    public void removeRunHabit(RunHabitDeleteRequest param) {
-        User user = findUserByUserId(param.getUserId());
-        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
-        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
-
-
-        QuitHabit quitHabit = QuitHabit.postQuitHabit()
-                .runTime(runHabit.getRunTime())
-                .user(user)
-                .place(runHabit.getPlace())
-                .action(runHabit.getAction())
-                .value(findValue(habitHistories, NOT_REST))
-                .restValue(findValue(habitHistories, REST))
-                .reasonOfQuit(param.getReason())
-                .startDate(runHabit.getCreatedAt())
-                .quitDate(LocalDateTime.now())
-                .build();
-        quitHabitRepository.save(quitHabit);
-        habitHistoryRepository.deleteAll(habitHistories);
-        runHabitRepository.delete(runHabit);
     }
 
     private Integer findValue(List<HabitHistory> habitHistories, Boolean restValue) {

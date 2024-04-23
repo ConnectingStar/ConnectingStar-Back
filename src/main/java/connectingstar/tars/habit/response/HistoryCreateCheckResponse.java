@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HabitHistoryCreateCheckResponse {
+public class HistoryCreateCheckResponse {
 
     private final Boolean todayWrite;
 
-    public HabitHistoryCreateCheckResponse(Boolean todayWrite) {
+    public HistoryCreateCheckResponse(Boolean todayWrite) {
         this.todayWrite = todayWrite;
     }
 }

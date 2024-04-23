@@ -1,7 +1,7 @@
 package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
-import connectingstar.tars.habit.request.RunHabitPutRequest;
+import connectingstar.tars.habit.request.RunPutRequest;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -108,7 +108,7 @@ public class RunHabit extends Auditable {
         this.alerts.add(habitAlert);
     }
 
-    public void updateData(RunHabitPutRequest param) {
+    public void updateData(RunPutRequest param) {
         this.identity = param.getIdentity() != null ? param.getIdentity() : this.identity;
         this.runTime = param.getRunTime() != null ? param.getRunTime() : this.runTime;
         this.place = param.getPlace() != null ? param.getPlace() : this.place;

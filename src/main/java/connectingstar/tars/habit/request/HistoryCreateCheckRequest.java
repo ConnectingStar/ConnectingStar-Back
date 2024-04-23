@@ -13,13 +13,7 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
-public class HabitHistoryCreateCheckRequest {
-
-    /**
-     * 조회 기준 날짜
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate date;
+public class HistoryCreateCheckRequest {
 
     /**
      * 유저 ID
@@ -30,4 +24,11 @@ public class HabitHistoryCreateCheckRequest {
      * 진행중인 습관 ID
      */
     private Integer runHabitId;
+
+    /**
+     * 조회 기준 날짜
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate date;
+
 }

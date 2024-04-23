@@ -1,6 +1,5 @@
 package connectingstar.tars.habit.request;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,18 +7,24 @@ import lombok.Setter;
 import java.time.LocalTime;
 
 /**
- * 진행중인 습관 생성 요청
+ * 진행중인 습관 수정 요청
  *
  * @author 김성수
  */
 @Getter
 @Setter
-public class RunHabitPostRequest {
+public class RunPutRequest {
+
+
+    /**
+     * 진행중인 습관 ID
+     */
+    private Integer runHabitId;
 
     /**
      * 사용자 PK
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * 정체성

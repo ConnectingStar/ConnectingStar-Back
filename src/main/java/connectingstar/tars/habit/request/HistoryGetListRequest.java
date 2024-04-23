@@ -1,10 +1,8 @@
 package connectingstar.tars.habit.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 /**
  * 내 습관 기록 기간 조회 요청
@@ -13,7 +11,7 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
-public class HabitHistoryListRequest {
+public class HistoryGetListRequest {
 
     /**
      * 유저 ID
@@ -26,8 +24,12 @@ public class HabitHistoryListRequest {
     private Integer runHabitId;
 
     /**
-     * 조회 기준 날짜
+     * 최신,오래된 순 구분
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate referenceDate;
+    private Boolean increase;
+
+    /**
+     * 휴식 여부 구분
+     */
+    private Boolean isRest;
 }

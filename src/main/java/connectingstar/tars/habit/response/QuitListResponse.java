@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"quitHabitId", "userId","userNickname", "runTime", "place", "action", "value", "restValue", "reasonOfQuit","startDate", "quitDate"})
-public class QuitHabitListResponse {
+public class QuitListResponse {
 
     /**
      * 종료한 습관 ID
@@ -73,7 +73,7 @@ public class QuitHabitListResponse {
      */
     private final LocalDateTime quitDate;
 
-    public QuitHabitListResponse(Integer quitHabitId, Long userId, String userNickname, LocalTime runTime,
+    public QuitListResponse(Integer quitHabitId, Long userId, String userNickname, LocalTime runTime,
                                  String place, String action, Integer value, Integer restValue, String reasonOfQuit,
                                  LocalDateTime startDate, LocalDateTime quitDate) {
         this.quitHabitId = quitHabitId;

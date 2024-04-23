@@ -4,8 +4,8 @@ import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.habit.domain.QQuitHabit;
-import connectingstar.tars.habit.request.QuitHabitListRequest;
-import connectingstar.tars.habit.response.QuitHabitListResponse;
+import connectingstar.tars.habit.request.QuitListRequest;
+import connectingstar.tars.habit.response.QuitListResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -28,8 +28,7 @@ public class QuitHabitDao {
    * @param param 조회 조건
    * @return 조회 결과
    */
-
-  public List<QuitHabitListResponse> getList(QuitHabitListRequest param) {
+  public List<QuitListResponse> getList(QuitListRequest param) {
     QQuitHabit quitHabit = QQuitHabit.quitHabit;
 
     return queryFactory
@@ -39,11 +38,11 @@ public class QuitHabitDao {
         .fetch();
   }
 
-  private ConstructorExpression<QuitHabitListResponse> getConstructorExpression() {
+  private ConstructorExpression<QuitListResponse> getConstructorExpression() {
     QQuitHabit quitHabit = QQuitHabit.quitHabit;
 
     return Projections.constructor(
-        QuitHabitListResponse.class,
+        QuitListResponse.class,
         quitHabit.quitHabitId,
         quitHabit.user.id,
         quitHabit.user.nickname,

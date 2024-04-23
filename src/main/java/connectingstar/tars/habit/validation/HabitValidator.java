@@ -25,7 +25,7 @@ public class HabitValidator {
     /**
      * 진행중인 습관 생성 요청 검증
      */
-    public void validate(RunHabitPostRequest param) {
+    public void validate(RunPostRequest param) {
         validateNull(param.getUserId(),PARAM_USER_ID_EMPTY);
         validateNull(param.getIdentity(), PARAM_IDENTITY_EMPTY);
         validateNull(param.getRunTime(), PARAM_RUN_TIME_EMPTY);
@@ -38,7 +38,7 @@ public class HabitValidator {
     /**
      * 오늘 실천한 습관 저장 요청 검증
      */
-    public void validate(HabitHistoryPostRequest param) {
+    public void validate(HistoryPostRequest param) {
         validateNull(param.getUserId(),PARAM_USER_ID_EMPTY);
         validateNull(param.getRunHabitId(),PARAM_RUN_HABIT_ID_EMPTY);
         validateNull(param.getAchievement(),PARAM_ACHIEVEMENT_EMPTY);
@@ -53,14 +53,14 @@ public class HabitValidator {
     /**
      * 종료한 습관 조회 요청 검증
      */
-    public void validate(QuitHabitListRequest param) {
+    public void validate(QuitListRequest param) {
         validateNull(param.getUserId(), USER_NOT_FOUND);
     }
 
     /**
      * 습관 기록 조회 요청 검증
      */
-    public void validate(HabitHistoryGetListRequest param) {
+    public void validate(HistoryGetListRequest param) {
         validateNull(param.getUserId(), USER_NOT_FOUND);
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
         validateNull(param.getIncrease(), PARAM_INCREASE_EMPTY);
@@ -69,13 +69,16 @@ public class HabitValidator {
     /**
      * 습관 기록 기간 조회 요청 검증
      */
-    public void validate(HabitHistoryListRequest param) {
+    public void validate(HistoryListRequest param) {
         validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
         validateNull(param.getUserId(), USER_NOT_FOUND);
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
     }
 
-    public void validate(HabitHistoryCreateCheckRequest param) {
+    /**
+     * 특정기간 습관 기록 생성여부 조회 요청 검증
+     */
+    public void validate(HistoryCreateCheckRequest param) {
         validateNull(param.getDate(), PARAM_DATE_EMPTY);
         validateNull(param.getUserId(), USER_NOT_FOUND);
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);

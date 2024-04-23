@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class HabitHistoryPostRequest {
+public class HistoryPostRequest {
 
     /**
      * 유저 ID
