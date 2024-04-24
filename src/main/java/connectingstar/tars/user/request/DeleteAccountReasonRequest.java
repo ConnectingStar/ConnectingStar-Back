@@ -1,7 +1,5 @@
 package connectingstar.tars.user.request;
 
-import connectingstar.tars.user.domain.enums.GenderType;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,13 +12,13 @@ import lombok.Setter;
 @Setter
 public class DeleteAccountReasonRequest {
 
+  /**
+   * 탈퇴 이유
+   */
   private String reason;
 
-  private GenderType genderType;
-
-  private String ageRange;
-
-  private LocalDateTime createDate;
-
-  private LocalDateTime deleteDate;
+  /**
+   * 삭제 요청 날짜
+   */
+  private String deletedDt;
 }

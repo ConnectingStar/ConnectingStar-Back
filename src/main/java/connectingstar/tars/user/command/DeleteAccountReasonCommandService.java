@@ -1,7 +1,9 @@
 package connectingstar.tars.user.command;
 
 import connectingstar.tars.user.domain.DeleteAccountReason;
-import connectingstar.tars.user.repository.UserOutRepository;
+import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.query.UserQueryService;
+import connectingstar.tars.user.repository.DeleteAccountReasonRepository;
 import connectingstar.tars.user.request.DeleteAccountReasonRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,17 +18,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeleteAccountReasonCommandService {
 
-  private final UserOutRepository userOutRepository;
+  private final UserQueryService userQueryService;
+  private final DeleteAccountReasonRepository deleteAccountReasonRepository;
 
   public void saveDeleteAccountReason(DeleteAccountReasonRequest param) {
+    User user = userQueryService.getUser();
 
     DeleteAccountReason deleteAccountReason = DeleteAccountReason.builder()
         .reason(param.getReason())
-        .ageRange(param.getAgeRange())
-        .genderType(param.getGenderType())
-        .createDate(param.getCreateDate())
-        .deleteDate(param.getDeleteDate())
+        .ageRange(user.getAgeRange())
+        .genderType(user.getGender())
+        .createdDt(String.valueOf(user.getCreatedDt()))
+        .deletedDt(param.getDeletedDt())
         .build();
-    userOutRepository.save(deleteAccountReason);
+    deleteAccountReasonRepository.save(deleteAccountReason);
   }
 }

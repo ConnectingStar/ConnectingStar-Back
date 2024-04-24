@@ -224,6 +224,12 @@ public class UserController {
     return ResponseEntity.ok(userCommandService.getUserStar());
   }
 
+  /**
+   * 유저 탈퇴 이휴
+   *
+   * @param param 이유, 성별, 나이대, 계성 생성날짜, 계정 삭제날짜
+   * @return 요청결과
+   */
   @PostMapping(value = "/deleteAccountReason")
   public ResponseEntity<?> postDeleteAccountReason(@RequestBody DeleteAccountReasonRequest param) {
     deleteAccountReasonCommandService.saveDeleteAccountReason(param);
