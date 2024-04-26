@@ -19,6 +19,10 @@ public class ConstellationDetailResponse {
    */
   private final Integer constellationId;
   /**
+   * 별자리(캐릭터) 타입 이름
+   */
+  private final String typeName;
+  /**
    * 이름
    */
   private final String name;
@@ -45,6 +49,7 @@ public class ConstellationDetailResponse {
 
   public ConstellationDetailResponse(Constellation constellation, ConstellationProgressStatus progressStatus) {
     this.constellationId = constellation.getConstellationId();
+    this.typeName = constellation.getType().getName();
     this.name = constellation.getName();
     this.story = constellation.getStory();
     this.identity = constellation.getIdentity();
