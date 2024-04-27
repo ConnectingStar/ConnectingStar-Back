@@ -56,7 +56,7 @@ public class User extends BaseTimeEntity {
    * 연령대
    */
   @Convert(converter = AgeRangeType.TypeCodeConverter.class)
-  @Column(name = "age_range", nullable = false)
+  @Column(name = "age_range")
   private AgeRangeType ageRange;
   /**
    * 정체성
@@ -84,7 +84,7 @@ public class User extends BaseTimeEntity {
    */
   @Convert(converter = GenderType.TypeCodeConverter.class)
   @Column(name = "gender")
-  private GenderType gender = GenderType.NONE;
+  private GenderType gender;
 
   ///////////////////////////////////////////////////////////
   // Relations
