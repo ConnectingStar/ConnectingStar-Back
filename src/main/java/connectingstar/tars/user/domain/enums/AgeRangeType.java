@@ -28,8 +28,7 @@ public enum AgeRangeType implements Codable {
   AGE_40("F", "40-44"),
   AGE_45("G", "45-49"),
   AGE_50("H", "50-54"),
-  AGE_55("I", "55 이상"),
-  NONE("N", "선택 안 함");
+  AGE_55("I", "55 이상");
 
   private final String code;
   private final String name;
