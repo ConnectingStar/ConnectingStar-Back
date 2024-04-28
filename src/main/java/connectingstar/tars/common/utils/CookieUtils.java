@@ -1,13 +1,11 @@
 package connectingstar.tars.common.utils;
 
-import org.springframework.http.ResponseCookie;
-
-import java.util.Objects;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import lombok.experimental.UtilityClass;
+import org.springframework.http.ResponseCookie;
 
 
 /**
@@ -50,7 +48,7 @@ public class CookieUtils {
    */
   public void setCookie(String name, String value, Integer age, HttpServletResponse response) {
     ResponseCookie cookie =
-        ResponseCookie.from(name, value).path("/").sameSite("None").httpOnly(true).secure(false).maxAge(age).build();
+        ResponseCookie.from(name, value).path("/").sameSite("None").httpOnly(true).secure(true).maxAge(age).build();
 
     response.addHeader("Set-Cookie", cookie.toString());
   }
