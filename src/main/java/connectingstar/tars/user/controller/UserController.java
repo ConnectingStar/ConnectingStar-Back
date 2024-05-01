@@ -1,5 +1,6 @@
 package connectingstar.tars.user.controller;
 
+import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.common.response.ListResponse;
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.user.command.DeleteAccountReasonCommandService;
@@ -85,8 +86,7 @@ public class UserController {
   public ResponseEntity<?> doPutConstellationStar(@RequestBody UserConstellationStarRequest param) {
     UserValidator.validate(param);
 
-    userConstellationCommandService.update(param);
-    return ResponseEntity.ok(new SuccessResponse());
+    return ResponseEntity.ok(new DataResponse(userConstellationCommandService.update(param)));
   }
 
   /**

@@ -16,6 +16,7 @@ import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.response.UserConstellationResponse;
+import connectingstar.tars.user.response.UserConstellationStarResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -58,7 +59,7 @@ public class UserConstellationCommandService {
    * @param param 등록 정보
    */
   @Transactional
-  public void update(UserConstellationStarRequest param) {
+  public UserConstellationStarResponse update(UserConstellationStarRequest param) {
     User user = userQueryService.getUser();
     // 사용자 별 개수 존재여부 체크
     verifyStarCount(user);
@@ -68,6 +69,8 @@ public class UserConstellationCommandService {
     // 별 개수 수정
     userConstellation.updateStarCount(userConstellation.getStarCount() + 1);
     user.updateStar();
+
+    return new UserConstellationStarResponse(userConstellation.getRegYn());
   }
 
   private UserConstellation getUserConstellation(Integer constellationId) {
