@@ -33,6 +33,7 @@ public class UserQueryService {
     @Transactional(readOnly = true)
     public UserOnboardCheckResponse getOnboard() {
         User userByUserId = userHabitCommandService.findUserByUserId();
+        System.out.println(userByUserId.getOnboard());
         return new UserOnboardCheckResponse(userByUserId.getOnboard());
     }
 

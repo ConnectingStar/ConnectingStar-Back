@@ -84,12 +84,6 @@ public class UserController {
         return ResponseEntity.ok(new DataResponse(userConstellationCommandService.update(param)));
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> doGetTest() {
-
-        return ResponseEntity.ok(new SuccessResponse());
-    }
-
     /**
      * 온보딩 데이터 입력 API
      *
@@ -109,7 +103,7 @@ public class UserController {
      * @return 요청 결과
      */
     @GetMapping(value = "/check-onboarding")
-    public ResponseEntity<?> doPostOnboarding() {
+    public ResponseEntity<?> doCheckOnboarding() {
         return new ResponseEntity<>(userQueryService.getOnboard(), HttpStatus.OK);
     }
 

@@ -13,6 +13,7 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.request.RunDeleteRequest;
 import connectingstar.tars.habit.request.RunPostRequest;
 import connectingstar.tars.habit.request.RunPutRequest;
+import connectingstar.tars.habit.response.RunPostResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
@@ -54,7 +55,7 @@ public class RunHabitCommandService {
      * @param param 진행중인 습관 생성을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
      */
     @Transactional
-    public void saveRun(RunPostRequest param) {
+    public RunPostResponse saveRun(RunPostRequest param) {
         User user = findUserByUserId(param.getUserId());
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
@@ -70,7 +71,7 @@ public class RunHabitCommandService {
         runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         runHabitRepository.save(runHabit);
-        //추후 필요시 Return 값 추가 예정
+        return new RunPostResponse(runHabit.getRunHabitId());
     }
 
     /**
