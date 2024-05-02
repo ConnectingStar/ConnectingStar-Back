@@ -23,9 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Objects;
 
-import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.*;
+import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 
 /**
  * 진행중인 습관의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -38,13 +37,11 @@ import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.*;
 public class RunHabitCommandService {
 
     public static final int FIRST_ALERT_STATUS = 1;
-    public static final boolean ALERT_ON = true;
-    public static final int FIRST_ALERT_DEFAULT = 10;
     public static final int SECOND_ALERT_STATUS = 2;
-    public static final int SECOND_ALERT_DEFAULT = 30;
     public static final boolean NOT_REST = false;
     public static final boolean REST = true;
 
+    private final HabitAlertCommandService habitAlertCommandService;
     private final RunHabitRepository runHabitRepository;
     private final HabitAlertRepository habitAlertRepository;
     private final QuitHabitRepository quitHabitRepository;
@@ -68,8 +65,8 @@ public class RunHabitCommandService {
                 .value(param.getValue())
                 .unit(param.getUnit())
                 .build();
-        HabitAlert firstHabitAlert = makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
-        HabitAlert secondHabitAlert = makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
+        HabitAlert firstHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
+        HabitAlert secondHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
         runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         runHabitRepository.save(runHabit);
@@ -88,8 +85,10 @@ public class RunHabitCommandService {
 
         runHabit.updateData(param);
         List<HabitAlert> alerts = runHabit.getAlerts();
-        LocalTime firstAlertTime = updateHabitAlert(param.getFirstAlert(), alerts, FIRST_ALERT_STATUS);
-        LocalTime secondAlertTime = updateHabitAlert(param.getSecondAlert(), alerts, SECOND_ALERT_STATUS);
+        LocalTime firstAlertTime
+                = habitAlertCommandService.updateHabitAlert(param.getFirstAlert(), alerts, FIRST_ALERT_STATUS);
+        LocalTime secondAlertTime
+                = habitAlertCommandService.updateHabitAlert(param.getSecondAlert(), alerts, SECOND_ALERT_STATUS);
         return new RunPutResponse(runHabit, firstAlertTime, secondAlertTime);
 
     }
@@ -106,16 +105,16 @@ public class RunHabitCommandService {
 
 
         QuitHabit quitHabit = QuitHabit.postQuitHabit()
-            .runTime(runHabit.getRunTime())
-            .user(user)
-            .place(runHabit.getPlace())
-            .action(runHabit.getAction())
-            .value(findValue(habitHistories, NOT_REST))
-            .restValue(findValue(habitHistories, REST))
-            .reasonOfQuit(param.getReason())
-            .startDate(runHabit.getCreatedAt())
-            .quitDate(LocalDateTime.now())
-            .build();
+                .runTime(runHabit.getRunTime())
+                .user(user)
+                .place(runHabit.getPlace())
+                .action(runHabit.getAction())
+                .value(findValue(habitHistories, NOT_REST))
+                .restValue(findValue(habitHistories, REST))
+                .reasonOfQuit(param.getReason())
+                .startDate(runHabit.getCreatedAt())
+                .quitDate(LocalDateTime.now())
+                .build();
         quitHabitRepository.save(quitHabit);
         habitHistoryRepository.deleteAll(habitHistories);
         runHabitRepository.delete(runHabit);
@@ -126,45 +125,8 @@ public class RunHabitCommandService {
                 new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
-    private HabitAlert makeAlert(RunHabit runHabit,LocalTime runTime, LocalTime alert, int alertStatus) {
-        if(alert != null){
-            return HabitAlert.postHabitAlert()
-                    .runHabit(runHabit)
-                    .alertOrder(alertStatus)
-                    .alertTime(alert)
-                    .alertStatus(ALERT_ON)
-                    .build();
-        } else {
-            return HabitAlert.postHabitAlert()
-                    .runHabit(runHabit)
-                    .alertOrder(alertStatus)
-                    .alertTime(changeDefaultTime(runTime,alertStatus))
-                    .alertStatus(ALERT_ON)
-                    .build();
-        }
-    }
-
-    private LocalTime changeDefaultTime(LocalTime runTime, int alertStatus) {
-        if(alertStatus == FIRST_ALERT_STATUS){
-            return runTime.minusMinutes(FIRST_ALERT_DEFAULT);
-        } else if(alertStatus == SECOND_ALERT_STATUS){
-            return runTime.plusMinutes(SECOND_ALERT_DEFAULT);
-        }
-        throw new ValidationException(ALERT_ORDER_NOT_FOUND);
-    }
-
     private RunHabit findRunHabitByRunHabitId(Integer runHabitId) {
         return runHabitRepository.findById(runHabitId).orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
-    }
-
-    private LocalTime updateHabitAlert(LocalTime changeTime, List<HabitAlert> alerts , Integer alertOrder) {
-        HabitAlert habitAlert = alerts
-                .stream()
-                .filter(alert -> Objects.equals(alert.getAlertOrder(), alertOrder))
-                .findFirst()
-                .orElseThrow(() -> new ValidationException(ALERT_NOT_FOUND));
-        habitAlert.updateAlertTime(changeTime);
-        return habitAlert.getAlertTime();
     }
 
     private Integer findValue(List<HabitHistory> habitHistories, Boolean restValue) {
