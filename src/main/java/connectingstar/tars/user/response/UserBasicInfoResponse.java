@@ -11,9 +11,11 @@ public class UserBasicInfoResponse {
   String identity;
   String profileCharacter;
 
-  public UserBasicInfoResponse(String nickname, String identity, String profileCharacter) {
+  public UserBasicInfoResponse(String nickname, String identity
+      //, String profileCharacter
+  ) {
     this.nickname = nickname;
     this.identity = identity;
-    this.profileCharacter = profileCharacter;
+    //this.profileCharacter = profileCharacter;
   }
 }
