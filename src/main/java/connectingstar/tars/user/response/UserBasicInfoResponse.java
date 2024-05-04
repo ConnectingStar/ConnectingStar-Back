@@ -7,13 +7,15 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserBasicInfoResponse {
 
+  Integer userId;
   String nickname;
   String identity;
   String profileCharacter;
 
-  public UserBasicInfoResponse(String nickname, String identity
+  public UserBasicInfoResponse(Integer userId, String nickname, String identity
       //, String profileCharacter
   ) {
+    this.userId = userId;
     this.nickname = nickname;
     this.identity = identity;
     //this.profileCharacter = profileCharacter;

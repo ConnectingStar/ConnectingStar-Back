@@ -63,7 +63,7 @@ public class UserCommandService {
    */
   public UserBasicInfoResponse getUserBasicInfo() {
     User getUser = userQueryService.getUser();
-    return new UserBasicInfoResponse(getUser.getNickname(), getUser.getIdentity()
+    return new UserBasicInfoResponse(getUser.getId(), getUser.getNickname(), getUser.getIdentity()
         //, getUser.getConstellation().getCharacterImage()
     );
   }
@@ -74,7 +74,7 @@ public class UserCommandService {
   public Object getUserBasicInfoAndHabit() {
     User getUser = userQueryService.getUser();
     List<RunHabit> runHabitList = getRunHabit(getUser);
-    return new UserBasicInfoAndHabitResponse(getUser.getNickname(), getUser.getIdentity()
+    return new UserBasicInfoAndHabitResponse(getUser.getId(), getUser.getNickname(), getUser.getIdentity()
         //, getUser.getConstellation().getCharacterImage()
         , runHabitList);
   }
