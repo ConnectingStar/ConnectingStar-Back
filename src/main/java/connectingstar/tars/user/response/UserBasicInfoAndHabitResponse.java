@@ -9,14 +9,16 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserBasicInfoAndHabitResponse {
 
+  Integer userId;
   String nickname;
   String identity;
   String profileCharacter;
   List<RunHabit> runHabitList;
 
-  public UserBasicInfoAndHabitResponse(String nickname, String identity
+  public UserBasicInfoAndHabitResponse(Integer userId, String nickname, String identity
       //, String profileCharacter
       , List<RunHabit> runHabitList) {
+    this.userId = userId;
     this.nickname = nickname;
     this.identity = identity;
     //this.profileCharacter = profileCharacter;
