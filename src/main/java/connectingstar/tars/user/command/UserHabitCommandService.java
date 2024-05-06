@@ -10,6 +10,7 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserDetail;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserOnboardingRequest;
+import connectingstar.tars.user.response.UserOnboardingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,17 +42,18 @@ public class UserHabitCommandService {
      * @param param 등록 정보
      */
     @Transactional
-    public void save(UserOnboardingRequest param) {
+    public UserOnboardingResponse save(UserOnboardingRequest param) {
         User user = findUserByUserId();
         user.updateOnboarding(param);
-        saveRunHabit(param, user);
+        RunHabit runHabit = saveRunHabit(param, user);
+        return new UserOnboardingResponse(user, runHabit);
     }
 
     public User findUserByUserId() {
         return userRepository.findById(findUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }
 
-    private void saveRunHabit(UserOnboardingRequest param, User user) {
+    private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)
@@ -68,6 +70,6 @@ public class UserHabitCommandService {
                 habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
         runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
-        runHabitRepository.save(runHabit);
+        return runHabitRepository.save(runHabit);
     }
 }
