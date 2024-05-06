@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 습관 관련 API
  *
- *  @author 김성수
+ * @author 김성수
  */
 @RequiredArgsConstructor
 @RequestMapping(value = "/habit", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,18 +33,17 @@ public class HabitController {
      * 진행중인 습관 생성
      *
      * @param param 진행중인 습관 생성을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
-     * @return 201 응답
+     * @return 201 응답 RunHabitId
      */
     @PostMapping
     public ResponseEntity<?> doPostRun(@RequestBody RunPostRequest param) {
         HabitValidator.validate(param);
-        runHabitCommandService.saveRun(param);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(runHabitCommandService.saveRun(param), HttpStatus.CREATED);
     }
 
     /**
-     *  습관 기록 생성
+     * 습관 기록 생성
      *
      * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
      * @return 201 응답
@@ -57,19 +56,17 @@ public class HabitController {
     }
 
     /**
-     *  내 진행중인 습관 조회 (*임시 추후 고치겠습니다)
+     * 내 진행중인 습관 조회 (*임시 추후 고치겠습니다)
      *
-     * @param param 진행중인 습관 조회를 위한 위한 유저 ID
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
      */
     @GetMapping
-    public ResponseEntity<?> doGetRunList(RunListRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(runHabitQueryService.getList(param));
+    public ResponseEntity<?> doGetRunList() {
+        return ResponseEntity.ok(runHabitQueryService.getList());
     }
 
     /**
-     *  내 종료 습관 조회
+     * 내 종료 습관 조회
      *
      * @param param 종료습관 조회를 위한 위한 유저 ID
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
@@ -81,7 +78,7 @@ public class HabitController {
     }
 
     /**
-     *  내 습관기록목록 조회
+     * 내 습관기록목록 조회
      *
      * @param param 습관기록목록 조회를 위한 위한 유저 ID,진행중인 습관 ID, 최신,오래된 순 구분, 휴식 여부 구분
      * @return 배열(습관 수행 날짜, 실천한 장소, 실천량, 단위, 느낀점)
@@ -93,37 +90,37 @@ public class HabitController {
     }
 
     /**
-     *  내 습관 주간기록 조회
+     * 내 습관 주간기록 조회
      *
      * @param param 습관주간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/weekly")
-    public ResponseEntity<?> doGetHistoryWeeklyList(HistoryListRequest param){
+    public ResponseEntity<?> doGetHistoryWeeklyList(HistoryListRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(habitHistoryQueryService.getWeeklyList(param));
     }
 
     /**
-     *  내 습관 월간기록 조회
+     * 내 습관 월간기록 조회
      *
      * @param param 습관월간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/monthly")
-    public ResponseEntity<?> doGetHistoryMonthlyList(HistoryListRequest param){
+    public ResponseEntity<?> doGetHistoryMonthlyList(HistoryListRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(habitHistoryQueryService.getMonthList(param));
     }
 
     /**
-     *  특정 날짜 습관기록 생성여부 조회
+     * 특정 날짜 습관기록 생성여부 조회
      *
      * @param param 습관주간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/check")
-    public ResponseEntity<?> doGetCreateCheck(HistoryCreateCheckRequest param){
+    public ResponseEntity<?> doGetCreateCheck(HistoryCreateCheckRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(habitHistoryQueryService.checkTodayCreate(param));
     }

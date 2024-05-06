@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.habit.domain.RunHabit;
 import lombok.Getter;
 
-
 import java.time.LocalTime;
 
 /**
@@ -16,7 +15,7 @@ import java.time.LocalTime;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"runHabitId", "userId","userName","identity", "runTime", "place", "action", "value", "unit", "firstAlert","secondAlert"})
+@JsonPropertyOrder({"runHabitId", "userId", "userName", "identity", "runTime", "place", "action", "value", "unit", "firstAlert", "secondAlert"})
 public class RunPutResponse {
 
 
@@ -76,7 +75,7 @@ public class RunPutResponse {
      */
     private final LocalTime secondAlert;
 
-    public RunPutResponse(RunHabit runHabit,LocalTime firstAlert,LocalTime secondAlert) {
+    public RunPutResponse(RunHabit runHabit, LocalTime firstAlert, LocalTime secondAlert) {
         this.runHabitId = runHabit.getRunHabitId();
         this.userId = runHabit.getUser().getId();
         this.userNickname = runHabit.getUser().getNickname();
@@ -88,6 +87,20 @@ public class RunPutResponse {
         this.unit = runHabit.getUnit();
         this.firstAlert = firstAlert;
         this.secondAlert = secondAlert;
+    }
+
+    public RunPutResponse(RunHabit runHabit) {
+        this.runHabitId = runHabit.getRunHabitId();
+        this.userId = runHabit.getUser().getId();
+        this.userNickname = runHabit.getUser().getNickname();
+        this.identity = runHabit.getIdentity();
+        this.runTime = runHabit.getRunTime();
+        this.place = runHabit.getPlace();
+        this.action = runHabit.getAction();
+        this.value = runHabit.getValue();
+        this.unit = runHabit.getUnit();
+        this.firstAlert = runHabit.getAlerts().get(0).getAlertTime();
+        this.secondAlert = runHabit.getAlerts().get(1).getAlertTime();
     }
 
 }
