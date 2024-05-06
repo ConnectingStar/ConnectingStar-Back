@@ -17,8 +17,9 @@ public class TimeInfo {
 
     public TimeInfo(LocalTime time) {
         Integer hour = time.getHour();
+        String minute = String.valueOf(time.getMinute());
         this.noon = time.getHour() <= 12 ? AM : PM;
         this.hour = String.valueOf(hour).length() == 1 ? "0" + String.valueOf(hour).length() : String.valueOf(hour);
-        this.minute = String.valueOf(time.getMinute());
+        this.minute = minute.length() == 1 ? "0" + minute : minute;
     }
 }
