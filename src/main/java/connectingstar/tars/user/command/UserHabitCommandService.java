@@ -61,6 +61,7 @@ public class UserHabitCommandService {
                 .value(param.getValue())
                 .unit(param.getUnit())
                 .build();
+        user.updateIdentity(param.getIdentity());
         HabitAlert firstHabitAlert =
                 habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
         HabitAlert secondHabitAlert =

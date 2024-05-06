@@ -157,6 +157,10 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
     }
 
+    public void updateIdentity(String identity) {
+        this.identity = identity;
+    }
+
     public void updateGender(GenderType genderType) {
         this.gender = genderType;
     }
