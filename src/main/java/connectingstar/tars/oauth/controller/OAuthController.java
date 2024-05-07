@@ -1,9 +1,12 @@
 package connectingstar.tars.oauth.controller;
 
 import connectingstar.tars.common.config.JwtProperties;
+import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.common.utils.CookieUtils;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.oauth.domain.enums.SocialType;
+import connectingstar.tars.oauth.response.OAuthLoginResponse;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.oauth.validation.OAuthValidator;
 import jakarta.servlet.http.HttpServletResponse;
@@ -70,7 +73,7 @@ public class OAuthController {
     CookieUtils.setCookie(jwtProperties.cookieName(),
         oauthService.login(SocialType.fromCode(socialType), authCode),
         24 * 60 * 60, response);
-    return ResponseEntity.ok(new SuccessResponse());
+    return ResponseEntity.ok(new DataResponse(new OAuthLoginResponse(UserUtils.getUser().getOnboard())));
   }
 
   /**
