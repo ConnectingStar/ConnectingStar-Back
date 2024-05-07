@@ -13,6 +13,7 @@ import connectingstar.tars.user.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -58,7 +59,9 @@ public class OAuthService {
       user = Optional.of(userRepository.save(new User(userInfo.email(), socialType)));
     }
 
-    return jwtService.generateToken(user.get());
+    String accessToken = jwtService.generateToken(user.get());
+    SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessToken));
+    return accessToken;
   }
 
   /**

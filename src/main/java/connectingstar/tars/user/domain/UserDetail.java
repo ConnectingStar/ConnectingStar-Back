@@ -33,6 +33,10 @@ public class UserDetail implements UserDetails {
    */
   private final Integer star;
   /**
+   * 온보딩 통과 여부
+   */
+  private final Boolean onboard;
+  /**
    * 프로필로 설정한 별자리
    */
   private final Constellation constellation;
@@ -43,6 +47,7 @@ public class UserDetail implements UserDetails {
     this.nickname = user.getNickname();
     this.socialType = user.getSocialType();
     this.star = user.getStar();
+    this.onboard = user.getOnboard();
     this.constellation = user.getConstellation();
   }
 
