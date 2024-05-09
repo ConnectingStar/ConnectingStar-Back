@@ -1,5 +1,6 @@
 package connectingstar.tars.constellation.controller;
 
+import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.common.response.ListResponse;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.constellation.query.ConstellationTypeQueryService;
@@ -49,7 +50,7 @@ public class ConstellationController {
   public ResponseEntity<?> doGetMain(@RequestParam(required = false) Integer constellationId) {
     ConstellationValidator.validate(constellationId);
 
-    return ResponseEntity.ok(constellationQueryService.getMain(constellationId));
+    return ResponseEntity.ok(new DataResponse(constellationQueryService.getMain(constellationId)));
   }
 
   /**
@@ -62,7 +63,7 @@ public class ConstellationController {
   public ResponseEntity<?> doGetOne(@RequestParam(required = false) Integer constellationId) {
     ConstellationValidator.validate(constellationId);
 
-    return ResponseEntity.ok(constellationQueryService.getOne(constellationId));
+    return ResponseEntity.ok(new DataResponse(constellationQueryService.getOne(constellationId)));
   }
 
   /**
