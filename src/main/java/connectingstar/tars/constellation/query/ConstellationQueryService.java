@@ -96,9 +96,9 @@ public class ConstellationQueryService {
             !it.getRegYn())
         .findFirst();
 
-    ConstellationProgressStatus progressStatus = getProgressStatus(userConstellation.get(), constellationId);
-
-    return new ConstellationDetailResponse(getConstellation(constellationId), progressStatus);
+    return userConstellation.map(constellation -> new ConstellationDetailResponse(getConstellation(constellationId),
+            getProgressStatus(constellation, constellationId)))
+        .orElseGet(() -> new ConstellationDetailResponse(getConstellation(constellationId), ConstellationProgressStatus.SELECT));
   }
 
   /**
@@ -109,16 +109,11 @@ public class ConstellationQueryService {
    * @return 별자리 진행 상태
    */
   private ConstellationProgressStatus getProgressStatus(UserConstellation userConstellation, Integer constellationId) {
-    if (Objects.isNull(userConstellation)) {
-      // 해금 시작 가능
-      return ConstellationProgressStatus.SELECT;
+    if (userConstellation.getConstellation().getConstellationId().equals(constellationId)) {
+      return userConstellation.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
     } else {
-      if (userConstellation.getConstellation().getConstellationId().equals(constellationId)) {
-        return userConstellation.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
-      } else {
-        // 다른 별자리 해금 진행 중
-        return ConstellationProgressStatus.OTHER;
-      }
+      // 다른 별자리 해금 진행 중
+      return ConstellationProgressStatus.OTHER;
     }
   }
 
