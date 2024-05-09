@@ -45,10 +45,8 @@ public class UserConstellationCommandService {
     User user = userQueryService.getUser();
     Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
 
-    // 이미 저장된 별자리인지 체크
-    verifyDuplicate(user.getUserConstellationList(), param.getConstellationId());
-    // 현재 진행중인 별자리가 존재하는지 체크
-    verifyAlreadyProgress(user.getUserConstellationList());
+    // 별자리 중복, 진행중인 별자리 존재 여부 검증
+    verifyConstellation(user.getUserConstellationList(), param.getConstellationId());
 
     user.addUserConstellation(new UserConstellation(constellation));
   }
@@ -96,24 +94,22 @@ public class UserConstellationCommandService {
   }
 
   /**
-   * 현재 진행중인 별자리가 존재하는지 체크
+   * 별자리 중복, 진행중인 별자리 존재 여부 검증
    *
    * @param constellationList 회원 별자리 목록
    */
-  private void verifyAlreadyProgress(List<UserConstellation> constellationList) {
-    boolean isExist = constellationList.stream().anyMatch(it -> it.getRegYn().equals(Boolean.FALSE));
-
-    if (isExist) {
-      throw new ValidationException(USER_CONSTELLATION_ALREADY_PROGRESS);
-    }
-  }
-
-  private void verifyDuplicate(List<UserConstellation> constellationList, Integer constellationId) {
-    boolean isExist =
-        constellationList.stream().anyMatch(it -> it.getConstellation().getConstellationId().equals(constellationId));
-
-    if (isExist) {
-      throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
+  private void verifyConstellation(List<UserConstellation> constellationList, Integer constellationId) {
+    for (UserConstellation constellation : constellationList) {
+      if (constellation.getConstellation().getConstellationId().equals(constellationId)) {
+        // 별자리 중복 검증
+        if (constellation.getRegYn()) {
+          throw new ValidationException(USER_CONSTELLATION_DUPLICATE);
+        }
+      }
+      // 진행중인 별자리 존재 여부 검증
+      if (!constellation.getRegYn()) {
+        throw new ValidationException(USER_CONSTELLATION_ALREADY_PROGRESS);
+      }
     }
   }
 
