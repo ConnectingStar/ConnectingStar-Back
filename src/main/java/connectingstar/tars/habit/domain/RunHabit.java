@@ -36,8 +36,8 @@ public class RunHabit extends Auditable {
     /**
      * 사용자 PK
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "user_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /**
@@ -104,17 +104,17 @@ public class RunHabit extends Auditable {
         this.unit = unit;
     }
 
-    public void addAlert(HabitAlert habitAlert){
+    public void addAlert(HabitAlert habitAlert) {
         this.alerts.add(habitAlert);
     }
 
     public void updateData(RunPutRequest param) {
         this.identity = param.getIdentity() != null ? param.getIdentity() : this.identity;
-        this.runTime = param.getRunTime() != null ? param.getRunTime() : this.runTime;
+        this.runTime = param.getRunTime() != null ? param.getRunTime().toLocalTime() : this.runTime;
         this.place = param.getPlace() != null ? param.getPlace() : this.place;
-        this.action = param.getAction() != null ? param.getAction() : this.action;
-        this.value = param.getValue() != null ? param.getValue() : this.value;
-        this.unit = param.getUnit() != null ? param.getUnit() : this.unit;
+        this.action = param.getBehavior() != null ? param.getBehavior() : this.action;
+        this.value = param.getBehaviorValue() != null ? param.getBehaviorValue() : this.value;
+        this.unit = param.getBehaviorUnit() != null ? param.getBehaviorUnit() : this.unit;
 
     }
 }

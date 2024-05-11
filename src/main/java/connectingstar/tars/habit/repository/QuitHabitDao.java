@@ -50,6 +50,7 @@ public class QuitHabitDao {
                 quitHabit.place,
                 quitHabit.action,
                 quitHabit.value,
+                quitHabit.unit,
                 quitHabit.restValue,
                 quitHabit.reasonOfQuit,
                 quitHabit.startDate,

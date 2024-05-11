@@ -34,7 +34,7 @@ public class HistoryPostRequest {
     /**
      * 실천량
      */
-    private Integer runValue;
+    private Integer behaviorValue;
 
     /**
      * 느낀점

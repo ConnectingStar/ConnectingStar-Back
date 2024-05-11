@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"runDate","achievement","runValue"})
+@JsonPropertyOrder({"runDate", "achievement", "runValue"})
 public class HistoryListResponse {
 
     /**
@@ -29,11 +29,11 @@ public class HistoryListResponse {
     /**
      * 실천량
      */
-    private final Integer runValue;
+    private final Integer behaviorValue;
 
-    public HistoryListResponse(LocalDateTime runDate, Integer achievement, Integer runValue) {
+    public HistoryListResponse(LocalDateTime runDate, Integer achievement, Integer behaviorValue) {
         this.runDate = runDate;
         this.achievement = achievement;
-        this.runValue = runValue;
+        this.behaviorValue = behaviorValue;
     }
 }
