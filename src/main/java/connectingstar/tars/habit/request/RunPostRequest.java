@@ -16,10 +16,6 @@ import java.time.LocalTime;
 @Setter
 public class RunPostRequest {
 
-    /**
-     * 사용자 PK
-     */
-    private Integer userId;
 
     /**
      * 정체성

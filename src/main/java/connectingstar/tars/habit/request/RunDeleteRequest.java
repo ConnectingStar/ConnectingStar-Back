@@ -13,11 +13,6 @@ import lombok.Setter;
 public class RunDeleteRequest {
 
     /**
-     * 사용자 PK
-     */
-    private Integer userId;
-
-    /**
      * 진행중인 습관 ID
      */
     private Integer runHabitId;
