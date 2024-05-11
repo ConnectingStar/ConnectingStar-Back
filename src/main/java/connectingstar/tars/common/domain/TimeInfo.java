@@ -19,7 +19,15 @@ public class TimeInfo {
         Integer hour = time.getHour();
         String minute = String.valueOf(time.getMinute());
         this.noon = time.getHour() <= 12 ? AM : PM;
-        this.hour = String.valueOf(hour).length() == 1 ? "0" + String.valueOf(hour).length() : String.valueOf(hour);
+        if (noon.equals(PM)) hour -= 12;
+        this.hour = String.valueOf(hour).length() == 1 ? "0" + hour : String.valueOf(hour);
         this.minute = minute.length() == 1 ? "0" + minute : minute;
+    }
+
+    public LocalTime toLocalTime() {
+        LocalTime localTime = LocalTime.of(Integer.parseInt(this.hour), Integer.parseInt(this.minute));
+        if (noon.equals(PM)) {
+            return localTime.plusHours(12);
+        } else return localTime;
     }
 }

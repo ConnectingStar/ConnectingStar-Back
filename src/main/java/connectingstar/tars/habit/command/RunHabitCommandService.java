@@ -59,14 +59,14 @@ public class RunHabitCommandService {
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)
-                .runTime(param.getRunTime())
+                .runTime(param.getRunTime().toLocalTime())
                 .place(param.getPlace())
-                .action(param.getAction())
-                .value(param.getValue())
-                .unit(param.getUnit())
+                .action(param.getBehavior())
+                .value(param.getBehaviorValue())
+                .unit(param.getBehaviorUnit())
                 .build();
-        HabitAlert firstHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
-        HabitAlert secondHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
+        HabitAlert firstHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getFirstAlert().toLocalTime(), FIRST_ALERT_STATUS);
+        HabitAlert secondHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getSecondAlert().toLocalTime(), SECOND_ALERT_STATUS);
         runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         runHabitRepository.save(runHabit);
@@ -86,9 +86,9 @@ public class RunHabitCommandService {
         runHabit.updateData(param);
         List<HabitAlert> alerts = runHabit.getAlerts();
         LocalTime firstAlertTime
-                = habitAlertCommandService.updateHabitAlert(param.getFirstAlert(), alerts, FIRST_ALERT_STATUS);
+                = habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts, FIRST_ALERT_STATUS);
         LocalTime secondAlertTime
-                = habitAlertCommandService.updateHabitAlert(param.getSecondAlert(), alerts, SECOND_ALERT_STATUS);
+                = habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS);
         return new RunPutResponse(runHabit, firstAlertTime, secondAlertTime);
 
     }
@@ -109,6 +109,7 @@ public class RunHabitCommandService {
                 .place(runHabit.getPlace())
                 .action(runHabit.getAction())
                 .value(findValue(habitHistories, NOT_REST))
+                .unit(runHabit.getUnit())
                 .restValue(findValue(habitHistories, REST))
                 .reasonOfQuit(param.getReason())
                 .startDate(runHabit.getCreatedAt())

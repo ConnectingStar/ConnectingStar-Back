@@ -50,17 +50,17 @@ public class UserHabitCommandService {
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)
-                .runTime(param.getRunTime())
+                .runTime(param.getRunTime().toLocalTime())
                 .place(param.getPlace())
-                .action(param.getAction())
-                .value(param.getValue())
-                .unit(param.getUnit())
+                .action(param.getBehavior())
+                .value(param.getBehaviorValue())
+                .unit(param.getBehaviorUnit())
                 .build();
         user.updateIdentity(param.getIdentity());
         HabitAlert firstHabitAlert =
-                habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
+                habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getFirstAlert().toLocalTime(), FIRST_ALERT_STATUS);
         HabitAlert secondHabitAlert =
-                habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
+                habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getSecondAlert().toLocalTime(), SECOND_ALERT_STATUS);
         runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         return runHabitRepository.save(runHabit);
