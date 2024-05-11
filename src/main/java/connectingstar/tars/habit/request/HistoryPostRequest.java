@@ -14,10 +14,6 @@ import lombok.Setter;
 @Setter
 public class HistoryPostRequest {
 
-    /**
-     * 유저 ID
-     */
-    private Integer userId;
 
     /**
      * 진행중인 습관 ID

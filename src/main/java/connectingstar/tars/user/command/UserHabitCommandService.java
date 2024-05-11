@@ -1,18 +1,17 @@
 package connectingstar.tars.user.command;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.command.HabitAlertCommandService;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.HabitAlertRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.user.domain.User;
-import connectingstar.tars.user.domain.UserDetail;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserOnboardingRequest;
 import connectingstar.tars.user.response.UserOnboardingResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +28,6 @@ public class UserHabitCommandService {
     private final HabitAlertRepository habitAlertRepository;
     private final RunHabitRepository runHabitRepository;
 
-    private static Integer findUserId() {
-        UserDetail details = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (details != null) {
-            return details.getUserId();
-        } else throw new ValidationException(USER_NOT_FOUND);
-    }
 
     /**
      * 온보딩 정보 등록
@@ -50,7 +43,7 @@ public class UserHabitCommandService {
     }
 
     public User findUserByUserId() {
-        return userRepository.findById(findUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+        return userRepository.findById(UserUtils.getUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }
 
     private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {

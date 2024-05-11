@@ -2,6 +2,7 @@ package connectingstar.tars.habit.command;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.UserErrorCode;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
@@ -100,7 +101,7 @@ public class RunHabitCommandService {
      * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
      */
     public void deleteRun(RunDeleteRequest param) {
-        User user = findUserByUserId(param.getUserId());
+        User user = findUserByUserId(UserUtils.getUserId());
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
 
