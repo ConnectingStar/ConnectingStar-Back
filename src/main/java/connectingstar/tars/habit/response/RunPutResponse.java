@@ -2,6 +2,7 @@ package connectingstar.tars.habit.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import connectingstar.tars.common.domain.TimeInfo;
 import connectingstar.tars.habit.domain.RunHabit;
 import lombok.Getter;
 
@@ -43,7 +44,7 @@ public class RunPutResponse {
     /**
      * 실천 시간
      */
-    private final LocalTime runTime;
+    private final TimeInfo runTime;
 
     /**
      * 장소
@@ -53,40 +54,40 @@ public class RunPutResponse {
     /**
      * 행동
      */
-    private final String action;
+    private final String behavior;
 
     /**
      * 얼마나
      */
-    private final Integer value;
+    private final Integer behaviorValue;
 
     /**
      * 단위
      */
-    private final String unit;
+    private final String behaviorUnit;
 
     /**
      * 1차 알림
      */
-    private final LocalTime firstAlert;
+    private final TimeInfo firstAlert;
 
     /**
      * 2차 알림
      */
-    private final LocalTime secondAlert;
+    private final TimeInfo secondAlert;
 
     public RunPutResponse(RunHabit runHabit, LocalTime firstAlert, LocalTime secondAlert) {
         this.runHabitId = runHabit.getRunHabitId();
         this.userId = runHabit.getUser().getId();
         this.userNickname = runHabit.getUser().getNickname();
         this.identity = runHabit.getIdentity();
-        this.runTime = runHabit.getRunTime();
+        this.runTime = new TimeInfo(runHabit.getRunTime());
         this.place = runHabit.getPlace();
-        this.action = runHabit.getAction();
-        this.value = runHabit.getValue();
-        this.unit = runHabit.getUnit();
-        this.firstAlert = firstAlert;
-        this.secondAlert = secondAlert;
+        this.behavior = runHabit.getAction();
+        this.behaviorValue = runHabit.getValue();
+        this.behaviorUnit = runHabit.getUnit();
+        this.firstAlert = new TimeInfo(firstAlert);
+        this.secondAlert = new TimeInfo(secondAlert);
     }
 
     public RunPutResponse(RunHabit runHabit) {
@@ -94,13 +95,13 @@ public class RunPutResponse {
         this.userId = runHabit.getUser().getId();
         this.userNickname = runHabit.getUser().getNickname();
         this.identity = runHabit.getIdentity();
-        this.runTime = runHabit.getRunTime();
+        this.runTime = new TimeInfo(runHabit.getRunTime());
         this.place = runHabit.getPlace();
-        this.action = runHabit.getAction();
-        this.value = runHabit.getValue();
-        this.unit = runHabit.getUnit();
-        this.firstAlert = runHabit.getAlerts().get(0).getAlertTime();
-        this.secondAlert = runHabit.getAlerts().get(1).getAlertTime();
+        this.behavior = runHabit.getAction();
+        this.behaviorValue = runHabit.getValue();
+        this.behaviorUnit = runHabit.getUnit();
+        this.firstAlert = new TimeInfo(runHabit.getAlerts().get(0).getAlertTime());
+        this.secondAlert = new TimeInfo(runHabit.getAlerts().get(1).getAlertTime());
     }
 
 }

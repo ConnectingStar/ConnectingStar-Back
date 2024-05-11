@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -41,7 +42,7 @@ public class HabitHistoryCommandService {
     public void saveHistory(HistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
-        checkTodayCreateHistoryHabit(user);
+        checkTodayCreateHistoryHabit(user, param.getRunHabitId());
 
         RunHabit runHabit = findRunHabitByRunHabitId(param);
         HabitHistory build = HabitHistory.builder()
@@ -51,7 +52,7 @@ public class HabitHistoryCommandService {
                 .review(param.getReview())
                 .runDate(LocalDateTime.now())
                 .runPlace(param.getRunPlace())
-                .runValue(param.getRunValue())
+                .runValue(param.getBehaviorValue())
                 .isRest(param.getIsRest())
                 .build();
         habitHistoryRepository.save(build);
@@ -68,9 +69,10 @@ public class HabitHistoryCommandService {
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
-    private void checkTodayCreateHistoryHabit(User user) {
+    private void checkTodayCreateHistoryHabit(User user, Integer runHabitId) {
         Optional<HabitHistory> recentHistory = user.getHabitHistories()
                 .stream()
+                .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), runHabitId))
                 .sorted(Comparator.comparingInt(HabitHistory::getHabitHistoryId).reversed())
                 .findFirst();
         if (recentHistory.isPresent()) {

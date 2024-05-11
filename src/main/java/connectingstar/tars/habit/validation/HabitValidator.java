@@ -29,9 +29,9 @@ public class HabitValidator {
         validateNull(param.getIdentity(), PARAM_IDENTITY_EMPTY);
         validateNull(param.getRunTime(), PARAM_RUN_TIME_EMPTY);
         validateNull(param.getPlace(), PARAM_PLACE_EMPTY);
-        validateNull(param.getAction(), PARAM_ACTION_EMPTY);
-        validateNull(param.getValue(), PARAM_VALUE_EMPTY);
-        validateNull(param.getUnit(), PARAM_UNIT_EMPTY);
+        validateNull(param.getBehavior(), PARAM_ACTION_EMPTY);
+        validateNull(param.getBehaviorValue(), PARAM_VALUE_EMPTY);
+        validateNull(param.getBehaviorUnit(), PARAM_UNIT_EMPTY);
     }
 
     /**
@@ -41,7 +41,7 @@ public class HabitValidator {
         validateNull(param.getRunHabitId(), PARAM_RUN_HABIT_ID_EMPTY);
         validateNull(param.getAchievement(), PARAM_ACHIEVEMENT_EMPTY);
         validateNull(param.getRunPlace(), PARAM_PLACE_EMPTY);
-        validateNull(param.getRunValue(), PARAM_VALUE_EMPTY);
+        validateNull(param.getBehaviorValue(), PARAM_VALUE_EMPTY);
         validateNull(param.getReview(), PARAM_REVIEW_EMPTY);
         validateNull(param.getIsRest(), PARAM_IS_REST_EMPTY);
 
