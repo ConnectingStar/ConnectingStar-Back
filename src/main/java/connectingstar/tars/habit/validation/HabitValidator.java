@@ -26,7 +26,6 @@ public class HabitValidator {
      * 진행중인 습관 생성 요청 검증
      */
     public void validate(RunPostRequest param) {
-        validateNull(param.getUserId(), PARAM_USER_ID_EMPTY);
         validateNull(param.getIdentity(), PARAM_IDENTITY_EMPTY);
         validateNull(param.getRunTime(), PARAM_RUN_TIME_EMPTY);
         validateNull(param.getPlace(), PARAM_PLACE_EMPTY);

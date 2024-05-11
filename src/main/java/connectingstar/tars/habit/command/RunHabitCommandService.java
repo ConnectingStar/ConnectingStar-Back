@@ -7,10 +7,7 @@ import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
-import connectingstar.tars.habit.repository.HabitAlertRepository;
-import connectingstar.tars.habit.repository.HabitHistoryRepository;
-import connectingstar.tars.habit.repository.QuitHabitRepository;
-import connectingstar.tars.habit.repository.RunHabitRepository;
+import connectingstar.tars.habit.repository.*;
 import connectingstar.tars.habit.request.RunDeleteRequest;
 import connectingstar.tars.habit.request.RunPostRequest;
 import connectingstar.tars.habit.request.RunPutRequest;
@@ -45,6 +42,7 @@ public class RunHabitCommandService {
 
     private final HabitAlertCommandService habitAlertCommandService;
     private final RunHabitRepository runHabitRepository;
+    private final RunHabitDao runHabitDao;
     private final HabitAlertRepository habitAlertRepository;
     private final QuitHabitRepository quitHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
@@ -57,7 +55,7 @@ public class RunHabitCommandService {
      */
     @Transactional
     public RunPostResponse saveRun(RunPostRequest param) {
-        User user = findUserByUserId(param.getUserId());
+        User user = findUserByUserId(UserUtils.getUserId());
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)
@@ -102,9 +100,8 @@ public class RunHabitCommandService {
      */
     public void deleteRun(RunDeleteRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
-        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
+        RunHabit runHabit = runHabitDao.checkUserId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
-
 
         QuitHabit quitHabit = QuitHabit.postQuitHabit()
                 .runTime(runHabit.getRunTime())
