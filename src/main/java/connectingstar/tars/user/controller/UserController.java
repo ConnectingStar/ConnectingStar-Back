@@ -7,8 +7,6 @@ import connectingstar.tars.user.command.DeleteAccountReasonCommandService;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.command.UserConstellationCommandService;
 import connectingstar.tars.user.command.UserHabitCommandService;
-import connectingstar.tars.user.domain.enums.AgeRangeType;
-import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.query.UserConstellationQueryService;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.request.DeleteAccountReasonRequest;
@@ -208,26 +206,6 @@ public class UserController {
   @GetMapping(value = "/basic-info-habit")
   public ResponseEntity<?> getUserBasicInfoAndHabit() {
     return ResponseEntity.ok(new DataResponse(userCommandService.getUserBasicInfoAndHabit()));
-  }
-
-  /**
-   * 회원 성별 타입 목록 조회
-   *
-   * @return 요청 결과
-   */
-  @GetMapping(value = "/gender/type/list")
-  public ResponseEntity<?> doGetGenderTypeList() {
-    return ResponseEntity.ok(new ListResponse(GenderType.getTypeList()));
-  }
-
-  /**
-   * 회원 나이대 타입 목록 조회
-   *
-   * @return 요청 결과
-   */
-  @GetMapping(value = "/age-range/type/list")
-  public ResponseEntity<?> doGetAgeRangeTypeList() {
-    return ResponseEntity.ok(new ListResponse(AgeRangeType.getTypeList()));
   }
 
   /**

@@ -43,14 +43,12 @@ public class ConstellationController {
   /**
    * 별자리 메인 페이지 정보 조회
    *
-   * @param constellationId 별자리 ID
    * @return 별자리 메인 페이지 정보
    */
   @GetMapping("/main")
-  public ResponseEntity<?> doGetMain(@RequestParam(required = false) Integer constellationId) {
-    ConstellationValidator.validate(constellationId);
+  public ResponseEntity<?> doGetMain() {
 
-    return ResponseEntity.ok(new DataResponse(constellationQueryService.getMain(constellationId)));
+    return ResponseEntity.ok(new DataResponse(constellationQueryService.getMain()));
   }
 
   /**
