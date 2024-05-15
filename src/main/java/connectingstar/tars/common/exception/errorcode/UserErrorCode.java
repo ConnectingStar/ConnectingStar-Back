@@ -27,6 +27,7 @@ public enum UserErrorCode implements ErrorCode {
    * not found
    */
   USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "회원 정보를 찾을 수 없습니다."),
+  USER_IDENTITY_NOT_FOUNT(HttpStatus.BAD_REQUEST, "대표 정체성을 가진 습관을 찾을 수 없습니다."),
 
   /**
    * duplicate

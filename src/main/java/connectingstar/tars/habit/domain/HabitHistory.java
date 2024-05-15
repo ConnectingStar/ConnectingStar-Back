@@ -76,14 +76,8 @@ public class HabitHistory extends Auditable {
     @Column(name = "run_value",nullable = false)
     private Integer runValue;
 
-    /**
-     * 휴식 여부
-     */
-    @Column(name = "is_rest",nullable = false)
-    private Boolean isRest;
-
     @Builder
-    public HabitHistory(Integer habitHistoryId, User user, RunHabit runHabit, Integer achievement, String review, LocalDateTime runDate, String runPlace, Integer runValue, Boolean isRest) {
+    public HabitHistory(Integer habitHistoryId, User user, RunHabit runHabit, Integer achievement, String review, LocalDateTime runDate, String runPlace, Integer runValue) {
         this.habitHistoryId = habitHistoryId;
         this.user = user;
         this.runHabit = runHabit;
@@ -92,6 +86,5 @@ public class HabitHistory extends Auditable {
         this.runDate = runDate;
         this.runPlace = runPlace;
         this.runValue = runValue;
-        this.isRest = isRest;
     }
 }

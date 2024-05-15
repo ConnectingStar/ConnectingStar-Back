@@ -40,9 +40,4 @@ public class HistoryPostRequest {
      * 느낀점
      */
     private String review;
-
-    /**
-     * 휴식여부
-     */
-    private Boolean isRest;
 }
