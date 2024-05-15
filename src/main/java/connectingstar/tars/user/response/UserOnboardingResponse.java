@@ -79,8 +79,8 @@ public class UserOnboardingResponse {
 
     public UserOnboardingResponse(User user, RunHabit runHabit) {
         this.nickname = user.getNickname();
-        this.genderType = user.getGender().getName();
-        this.ageRangeType = user.getAgeRange().getName();
+        this.genderType = user.getGender().getCode();
+        this.ageRangeType = user.getAgeRange().getCode();
         this.referrer = user.getReferrer();
         this.identity = user.getIdentity();
         this.runTime = new TimeInfo(runHabit.getRunTime());

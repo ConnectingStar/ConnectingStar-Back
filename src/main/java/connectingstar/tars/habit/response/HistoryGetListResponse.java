@@ -27,18 +27,18 @@ public class HistoryGetListResponse {
     /**
      * 단위
      */
-    private final String unit;
+    private final String behaviorUnit;
 
     /**
      * 느낀점
      */
     private final String review;
 
-    public HistoryGetListResponse(LocalDateTime runDate, String runPlace, Integer runValue, String unit, String review) {
+    public HistoryGetListResponse(LocalDateTime runDate, String runPlace, Integer runValue, String behaviorUnit, String review) {
         this.runDate = runDate;
         this.runPlace = runPlace;
         this.runValue = runValue;
-        this.unit = unit;
+        this.behaviorUnit = behaviorUnit;
         this.review = review;
     }
 }

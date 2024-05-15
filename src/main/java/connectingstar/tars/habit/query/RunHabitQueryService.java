@@ -1,7 +1,6 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.habit.domain.RunHabit;
-import connectingstar.tars.habit.repository.RunHabitDao;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.response.RunPutResponse;
 import connectingstar.tars.user.command.UserHabitCommandService;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RunHabitQueryService {
 
-    private final RunHabitDao runHabitDao;
     private final RunHabitRepository runHabitRepository;
     private final UserHabitCommandService userHabitCommandService;
 

@@ -33,8 +33,8 @@ public class QuitHabit extends Auditable {
     /**
      * 사용자 PK
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "user_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /**
@@ -62,6 +62,13 @@ public class QuitHabit extends Auditable {
     private Integer value;
 
     /**
+     * 단위
+     */
+    @Column(name = "unit", nullable = false)
+    private String unit;
+
+
+    /**
      * 휴식 실천횟수
      */
     @Column(name = "rest_value", nullable = false)
@@ -86,12 +93,13 @@ public class QuitHabit extends Auditable {
     private LocalDateTime quitDate;
 
     @Builder(builderMethodName = "postQuitHabit")
-    public QuitHabit(LocalTime runTime,User user, String place, String action, Integer value, Integer restValue, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
+    public QuitHabit(LocalTime runTime, User user, String place, String action, Integer value, String unit, Integer restValue, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
         this.runTime = runTime;
         this.user = user;
         this.place = place;
         this.action = action;
         this.value = value;
+        this.unit = unit;
         this.restValue = restValue;
         this.reasonOfQuit = reasonOfQuit;
         this.startDate = startDate;

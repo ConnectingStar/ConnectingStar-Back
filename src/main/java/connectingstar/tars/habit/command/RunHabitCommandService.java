@@ -2,14 +2,12 @@ package connectingstar.tars.habit.command;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.UserErrorCode;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
-import connectingstar.tars.habit.repository.HabitAlertRepository;
-import connectingstar.tars.habit.repository.HabitHistoryRepository;
-import connectingstar.tars.habit.repository.QuitHabitRepository;
-import connectingstar.tars.habit.repository.RunHabitRepository;
+import connectingstar.tars.habit.repository.*;
 import connectingstar.tars.habit.request.RunDeleteRequest;
 import connectingstar.tars.habit.request.RunPostRequest;
 import connectingstar.tars.habit.request.RunPutRequest;
@@ -44,6 +42,7 @@ public class RunHabitCommandService {
 
     private final HabitAlertCommandService habitAlertCommandService;
     private final RunHabitRepository runHabitRepository;
+    private final RunHabitDao runHabitDao;
     private final HabitAlertRepository habitAlertRepository;
     private final QuitHabitRepository quitHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
@@ -56,18 +55,18 @@ public class RunHabitCommandService {
      */
     @Transactional
     public RunPostResponse saveRun(RunPostRequest param) {
-        User user = findUserByUserId(param.getUserId());
+        User user = findUserByUserId(UserUtils.getUserId());
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)
-                .runTime(param.getRunTime())
+                .runTime(param.getRunTime().toLocalTime())
                 .place(param.getPlace())
-                .action(param.getAction())
-                .value(param.getValue())
-                .unit(param.getUnit())
+                .action(param.getBehavior())
+                .value(param.getBehaviorValue())
+                .unit(param.getBehaviorUnit())
                 .build();
-        HabitAlert firstHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
-        HabitAlert secondHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
+        HabitAlert firstHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getFirstAlert().toLocalTime(), FIRST_ALERT_STATUS);
+        HabitAlert secondHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getSecondAlert().toLocalTime(), SECOND_ALERT_STATUS);
         runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         runHabitRepository.save(runHabit);
@@ -87,9 +86,9 @@ public class RunHabitCommandService {
         runHabit.updateData(param);
         List<HabitAlert> alerts = runHabit.getAlerts();
         LocalTime firstAlertTime
-                = habitAlertCommandService.updateHabitAlert(param.getFirstAlert(), alerts, FIRST_ALERT_STATUS);
+                = habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts, FIRST_ALERT_STATUS);
         LocalTime secondAlertTime
-                = habitAlertCommandService.updateHabitAlert(param.getSecondAlert(), alerts, SECOND_ALERT_STATUS);
+                = habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS);
         return new RunPutResponse(runHabit, firstAlertTime, secondAlertTime);
 
     }
@@ -100,10 +99,9 @@ public class RunHabitCommandService {
      * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
      */
     public void deleteRun(RunDeleteRequest param) {
-        User user = findUserByUserId(param.getUserId());
-        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
+        User user = findUserByUserId(UserUtils.getUserId());
+        RunHabit runHabit = runHabitDao.checkUserId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
-
 
         QuitHabit quitHabit = QuitHabit.postQuitHabit()
                 .runTime(runHabit.getRunTime())
@@ -111,6 +109,7 @@ public class RunHabitCommandService {
                 .place(runHabit.getPlace())
                 .action(runHabit.getAction())
                 .value(findValue(habitHistories, NOT_REST))
+                .unit(runHabit.getUnit())
                 .restValue(findValue(habitHistories, REST))
                 .reasonOfQuit(param.getReason())
                 .startDate(runHabit.getCreatedAt())

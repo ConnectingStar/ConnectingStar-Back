@@ -1,18 +1,17 @@
 package connectingstar.tars.user.command;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.command.HabitAlertCommandService;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.HabitAlertRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.user.domain.User;
-import connectingstar.tars.user.domain.UserDetail;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserOnboardingRequest;
 import connectingstar.tars.user.response.UserOnboardingResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +28,6 @@ public class UserHabitCommandService {
     private final HabitAlertRepository habitAlertRepository;
     private final RunHabitRepository runHabitRepository;
 
-    private static Integer findUserId() {
-        UserDetail details = (UserDetail) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (details != null) {
-            return details.getUserId();
-        } else throw new ValidationException(USER_NOT_FOUND);
-    }
 
     /**
      * 온보딩 정보 등록
@@ -50,24 +43,24 @@ public class UserHabitCommandService {
     }
 
     public User findUserByUserId() {
-        return userRepository.findById(findUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+        return userRepository.findById(UserUtils.getUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }
 
     private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)
-                .runTime(param.getRunTime())
+                .runTime(param.getRunTime().toLocalTime())
                 .place(param.getPlace())
-                .action(param.getAction())
-                .value(param.getValue())
-                .unit(param.getUnit())
+                .action(param.getBehavior())
+                .value(param.getBehaviorValue())
+                .unit(param.getBehaviorUnit())
                 .build();
         user.updateIdentity(param.getIdentity());
         HabitAlert firstHabitAlert =
-                habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
+                habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getFirstAlert().toLocalTime(), FIRST_ALERT_STATUS);
         HabitAlert secondHabitAlert =
-                habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
+                habitAlertCommandService.makeAlert(runHabit, param.getRunTime().toLocalTime(), param.getSecondAlert().toLocalTime(), SECOND_ALERT_STATUS);
         runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
         runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
         return runHabitRepository.save(runHabit);

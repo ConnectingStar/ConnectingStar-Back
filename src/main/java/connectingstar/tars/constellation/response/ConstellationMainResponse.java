@@ -51,7 +51,7 @@ public class ConstellationMainResponse {
     /**
      * strokeWidth
      */
-    private BigDecimal strokeWitdh;
+    private BigDecimal strokeWidth;
     /**
      * opacity
      */
@@ -80,7 +80,7 @@ public class ConstellationMainResponse {
     public Svg(ConstellationSvg svg, Integer regStarCount) {
       this.fill = svg.getFill();
       this.stroke = svg.getStroke();
-      this.strokeWitdh = FormatUtils.format(svg.getStrokeWitdh());
+      this.strokeWidth = FormatUtils.format(svg.getStrokeWidth());
       this.opacity = FormatUtils.format(svg.getOpacity());
       this.width = FormatUtils.format(svg.getWidth());
       this.height = FormatUtils.format(svg.getHeight());

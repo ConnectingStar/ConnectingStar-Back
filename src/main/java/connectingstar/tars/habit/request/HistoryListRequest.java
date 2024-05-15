@@ -15,10 +15,6 @@ import java.time.LocalDate;
 @Setter
 public class HistoryListRequest {
 
-    /**
-     * 유저 ID
-     */
-    private Integer userId;
 
     /**
      * 진행중인 습관 ID

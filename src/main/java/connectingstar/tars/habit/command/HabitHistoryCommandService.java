@@ -3,6 +3,7 @@ package connectingstar.tars.habit.command;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.HabitErrorCode;
 import connectingstar.tars.common.exception.errorcode.UserErrorCode;
+import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -38,9 +40,9 @@ public class HabitHistoryCommandService {
      * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
      */
     public void saveHistory(HistoryPostRequest param) {
-        User user = findUserByUserId(param);
+        User user = findUserByUserId(UserUtils.getUserId());
 
-        checkTodayCreateHistoryHabit(user);
+        checkTodayCreateHistoryHabit(user, param.getRunHabitId());
 
         RunHabit runHabit = findRunHabitByRunHabitId(param);
         HabitHistory build = HabitHistory.builder()
@@ -50,7 +52,7 @@ public class HabitHistoryCommandService {
                 .review(param.getReview())
                 .runDate(LocalDateTime.now())
                 .runPlace(param.getRunPlace())
-                .runValue(param.getRunValue())
+                .runValue(param.getBehaviorValue())
                 .isRest(param.getIsRest())
                 .build();
         habitHistoryRepository.save(build);
@@ -62,18 +64,19 @@ public class HabitHistoryCommandService {
                 -> new ValidationException(HabitErrorCode.RUN_HABIT_NOT_FOUND));
     }
 
-    private User findUserByUserId(HistoryPostRequest param) {
-        return userRepository.findById(param.getUserId()).orElseThrow(()
+    private User findUserByUserId(Integer userId) {
+        return userRepository.findById(userId).orElseThrow(()
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
-    private void checkTodayCreateHistoryHabit(User user) {
+    private void checkTodayCreateHistoryHabit(User user, Integer runHabitId) {
         Optional<HabitHistory> recentHistory = user.getHabitHistories()
                 .stream()
+                .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), runHabitId))
                 .sorted(Comparator.comparingInt(HabitHistory::getHabitHistoryId).reversed())
                 .findFirst();
-        if(recentHistory.isPresent()){
-            if(recentHistory.get().getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
+        if (recentHistory.isPresent()) {
+            if (recentHistory.get().getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
                 throw new ValidationException(HabitErrorCode.ALREADY_CREATED_HABIT_HISTORY);
         }
     }

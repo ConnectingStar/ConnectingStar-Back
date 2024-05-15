@@ -1,10 +1,8 @@
 package connectingstar.tars.user.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import connectingstar.tars.common.domain.TimeInfo;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalTime;
 
 
 /**
@@ -45,8 +43,7 @@ public class UserOnboardingRequest {
     /**
      * 실천 시간
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalTime runTime;
+    private TimeInfo runTime;
 
     /**
      * 장소
@@ -56,28 +53,26 @@ public class UserOnboardingRequest {
     /**
      * 행동
      */
-    private String action;
+    private String behavior;
 
     /**
      * 얼마나
      */
-    private Integer value;
+    private Integer behaviorValue;
 
     /**
      * 단위
      */
-    private String unit;
+    private String behaviorUnit;
 
     /**
      * 1차 알림 (값이 없을 시 자동으로 runTime 10분 전으로 설정)
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalTime firstAlert;
+    private TimeInfo firstAlert;
 
     /**
      * 2차 알림 (값이 없을 시 자동으로 runTime 30분 후로 설정)
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-    private LocalTime secondAlert;
+    private TimeInfo secondAlert;
 
 }

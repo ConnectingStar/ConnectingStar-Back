@@ -55,7 +55,7 @@ public class ConstellationSvg {
    * strokeWidth
    */
   @Column(name = "stroke_width", nullable = false)
-  private BigDecimal strokeWitdh;
+  private BigDecimal strokeWidth;
   /**
    * opacity
    */
