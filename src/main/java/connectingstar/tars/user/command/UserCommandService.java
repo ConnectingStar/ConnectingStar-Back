@@ -1,6 +1,7 @@
 package connectingstar.tars.user.command;
 
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_IDENTITY_NOT_FOUNT;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
@@ -26,6 +27,7 @@ import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserHavingConstellationResponse;
 import connectingstar.tars.user.response.UserStarResponse;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,9 +65,9 @@ public class UserCommandService {
    */
   public UserBasicInfoResponse getUserBasicInfo() {
     User getUser = userQueryService.getUser();
-    return new UserBasicInfoResponse(getUser.getId(), getUser.getNickname(), getUser.getIdentity()
-        //, getUser.getConstellation().getCharacterImage()
-    );
+    RunHabit firstRunHabit = getUser.getRunHabits().stream().filter(runHabit -> getUser.getIdentity().equals(runHabit.getIdentity()))
+        .findFirst().orElseThrow(() -> new ValidationException(USER_IDENTITY_NOT_FOUNT));
+    return new UserBasicInfoResponse(getUser,firstRunHabit);
   }
 
   /**

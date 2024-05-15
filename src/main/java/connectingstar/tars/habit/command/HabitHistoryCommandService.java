@@ -37,7 +37,7 @@ public class HabitHistoryCommandService {
     /**
      * 습관기록 저장
      *
-     * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
+     * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
      */
     public void saveHistory(HistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
@@ -53,7 +53,6 @@ public class HabitHistoryCommandService {
                 .runDate(LocalDateTime.now())
                 .runPlace(param.getRunPlace())
                 .runValue(param.getBehaviorValue())
-                .isRest(param.getIsRest())
                 .build();
         habitHistoryRepository.save(build);
     }

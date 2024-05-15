@@ -19,7 +19,7 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 @UtilityClass
 public class HabitValidator {
 
-    public static final int ACHIEVEMENT_MIN = 1;
+    public static final int ACHIEVEMENT_MIN = 0;
     public static final int ACHIEVEMENT_MAX = 5;
 
     /**
@@ -43,7 +43,6 @@ public class HabitValidator {
         validateNull(param.getRunPlace(), PARAM_PLACE_EMPTY);
         validateNull(param.getBehaviorValue(), PARAM_VALUE_EMPTY);
         validateNull(param.getReview(), PARAM_REVIEW_EMPTY);
-        validateNull(param.getIsRest(), PARAM_IS_REST_EMPTY);
 
         validateRange(param.getAchievement(), ACHIEVEMENT_MIN, ACHIEVEMENT_MAX, OUT_OF_ACHIEVEMENT_RANGE);
     }
