@@ -66,21 +66,20 @@ public class ConstellationQueryService {
   /**
    * 별자리 메인 페이지 정보 조회
    *
-   * @param constellationId 별자리 ID
+   * @return 요처 결과
    */
   @Transactional(readOnly = true)
-  public ConstellationMainResponse getMain(Integer constellationId) {
+  public ConstellationMainResponse getMain() {
     User user = userQueryService.getUser(UserUtils.getUserId());
-    Optional<UserConstellation> userConstellation = userQueryService.getUserConstellation(user,
-        constellationId);
-    if (userConstellation.isPresent()) {
-      return new ConstellationMainResponse(user.getStar(),
-          userConstellation.get().getConstellation(),
-          userConstellation.get().getStarCount());
-    } else {
-      Constellation constellation = getConstellation(constellationId);
-      return new ConstellationMainResponse(user.getStar(), constellation, 0);
-    }
+
+    Optional<UserConstellation> userConstellation = user.getUserConstellationList()
+        .stream()
+        .filter(it -> !it.getRegYn())
+        .findFirst();
+
+    return userConstellation.map(constellation -> new ConstellationMainResponse(user.getStar(),
+        constellation.getConstellation(),
+        constellation.getStarCount())).orElseGet(() -> new ConstellationMainResponse(user.getStar(), null, 0));
   }
 
   /**

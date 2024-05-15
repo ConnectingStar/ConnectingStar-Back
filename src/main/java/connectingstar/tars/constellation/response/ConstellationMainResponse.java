@@ -6,6 +6,7 @@ import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.domain.ConstellationSvg;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 
 /**
@@ -20,7 +21,7 @@ public class ConstellationMainResponse {
   /**
    * 보유 별 개수
    */
-  private Integer starCount;
+  private final Integer starCount;
   /**
    * 캐릭터 이름
    */
@@ -29,11 +30,20 @@ public class ConstellationMainResponse {
    * svg 정보
    */
   private Svg svg;
+  /**
+   * 진행중인 별자리 존재여부
+   */
+  private final Boolean isProgress;
 
   public ConstellationMainResponse(Integer starCount, Constellation constellation, Integer regStarCount) {
     this.starCount = starCount;
-    this.name = constellation.getName();
-    this.svg = new Svg(constellation.getSvg(), regStarCount);
+    if (Objects.nonNull(constellation)) {
+      this.name = constellation.getName();
+      this.svg = new Svg(constellation.getSvg(), regStarCount);
+      this.isProgress = true;
+    } else {
+      this.isProgress = false;
+    }
   }
 
   @Getter
