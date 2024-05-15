@@ -30,6 +30,7 @@ import java.util.Optional;
 @Service
 public class HabitHistoryCommandService {
 
+    public static final int REST_VALUE = 0;
     private final HabitHistoryRepository habitHistoryRepository;
     private final RunHabitRepository runHabitRepository;
     private final UserRepository userRepository;
@@ -53,6 +54,7 @@ public class HabitHistoryCommandService {
                 .runDate(LocalDateTime.now())
                 .runPlace(param.getRunPlace())
                 .runValue(param.getBehaviorValue())
+                .isRest(param.getAchievement() == REST_VALUE)
                 .build();
         habitHistoryRepository.save(build);
     }
