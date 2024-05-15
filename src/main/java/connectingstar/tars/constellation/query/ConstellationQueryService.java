@@ -6,7 +6,7 @@ import static connectingstar.tars.common.exception.errorcode.ConstellationErrorC
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.constellation.domain.enums.ConstellationProgressStatus;
+import connectingstar.tars.constellation.domain.enums.ConstellationStatus;
 import connectingstar.tars.constellation.repository.ConstellationDao;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.constellation.repository.ConstellationTypeRepository;
@@ -98,7 +98,7 @@ public class ConstellationQueryService {
 
     return userConstellation.map(constellation -> new ConstellationDetailResponse(getConstellation(constellationId),
             getProgressStatus(constellation, constellationId)))
-        .orElseGet(() -> new ConstellationDetailResponse(getConstellation(constellationId), ConstellationProgressStatus.SELECT));
+        .orElseGet(() -> new ConstellationDetailResponse(getConstellation(constellationId), ConstellationStatus.SELECT));
   }
 
   /**
@@ -108,12 +108,12 @@ public class ConstellationQueryService {
    * @param constellationId   별자리 ID
    * @return 별자리 진행 상태
    */
-  private ConstellationProgressStatus getProgressStatus(UserConstellation userConstellation, Integer constellationId) {
+  private ConstellationStatus getProgressStatus(UserConstellation userConstellation, Integer constellationId) {
     if (userConstellation.getConstellation().getConstellationId().equals(constellationId)) {
-      return userConstellation.getRegYn() ? ConstellationProgressStatus.COMPLETE : ConstellationProgressStatus.PROGRESS;
+      return userConstellation.getRegYn() ? ConstellationStatus.COMPLETE : ConstellationStatus.PROGRESS;
     } else {
       // 다른 별자리 해금 진행 중
-      return ConstellationProgressStatus.OTHER;
+      return ConstellationStatus.OTHER;
     }
   }
 

@@ -2,7 +2,7 @@ package connectingstar.tars.constellation.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.constellation.domain.enums.ConstellationProgressStatus;
+import connectingstar.tars.constellation.domain.enums.ConstellationStatus;
 import lombok.Getter;
 
 /**
@@ -43,18 +43,18 @@ public class ConstellationDetailResponse {
    */
   private final Integer starCount;
   /**
-   * 별 개수
+   * 별자리 상태
    */
-  private final String progressStatus;
+  private final String status;
 
-  public ConstellationDetailResponse(Constellation constellation, ConstellationProgressStatus progressStatus) {
+  public ConstellationDetailResponse(Constellation constellation, ConstellationStatus status) {
     this.constellationId = constellation.getConstellationId();
     this.typeName = constellation.getType().getName();
     this.name = constellation.getName();
     this.story = constellation.getStory();
     this.identity = constellation.getIdentity();
-    this.image = progressStatus == ConstellationProgressStatus.COMPLETE ? constellation.getCharacterImage() : constellation.getImage();
+    this.image = status == ConstellationStatus.COMPLETE ? constellation.getCharacterImage() : constellation.getImage();
     this.starCount = constellation.getStarCount();
-    this.progressStatus = progressStatus.getCode();
+    this.status = status.getCode();
   }
 }
