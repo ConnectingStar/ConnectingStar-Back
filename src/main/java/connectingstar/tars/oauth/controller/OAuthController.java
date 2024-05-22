@@ -53,8 +53,8 @@ public class OAuthController {
    *
    * @param response 응답 객체
    */
-  @GetMapping(value = "/logout")
-  public ResponseEntity<?> doGetLogout(HttpServletResponse response) {
+  @PostMapping(value = "/logout")
+  public ResponseEntity<?> doPostLogout(HttpServletResponse response) {
     CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
     return ResponseEntity.ok(new SuccessResponse());
   }
