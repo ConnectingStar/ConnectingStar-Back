@@ -46,6 +46,6 @@ public class ConstellationListResponse {
     this.name = constellation.getName();
     this.image = status == ConstellationStatus.COMPLETE ? constellation.getCharacterImage() : constellation.getImage();
     this.starCount = constellation.getStarCount();
-    this.status = status.getCode();
+    this.status = status.name();
   }
 }
