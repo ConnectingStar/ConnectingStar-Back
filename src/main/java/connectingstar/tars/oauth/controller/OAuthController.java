@@ -6,6 +6,7 @@ import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.common.utils.CookieUtils;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.oauth.domain.enums.SocialType;
+import connectingstar.tars.oauth.request.OAuthLoginRequest;
 import connectingstar.tars.oauth.response.OAuthLoginResponse;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.oauth.validation.OAuthValidator;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,16 +64,14 @@ public class OAuthController {
   /**
    * 소셜 로그인
    *
-   * @param socialType 소셜 타입
-   * @param authCode   AccessToken을 발급 받기 위한 코드
+   * @param param 요청 파라미터
    */
   @PostMapping(value = "/login")
-  public ResponseEntity<?> doPostLogin(@RequestParam(required = false) String socialType,
-      @RequestParam(required = false) String authCode, HttpServletResponse response) {
-    OAuthValidator.validate(socialType, authCode);
+  public ResponseEntity<?> doPostLogin(@RequestBody OAuthLoginRequest param, HttpServletResponse response) {
+    OAuthValidator.validate(param);
 
     CookieUtils.setCookie(jwtProperties.cookieName(),
-        oauthService.login(SocialType.fromCode(socialType), authCode),
+        oauthService.login(SocialType.fromCode(param.getSocialType()), param.getAuthCode()),
         24 * 60 * 60, response);
     return ResponseEntity.ok(new DataResponse(new OAuthLoginResponse(UserUtils.getUser().getOnboard())));
   }

@@ -7,6 +7,7 @@ import static connectingstar.tars.common.exception.errorcode.OAuthErrorCode.SOCI
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.exception.errorcode.ErrorCode;
 import connectingstar.tars.oauth.domain.enums.SocialType;
+import connectingstar.tars.oauth.request.OAuthLoginRequest;
 import lombok.experimental.UtilityClass;
 import org.springframework.util.StringUtils;
 
@@ -21,13 +22,12 @@ public class OAuthValidator {
   /**
    * 소셜 로그인 요청 유효성 체크
    *
-   * @param socialType 소셜 타입
-   * @param authCode   AccessToken을 발급 받기 위한 코드
+   * @param param 요청 파라미터
    */
-  public void validate(String socialType, String authCode) {
-    validate(socialType);
+  public void validate(OAuthLoginRequest param) {
+    validate(param.getSocialType());
 
-    validateEmpty(authCode, PARAM_AUTH_CODE_EMPTY);
+    validateEmpty(param.getAuthCode(), PARAM_AUTH_CODE_EMPTY);
   }
 
   /**
