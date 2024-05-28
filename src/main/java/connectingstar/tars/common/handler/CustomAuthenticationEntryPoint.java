@@ -28,11 +28,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) {
-
     ErrorResponse errorResponse = new ErrorResponse(UNAUTHORIZED_USER);
     response.setContentType("application/json;charset=UTF-8");
     response.setStatus(errorResponse.status());
-
+    
     try {
       response.getWriter().print(new ObjectMapper().writeValueAsString(errorResponse));
     } catch (Exception e) {

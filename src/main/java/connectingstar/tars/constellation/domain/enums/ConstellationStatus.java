@@ -1,6 +1,5 @@
 package connectingstar.tars.constellation.domain.enums;
 
-import connectingstar.tars.common.domain.enums.Codable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,28 +10,26 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum ConstellationStatus implements Codable {
+public enum ConstellationStatus {
 
   /**
    * 미보유, 특정 별자리 해금 미 진행 중
    */
-  SELECT("S"),
+  SELECT,
   /**
    * 다른 별자리 해금 진행 중
    */
-  OTHER("O"),
+  OTHER,
   /**
    * 진행중인 별자리
    */
-  PROGRESS("P"),
+  PROGRESS,
   /**
    * 해금된 별자리
    */
-  COMPLETE("C"),
+  COMPLETE,
   /**
    * 미보유
    */
-  NONE("N");
-
-  private final String code;
+  NONE
 }
