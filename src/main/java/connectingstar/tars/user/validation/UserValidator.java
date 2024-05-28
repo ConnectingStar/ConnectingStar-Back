@@ -82,6 +82,15 @@ public class UserValidator {
     }
 
     /**
+     * 회원 정체성 수정 유효성 체크
+     *
+     * @param param 요청 파라미터
+     */
+    public void validate(UserIdentityRequest param) {
+        validateEmpty(param.getIdentity(), USER_PARAM_IDENTITY_EMPTY);
+    }
+
+    /**
      * 진행중인 별자리 별 등록 유효성 체크
      *
      * @param param 요청 파라미터

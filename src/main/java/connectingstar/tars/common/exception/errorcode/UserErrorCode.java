@@ -18,6 +18,7 @@ public enum UserErrorCode implements ErrorCode {
    */
   USER_PARAM_ID_EMPTY(HttpStatus.BAD_REQUEST, "회원 ID는 필수 입력값입니다."),
   USER_PARAM_NICKNAME_EMPTY(HttpStatus.BAD_REQUEST, "닉네임은 필수 입력값입니다."),
+  USER_PARAM_IDENTITY_EMPTY(HttpStatus.BAD_REQUEST, "정체성은 필수 입력값입니다."),
   USER_PARAM_GENDER_TYPE_EMPTY(HttpStatus.BAD_REQUEST, "성별 타입은 필수 입력값입니다."),
   USER_PARAM_GENDER_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 성별 타입입니다."),
   USER_PARAM_AGE_RANGE_TYPE_EMPTY(HttpStatus.BAD_REQUEST, "나이대 타입은 필수 입력값입니다."),
