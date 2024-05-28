@@ -10,7 +10,9 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserOnboardingRequest;
+import connectingstar.tars.user.response.UserIdentityInfoResponse;
 import connectingstar.tars.user.response.UserOnboardingResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +48,11 @@ public class UserHabitCommandService {
         return userRepository.findById(UserUtils.getUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }
 
-    private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
+  public List<UserIdentityInfoResponse> getUserIdentityInfo() {
+    return findUserByUserId().getRunHabits().stream().map(habit -> new UserIdentityInfoResponse(habit.getIdentity())).toList();
+  }
+
+  private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())
                 .user(user)

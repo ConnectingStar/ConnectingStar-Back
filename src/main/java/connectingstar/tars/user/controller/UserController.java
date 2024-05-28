@@ -14,6 +14,7 @@ import connectingstar.tars.user.request.UserAgeRangeRequest;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserGenderRequest;
+import connectingstar.tars.user.request.UserIdentityRequest;
 import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.request.UserOnboardingRequest;
 import connectingstar.tars.user.validation.UserValidator;
@@ -145,6 +146,20 @@ public class UserController {
   }
 
   /**
+   * 정체성 수정
+   *
+   * @param param 수정 정보
+   * @return 요청 결과
+   */
+  @PutMapping(value = "/identity")
+  public ResponseEntity<?> doPutIdentity(@RequestBody UserIdentityRequest param) {
+    UserValidator.validate(param);
+
+    userCommandService.update(param);
+    return ResponseEntity.ok(new SuccessResponse());
+  }
+
+  /**
    * 성별 수정
    *
    * @param param 수정 정보
@@ -196,6 +211,16 @@ public class UserController {
   @GetMapping(value = "/basic-info")
   public ResponseEntity<?> getUserBasicInfo() {
     return ResponseEntity.ok(new DataResponse(userCommandService.getUserBasicInfo()));
+  }
+
+  /**
+   * 유저 정체성 리스트 정보 반환
+   *
+   * @return 유저 정체성 리스트
+   */
+  @GetMapping(value = "/identity-info")
+  public ResponseEntity<?> getUserIdentityInfo() {
+    return ResponseEntity.ok(new DataResponse(userHabitCommandService.getUserIdentityInfo()));
   }
 
   /**

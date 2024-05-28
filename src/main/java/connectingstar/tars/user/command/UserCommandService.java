@@ -21,6 +21,7 @@ import connectingstar.tars.user.request.UserAgeRangeRequest;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserGenderRequest;
+import connectingstar.tars.user.request.UserIdentityRequest;
 import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
@@ -132,6 +133,24 @@ public class UserCommandService {
     User user = userQueryService.getUser();
 
     user.updateNickname(param.getNickname());
+  }
+
+  /**
+   * 회원 닉네임 수정
+   *
+   * @param param 수정 정보
+   */
+  @Transactional
+  public void update(UserIdentityRequest param) {
+    User user = userQueryService.getUser();
+
+    user.getRunHabits()
+        .stream()
+        .filter(habit -> habit.getIdentity().equals(param.getIdentity()))
+        .findFirst()
+        .orElseThrow(() -> new ValidationException(USER_IDENTITY_NOT_FOUNT));
+
+    user.updateIdentity(param.getIdentity());
   }
 
   /**
