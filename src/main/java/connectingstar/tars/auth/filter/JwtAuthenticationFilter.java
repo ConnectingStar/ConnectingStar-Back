@@ -1,5 +1,9 @@
 package connectingstar.tars.auth.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import connectingstar.tars.common.response.DataResponse;
+import connectingstar.tars.common.response.ErrorResponse;
+import connectingstar.tars.user.response.UserOnboardCheckResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -34,6 +38,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String accessToken = CookieUtils.getCookie(request, jwtProperties.cookieName());
 
     if (!StringUtils.hasText(accessToken)) {
+      if(request.getRequestURI().equals("/user/check-onboarding")) {
+        writeFalseValue(response);
+        return;
+      }
       filterChain.doFilter(request, response);
       return;
     }
@@ -44,5 +52,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private static void writeFalseValue(HttpServletResponse response) throws IOException {
+    DataResponse dataResponse = new DataResponse(new UserOnboardCheckResponse(false));
+    response.setContentType("application/json;charset=UTF-8");
+    response.setStatus(HttpServletResponse.SC_OK);
+    response.getWriter().print(new ObjectMapper().writeValueAsString(dataResponse));
   }
 }
