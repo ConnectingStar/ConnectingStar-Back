@@ -30,18 +30,23 @@ import org.springframework.stereotype.Component;
 
 /**
  * Jwt 서비스
- *
- * @author 송병선
+ * <p>
+ * 액세스 토큰 및 리프레쉬 토큰 생성, 검증
  */
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtService {
 
+  private Key key;
   private final JwtProperties jwtProperties;
   private final UserQueryService userQueryService;
 
-  private Key key;
+  @PostConstruct
+  public void init() {
+    byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secretKey());
+    this.key = Keys.hmacShaKeyFor(keyBytes);
+  }
 
   /**
    * 엑세스 토큰 생성
@@ -49,13 +54,30 @@ public class JwtService {
    * @param user 회원 엔티티
    * @return 엑세스 토큰
    */
-  public String generateToken(User user) {
+  public String generateAccessToken(User user) {
     final Map<String, Object> claims = Map.of("email", user.getEmail());
     return Jwts.builder()
         .setClaims(claims)
         .setSubject(user.getId().toString())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.accessExpiration()))
+        .signWith(key, SignatureAlgorithm.HS512)
+        .compact();
+  }
+
+  /**
+   * 리프레쉬 토큰 생성
+   *
+   * @param user 회원 엔티티
+   * @return 리프레쉬 토큰
+   */
+  public String generateRefreshToken(User user) {
+    final Map<String, Object> claims = Map.of("email", user.getEmail());
+    return Jwts.builder()
+        .setClaims(claims)
+        .setSubject(user.getId().toString())
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.refreshExpiration()))
         .signWith(key, SignatureAlgorithm.HS512)
         .compact();
   }
@@ -73,13 +95,6 @@ public class JwtService {
     UserDetail userDetail = new UserDetail(userQueryService.getUser(Integer.valueOf(claims.getSubject())));
 
     return new UsernamePasswordAuthenticationToken(userDetail, token, userDetail.getAuthorities());
-  }
-
-  @PostConstruct
-  public void init() {
-    // 시크릿 값을 decode해서 키 변수에 할당
-    byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secretKey());
-    this.key = Keys.hmacShaKeyFor(keyBytes);
   }
 
   /**

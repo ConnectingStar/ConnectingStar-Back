@@ -59,7 +59,7 @@ public class OAuthService {
       user = Optional.of(userRepository.save(new User(userInfo.email(), socialType)));
     }
 
-    String accessToken = jwtService.generateToken(user.get());
+    String accessToken = jwtService.generateAccessToken(user.get());
     SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessToken));
     return accessToken;
   }

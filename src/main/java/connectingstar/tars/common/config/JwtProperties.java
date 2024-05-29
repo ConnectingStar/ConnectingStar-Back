@@ -13,6 +13,8 @@ public record JwtProperties(
     String secretKey,
 
     Long accessExpiration,
+    
+    Long refreshExpiration,
 
     String cookieName) {
 
