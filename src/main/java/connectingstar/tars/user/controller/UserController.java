@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -52,8 +51,15 @@ public class UserController {
   private final UserHabitCommandService userHabitCommandService;
   private final DeleteAccountReasonCommandService deleteAccountReasonCommandService;
 
-  @DeleteMapping
-  public ResponseEntity<?> deleteUser() {
+  /**
+   * 유저 탈퇴 + 탈퇴 이유
+   *
+   * @param param 이유, 성별, 나이대, 계성 생성날짜, 계정 삭제날짜
+   * @return 요청결과
+   */
+  @PostMapping(value = "/withdraw")
+  public ResponseEntity<?> doPostAccountReasonAndDeleteUser(@RequestBody DeleteAccountReasonRequest param) {
+    deleteAccountReasonCommandService.saveDeleteAccountReason(param);
     userCommandService.deleteUser();
     return ResponseEntity.ok(new SuccessResponse());
   }
@@ -254,17 +260,5 @@ public class UserController {
   @GetMapping(value = "/star")
   public ResponseEntity<?> getUserStar() {
     return ResponseEntity.ok(new DataResponse(userCommandService.getUserStar()));
-  }
-
-  /**
-   * 유저 탈퇴 이휴
-   *
-   * @param param 이유, 성별, 나이대, 계성 생성날짜, 계정 삭제날짜
-   * @return 요청결과
-   */
-  @PostMapping(value = "/deleteAccountReason")
-  public ResponseEntity<?> postDeleteAccountReason(@RequestBody DeleteAccountReasonRequest param) {
-    deleteAccountReasonCommandService.saveDeleteAccountReason(param);
-    return ResponseEntity.ok(new SuccessResponse());
   }
 }
