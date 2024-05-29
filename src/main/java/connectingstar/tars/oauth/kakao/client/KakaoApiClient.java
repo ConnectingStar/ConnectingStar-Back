@@ -1,5 +1,9 @@
 package connectingstar.tars.oauth.kakao.client;
 
+import static connectingstar.tars.common.exception.errorcode.OAuthErrorCode.OAUTH_TOKEN_FAIL;
+import static connectingstar.tars.common.exception.errorcode.OAuthErrorCode.OAUTH_USER_FAIL;
+
+import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.oauth.kakao.KakaoOAuthConfig;
 import connectingstar.tars.oauth.kakao.response.KakaoTokenResponse;
 import connectingstar.tars.oauth.response.SocialUserResponse;
@@ -72,8 +76,7 @@ public class KakaoApiClient {
           jsonObject.getInt("refresh_token_expires_in")
       );
     } catch (Exception e) {
-      // TODO: 추후에 변경 예정
-      throw new IllegalArgumentException("system.internal");
+      throw new ValidationException(OAUTH_TOKEN_FAIL);
     }
   }
 
@@ -88,8 +91,7 @@ public class KakaoApiClient {
       JSONObject jsonObject = new JSONObject(resultText);
       return new SocialUserResponse(String.valueOf(jsonObject.getLong("id")));
     } catch (Exception e) {
-      // TODO: 추후에 변경 예정
-      throw new IllegalArgumentException("system.internal");
+      throw new ValidationException(OAUTH_USER_FAIL);
     }
   }
 }
