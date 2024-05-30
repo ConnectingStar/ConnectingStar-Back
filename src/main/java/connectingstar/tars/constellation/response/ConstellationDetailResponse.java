@@ -46,8 +46,12 @@ public class ConstellationDetailResponse {
    * 별자리 상태
    */
   private final String status;
+  /**
+   * 프로빌 등록 여부
+   */
+  private final Boolean isProfile;
 
-  public ConstellationDetailResponse(Constellation constellation, ConstellationStatus status) {
+  public ConstellationDetailResponse(Constellation constellation, ConstellationStatus status, Boolean isProfile) {
     this.constellationId = constellation.getConstellationId();
     this.typeName = constellation.getType().getName();
     this.name = constellation.getName();
@@ -56,5 +60,6 @@ public class ConstellationDetailResponse {
     this.image = status == ConstellationStatus.COMPLETE ? constellation.getCharacterImage() : constellation.getImage();
     this.starCount = constellation.getStarCount();
     this.status = status.name();
+    this.isProfile = isProfile;
   }
 }

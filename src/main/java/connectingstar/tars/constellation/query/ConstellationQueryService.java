@@ -95,9 +95,13 @@ public class ConstellationQueryService {
             !it.getRegYn())
         .findFirst();
 
+    // 프로필 등록 여부
+    Boolean isProfile = Objects.isNull(user.getConstellation()) ? Boolean.FALSE
+        : user.getConstellation().getConstellationId().equals(constellationId) ? Boolean.TRUE : Boolean.FALSE;
+    
     return userConstellation.map(constellation -> new ConstellationDetailResponse(getConstellation(constellationId),
-            getProgressStatus(constellation, constellationId)))
-        .orElseGet(() -> new ConstellationDetailResponse(getConstellation(constellationId), ConstellationStatus.SELECT));
+            getProgressStatus(constellation, constellationId), isProfile))
+        .orElseGet(() -> new ConstellationDetailResponse(getConstellation(constellationId), ConstellationStatus.SELECT, isProfile));
   }
 
   /**
