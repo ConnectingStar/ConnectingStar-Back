@@ -18,6 +18,11 @@ public class DeleteAccountReasonRequest {
   private String reason;
 
   /**
+   * 탈퇴 상세 사유
+   */
+  private String content;
+
+  /**
    * 삭제 요청 날짜
    */
   private String deletedDt;

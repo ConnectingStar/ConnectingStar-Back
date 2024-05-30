@@ -31,6 +31,8 @@ public class DeleteAccountReason {
    */
   private String reason;
 
+  private String content;
+
   /**
    * 성별 남(M),여(W),선택안함(N)
    */
@@ -56,10 +58,11 @@ public class DeleteAccountReason {
   private String deletedDt;
 
   @Builder
-  public DeleteAccountReason(String reason, GenderType genderType, AgeRangeType ageRange,
+  public DeleteAccountReason(String reason, String content, GenderType genderType, AgeRangeType ageRange,
       String createdDt,
       String deletedDt) {
     this.reason = reason;
+    this.content = content;
     this.genderType = genderType;
     this.ageRange = ageRange;
     this.createdDt = createdDt;
