@@ -71,16 +71,16 @@ public class JwtService {
    * @param user 회원 엔티티
    * @return 리프레쉬 토큰
    */
-  public String generateRefreshToken(User user) {
-    final Map<String, Object> claims = Map.of("email", user.getEmail());
-    return Jwts.builder()
-        .setClaims(claims)
-        .setSubject(user.getId().toString())
-        .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.refreshExpiration()))
-        .signWith(key, SignatureAlgorithm.HS512)
-        .compact();
-  }
+//  public String generateRefreshToken(User user) {
+//    final Map<String, Object> claims = Map.of("email", user.getEmail());
+//    return Jwts.builder()
+//        .setClaims(claims)
+//        .setSubject(user.getId().toString())
+//        .setIssuedAt(new Date(System.currentTimeMillis()))
+//        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.refreshExpiration()))
+//        .signWith(key, SignatureAlgorithm.HS512)
+//        .compact();
+//  }
 
   /**
    * 토큰을 통해 Authentication 객체 생성 후, 반환
