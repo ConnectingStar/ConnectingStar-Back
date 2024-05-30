@@ -26,6 +26,7 @@ public class DeleteAccountReasonCommandService {
 
     DeleteAccountReason deleteAccountReason = DeleteAccountReason.builder()
         .reason(param.getReason())
+        .content(param.getContent())
         .ageRange(user.getAgeRange())
         .genderType(user.getGender())
         .createdDt(String.valueOf(user.getCreatedDt()))
