@@ -3,7 +3,7 @@ package connectingstar.tars.user.command;
 import static connectingstar.tars.common.exception.errorcode.StarErrorCode.STAR_ZERO_CNT;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_ALREADY_PROGRESS;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_DUPLICATE;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_PROGRESS;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_PROGRESS_NOT_EXIST;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
@@ -14,8 +14,6 @@ import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.request.UserConstellationRequest;
-import connectingstar.tars.user.request.UserConstellationStarRequest;
-import connectingstar.tars.user.response.UserConstellationResponse;
 import connectingstar.tars.user.response.UserConstellationStarResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +27,6 @@ public class UserConstellationCommandService {
   private final UserQueryService userQueryService;
   private final ConstellationQueryService constellationQueryService;
   private final UserConstellationRepository userConstellationRepository;
-
-  public UserConstellationResponse getWorkingUserConstellation(Integer constellationId) {
-    UserConstellation userConstellation = getUserConstellation(constellationId);
-    return new UserConstellationResponse(userConstellation.getConstellation(), userConstellation.getStarCount());
-  }
 
   /**
    * 별자리 선택(등록)
@@ -53,16 +46,18 @@ public class UserConstellationCommandService {
 
   /**
    * 진행중인 별자리 별 등록
-   *
-   * @param param 등록 정보
    */
   @Transactional
-  public UserConstellationStarResponse update(UserConstellationStarRequest param) {
+  public UserConstellationStarResponse updateStar() {
     User user = userQueryService.getUser();
     // 사용자 별 개수 존재여부 체크
     verifyStarCount(user);
 
-    UserConstellation userConstellation = getWorkingUserConstellation(user, param.getConstellationId());
+    UserConstellation userConstellation = user.getUserConstellationList()
+        .stream()
+        .filter(it -> !it.getRegYn())
+        .findFirst()
+        .orElseThrow(() -> new ValidationException(USER_CONSTELLATION_PROGRESS_NOT_EXIST));
 
     // 별 개수 수정
     userConstellation.updateStarCount(userConstellation.getStarCount() + 1);
@@ -74,23 +69,6 @@ public class UserConstellationCommandService {
   private UserConstellation getUserConstellation(Integer constellationId) {
     return userConstellationRepository.findByUserConstellationId(constellationId)
         .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
-  }
-
-  /**
-   * 진행중인 별자리 조회
-   *
-   * @param user            사용자
-   * @param constellationId 별자리 ID
-   * @return 사용자 별자리 엔티티
-   */
-  private UserConstellation getWorkingUserConstellation(User user, Integer constellationId) {
-    // 별자리 추출
-    return user.getUserConstellationList()
-        .stream()
-        .filter(it -> it.getConstellation().getConstellationId().equals(constellationId) &&
-            it.getRegYn().equals(Boolean.FALSE))
-        .findFirst()
-        .orElseThrow(() -> new ValidationException(USER_CONSTELLATION_NOT_PROGRESS));
   }
 
   /**

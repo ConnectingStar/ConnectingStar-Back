@@ -5,7 +5,6 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
-import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
@@ -19,16 +18,13 @@ import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserAgeRangeRequest;
 import connectingstar.tars.user.request.UserConstellationRequest;
-import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserGenderRequest;
 import connectingstar.tars.user.request.UserIdentityRequest;
 import connectingstar.tars.user.request.UserNicknameRequest;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
-import connectingstar.tars.user.response.UserHavingConstellationResponse;
 import connectingstar.tars.user.response.UserStarResponse;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +64,7 @@ public class UserCommandService {
     User getUser = userQueryService.getUser();
     RunHabit firstRunHabit = getUser.getRunHabits().stream().filter(runHabit -> getUser.getIdentity().equals(runHabit.getIdentity()))
         .findFirst().orElseThrow(() -> new ValidationException(USER_IDENTITY_NOT_FOUNT));
-    return new UserBasicInfoResponse(getUser,firstRunHabit);
+    return new UserBasicInfoResponse(getUser, firstRunHabit);
   }
 
   /**
@@ -80,17 +76,6 @@ public class UserCommandService {
     return new UserBasicInfoAndHabitResponse(getUser.getId(), getUser.getNickname(), getUser.getIdentity()
         //, getUser.getConstellation().getCharacterImage()
         , runHabitList);
-  }
-
-  /**
-   * 이미 등록한 별자리인지 확인
-   */
-  public UserHavingConstellationResponse getUserHavingConstellation(UserConstellationStarRequest param) {
-
-    Constellation constellation = constellationQueryService.getConstellation(param.getConstellationId());
-
-    return new UserHavingConstellationResponse(
-        isHavingConstellation(UserUtils.getUserId(), constellation.getConstellationId()));
   }
 
   public UserStarResponse getUserStar() {

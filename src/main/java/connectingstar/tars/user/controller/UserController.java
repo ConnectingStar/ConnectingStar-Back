@@ -12,7 +12,6 @@ import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.request.DeleteAccountReasonRequest;
 import connectingstar.tars.user.request.UserAgeRangeRequest;
 import connectingstar.tars.user.request.UserConstellationRequest;
-import connectingstar.tars.user.request.UserConstellationStarRequest;
 import connectingstar.tars.user.request.UserGenderRequest;
 import connectingstar.tars.user.request.UserIdentityRequest;
 import connectingstar.tars.user.request.UserNicknameRequest;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -91,14 +89,11 @@ public class UserController {
   /**
    * 진행중인 별자리 별 등록
    *
-   * @param param 별자리 정보
    * @return 요청 결과
    */
   @PutMapping(value = "/constellation/star")
-  public ResponseEntity<?> doPutConstellationStar(@RequestBody UserConstellationStarRequest param) {
-    UserValidator.validate(param);
-
-    return ResponseEntity.ok(new DataResponse(userConstellationCommandService.update(param)));
+  public ResponseEntity<?> doPutConstellationStar() {
+    return ResponseEntity.ok(new DataResponse(userConstellationCommandService.updateStar()));
   }
 
   /**
@@ -193,17 +188,6 @@ public class UserController {
     return ResponseEntity.ok(new SuccessResponse());
   }
 
-  /**
-   * 별자리 단일 조회 시 사용자 보유 여부 반환
-   *
-   * @param param 별자리 ID, 사용자 ID
-   * @return 사용자 별자리 보유 여부
-   */
-  @GetMapping(value = "/one")
-  public ResponseEntity<?> getHavingUserConstellation(UserConstellationStarRequest param) {
-    UserValidator.validate(param);
-    return ResponseEntity.ok(new DataResponse(userCommandService.getUserHavingConstellation(param)));
-  }
 
   /*
   별 관련 Controller
@@ -237,19 +221,6 @@ public class UserController {
   @GetMapping(value = "/basic-info-habit")
   public ResponseEntity<?> getUserBasicInfoAndHabit() {
     return ResponseEntity.ok(new DataResponse(userCommandService.getUserBasicInfoAndHabit()));
-  }
-
-  /**
-   * 진행 중인 별자리와 사용중인 별 갯수 조회
-   *
-   * @param constellationId 별자리 아이디
-   * @return 요청 결과
-   */
-  @GetMapping(value = "/constellation")
-  public ResponseEntity<?> getUserConstellation(
-      @RequestParam(required = false) Integer constellationId) {
-    return ResponseEntity.ok(new DataResponse(
-        userConstellationCommandService.getWorkingUserConstellation(constellationId)));
   }
 
   /**
