@@ -19,6 +19,10 @@ import lombok.Getter;
 public class ConstellationMainResponse {
 
   /**
+   * 별자리 ID
+   */
+  private Integer constellationId;
+  /**
    * 보유 별 개수
    */
   private final Integer starCount;
@@ -38,6 +42,7 @@ public class ConstellationMainResponse {
   public ConstellationMainResponse(Integer starCount, Constellation constellation, Integer regStarCount) {
     this.starCount = starCount;
     if (Objects.nonNull(constellation)) {
+      this.constellationId = constellation.getConstellationId();
       this.name = constellation.getName();
       this.svg = new Svg(constellation.getSvg(), regStarCount);
       this.isProgress = true;
