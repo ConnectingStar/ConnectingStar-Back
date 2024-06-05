@@ -63,7 +63,7 @@ public class UserConstellationCommandService {
     userConstellation.updateStarCount(userConstellation.getStarCount() + 1);
     user.updateStar();
 
-    return new UserConstellationStarResponse(userConstellation.getRegYn());
+    return new UserConstellationStarResponse(userConstellation.getConstellation(), userConstellation.getRegYn());
   }
 
   private UserConstellation getUserConstellation(Integer constellationId) {
