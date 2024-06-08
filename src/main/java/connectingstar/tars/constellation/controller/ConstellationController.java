@@ -3,7 +3,6 @@ package connectingstar.tars.constellation.controller;
 import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.common.response.ListResponse;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
-import connectingstar.tars.constellation.query.ConstellationTypeQueryService;
 import connectingstar.tars.constellation.request.ConstellationListRequest;
 import connectingstar.tars.constellation.validation.ConstellationValidator;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConstellationController {
 
   private final ConstellationQueryService constellationQueryService;
-  private final ConstellationTypeQueryService constellationTypeQueryService;
 
   /**
    * 별자리 목록 조회
@@ -62,15 +60,5 @@ public class ConstellationController {
     ConstellationValidator.validate(constellationId);
 
     return ResponseEntity.ok(new DataResponse(constellationQueryService.getOne(constellationId)));
-  }
-
-  /**
-   * 모든 별자리 타입 조회
-   *
-   * @return 모든 별자리 타입 정보
-   */
-  @GetMapping(value = "/type/list")
-  public ResponseEntity<?> doGetTypeList() {
-    return ResponseEntity.ok(new ListResponse(constellationTypeQueryService.getList()));
   }
 }
