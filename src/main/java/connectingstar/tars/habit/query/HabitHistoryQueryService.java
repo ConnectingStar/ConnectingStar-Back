@@ -32,7 +32,7 @@ public class HabitHistoryQueryService {
     /**
      * 월간 습관 기록 목록 조회
      *
-     * @param param 습관월간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
+     * @param param 습관월간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     public List<HistoryListResponse> getMonthList(HistoryListRequest param) {
@@ -40,9 +40,19 @@ public class HabitHistoryQueryService {
     }
 
     /**
+     * 단일 습관 기록 목록 조회
+     *
+     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
+     * @return 배열(습관 수행 날짜, 만족도, 실천량)
+     */
+    public HistoryGetListResponse get(HistoryListRequest param) {
+        return habitHistoryDao.get(param);
+    }
+
+    /**
      * 주간 습관 기록 목록 조회
      *
-     * @param param 습관주간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
+     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     public List<HistoryListResponse> getWeeklyList(HistoryListRequest param) {
@@ -57,7 +67,7 @@ public class HabitHistoryQueryService {
     /**
      * 습관 기록 목록 조회
      *
-     * @param param 습관기록목록 조회를 위한 위한 유저 ID,진행중인 습관 ID, 최신,오래된 순 구분, 휴식 여부 구분
+     * @param param 습관기록목록 조회를 위한 위한 진행중인 습관 ID, 최신,오래된 순 구분, 휴식 여부 구분
      * @return 배열(습관 수행 날짜, 실천한 장소, 실천량, 단위, 느낀점)
      */
     public List<HistoryGetListResponse> getList(HistoryGetListRequest param) {
