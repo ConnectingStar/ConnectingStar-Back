@@ -64,7 +64,7 @@ public class HabitHistoryCommandService {
 
     private void checkExpiration(User user, HistoryPostRequest param) {
         if(!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
-            throw new ValidationException(HabitErrorCode.ALREADY_CREATED_HABIT_HISTORY);
+            throw new ValidationException(HabitErrorCode.EXPIRED_DATE);
     }
 
 
