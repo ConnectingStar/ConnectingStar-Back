@@ -11,6 +11,7 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.request.HistoryPostRequest;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,8 @@ public class HabitHistoryCommandService {
     public void saveHistory(HistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
-        checkTodayCreateHistoryHabit(user, param.getRunHabitId());
+        checkExpiration(user, param);
+        checkTodayCreateHistoryHabit(user, param);
 
         RunHabit runHabit = findRunHabitByRunHabitId(param);
         HabitHistory build = HabitHistory.builder()
@@ -51,12 +53,18 @@ public class HabitHistoryCommandService {
                 .runHabit(runHabit)
                 .achievement(param.getAchievement())
                 .review(param.getReview())
-                .runDate(LocalDateTime.now())
+                .runDate(LocalDateTime.of(param.getReferenceDate().getYear(),param.getReferenceDate().getMonth().getValue(),param.getReferenceDate().getDayOfMonth(),
+                    LocalTime.now().getHour(),LocalTime.now().getMinute()))
                 .runPlace(param.getRunPlace())
                 .runValue(param.getBehaviorValue())
                 .isRest(param.getAchievement() == REST_VALUE)
                 .build();
         habitHistoryRepository.save(build);
+    }
+
+    private void checkExpiration(User user, HistoryPostRequest param) {
+        if(!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
+            throw new ValidationException(HabitErrorCode.ALREADY_CREATED_HABIT_HISTORY);
     }
 
 
@@ -70,14 +78,15 @@ public class HabitHistoryCommandService {
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
-    private void checkTodayCreateHistoryHabit(User user, Integer runHabitId) {
+    private void checkTodayCreateHistoryHabit(User user, HistoryPostRequest param) {
         Optional<HabitHistory> recentHistory = user.getHabitHistories()
                 .stream()
-                .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), runHabitId))
+                .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), param.getRunHabitId()))
+                .filter(habitHistory -> LocalDate.now().minusDays(2).isAfter(habitHistory.getRunDate().toLocalDate()))
                 .sorted(Comparator.comparingInt(HabitHistory::getHabitHistoryId).reversed())
                 .findFirst();
         if (recentHistory.isPresent()) {
-            if (recentHistory.get().getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
+            if (recentHistory.get().getRunDate().toLocalDate().isEqual(param.getReferenceDate()))
                 throw new ValidationException(HabitErrorCode.ALREADY_CREATED_HABIT_HISTORY);
         }
     }

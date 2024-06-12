@@ -3,10 +3,14 @@ package connectingstar.tars.habit.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.common.domain.TimeInfo;
+import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.Getter;
 
 import java.time.LocalTime;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 진행중인 습관 수정 응답
@@ -16,7 +20,7 @@ import java.time.LocalTime;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"runHabitId", "userId", "userName", "identity", "runTime", "place", "action", "value", "unit", "firstAlert", "secondAlert"})
+@JsonPropertyOrder({"runHabitId", "userId", "userName", "identity", "runTime", "place", "action", "value", "unit", "firstAlert", "secondAlert","historyInfo"})
 public class RunPutResponse {
 
 
@@ -103,5 +107,4 @@ public class RunPutResponse {
         this.firstAlert = new TimeInfo(runHabit.getAlerts().get(0).getAlertTime());
         this.secondAlert = new TimeInfo(runHabit.getAlerts().get(1).getAlertTime());
     }
-
 }

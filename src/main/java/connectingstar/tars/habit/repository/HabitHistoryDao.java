@@ -71,6 +71,30 @@ public class HabitHistoryDao {
     }
 
     /**
+     * 내 단일 습관 기록 조회
+     *
+     * @param param 조회 조건
+     * @return 조회 결과
+     */
+    public HistoryGetListResponse get(HistoryListRequest param) {
+
+        QHabitHistory habitHistory = QHabitHistory.habitHistory;
+
+        return queryFactory
+            .select(Projections.constructor(
+                HistoryGetListResponse.class,
+                habitHistory.runDate,
+                habitHistory.runPlace,
+                habitHistory.runValue,
+                habitHistory.runHabit.unit,
+                habitHistory.review
+            ))
+            .from(habitHistory)
+            .where(getPredicate(param, habitHistory))
+            .fetchFirst();
+    }
+
+    /**
      * 기준 달의 습관 기록 조회
      *
      * @param param 조회 조건
@@ -136,15 +160,15 @@ public class HabitHistoryDao {
                                            QHabitHistory habitHistory) {
         return habitHistory.user.id.eq(UserUtils.getUserId())
                 .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()))
-                .and(habitHistory.createdAt.year().eq(param.getReferenceDate().getYear()))
-                .and(habitHistory.createdAt.month().eq(param.getReferenceDate().getMonthValue()));
+                .and(habitHistory.runDate.year().eq(param.getReferenceDate().getYear()))
+                .and(habitHistory.runDate.month().eq(param.getReferenceDate().getMonthValue()));
     }
 
     private BooleanExpression getPredicate(HistoryListRequest param, QHabitHistory habitHistory,
                                            LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return habitHistory.user.id.eq(UserUtils.getUserId())
                 .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()))
-                .and(habitHistory.createdAt.between(startDateTime, endDateTime));
+                .and(habitHistory.runDate.between(startDateTime, endDateTime));
     }
 
     private ConstructorExpression<HistoryListResponse> getConstructorExpression() {

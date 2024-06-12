@@ -35,12 +35,20 @@ public class HabitValidator {
     }
 
     /**
+     * 나의 진행중인 습관 조회 요청 검증
+     */
+    public void validate(RunGetRequest param) {
+        validateNull(param.getRunHabitId(), PARAM_REFERENCE_DATE_EMPTY);
+    }
+
+    /**
      * 오늘 실천한 습관 저장 요청 검증
      */
     public void validate(HistoryPostRequest param) {
         validateNull(param.getRunHabitId(), PARAM_RUN_HABIT_ID_EMPTY);
         validateNull(param.getAchievement(), PARAM_ACHIEVEMENT_EMPTY);
         validateNull(param.getRunPlace(), PARAM_PLACE_EMPTY);
+        validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
         validateNull(param.getBehaviorValue(), PARAM_VALUE_EMPTY);
         validateNull(param.getReview(), PARAM_REVIEW_EMPTY);
 

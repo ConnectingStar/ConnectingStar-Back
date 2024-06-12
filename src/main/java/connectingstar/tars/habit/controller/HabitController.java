@@ -9,6 +9,7 @@ import connectingstar.tars.habit.query.HabitHistoryQueryService;
 import connectingstar.tars.habit.query.QuitHabitQueryService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.*;
+import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -68,6 +69,18 @@ public class HabitController {
     }
 
     /**
+     * 내 진행중인 단일 습관 조회 (*임시 추후 고치겠습니다)
+     *
+     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID)
+     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     */
+    @GetMapping(value = "/one")
+    public ResponseEntity<?> doGetRun(RunGetRequest param) {
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(new DataResponse(runHabitQueryService.get(param)));
+    }
+
+    /**
      * 내 종료 습관 조회
      *
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
@@ -90,9 +103,23 @@ public class HabitController {
     }
 
     /**
+     * 내 습관 기록 단일 조회
+     *
+     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
+     * @return 습관 수행 날짜, 만족도, 실천량
+     */
+    @GetMapping(value = "/history/date")
+    public ResponseEntity<?> doGetHistory(HistoryListRequest param) {
+        HabitValidator.validate(param);
+        HistoryGetListResponse historyGetListResponse = habitHistoryQueryService.get(param);
+        DataResponse dataResponse = new DataResponse(historyGetListResponse);
+        return ResponseEntity.ok(dataResponse);
+    }
+
+    /**
      * 내 습관 주간기록 조회
      *
-     * @param param 습관주간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
+     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/weekly")
@@ -104,7 +131,7 @@ public class HabitController {
     /**
      * 내 습관 월간기록 조회
      *
-     * @param param 습관월간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
+     * @param param 습관월간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/monthly")
@@ -116,7 +143,7 @@ public class HabitController {
     /**
      * 특정 날짜 습관기록 생성여부 조회
      *
-     * @param param 습관주간기록 조회를 위한 유저 ID, 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
+     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/check")
@@ -128,7 +155,7 @@ public class HabitController {
     /**
      * 진행중인 습관 수정
      *
-     * @param param 진행중인 습관 수정을 위한 진행중인 습관 ID, 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
+     * @param param 진행중인 습관 수정을 위한 진행중인 습관 ID, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
      * @return 200 응답, 입력값을 그대로 반환합니다.(추후 필요한 값만 반환하도록 수정필요)
      */
     @PutMapping
@@ -139,7 +166,7 @@ public class HabitController {
     /**
      * 진행중인 습관 삭제
      *
-     * @param param 진행중인 습관 삭제를 위한 진행중인 습관 ID, 사용자 PK, 삭제 이유
+     * @param param 진행중인 습관 삭제를 위한 진행중인 습관 ID, 삭제 이유
      * @return 204 응답
      */
     @DeleteMapping

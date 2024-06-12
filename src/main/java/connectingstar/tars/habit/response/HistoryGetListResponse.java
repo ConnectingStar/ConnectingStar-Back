@@ -24,6 +24,7 @@ public class HistoryGetListResponse {
      */
     private final Integer runValue;
 
+
     /**
      * 단위
      */
