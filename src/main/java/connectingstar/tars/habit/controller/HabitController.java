@@ -81,6 +81,31 @@ public class HabitController {
     }
 
     /**
+     * 내 진행중인 당일 습관 조회
+     *
+     * @param param 진행중인 습관 ID, 기준 날짜
+     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     */
+    @GetMapping(value = "/day")
+    public ResponseEntity<?> doGetRunDay(RunGetRequest param) {
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(new DataResponse(runHabitQueryService.getDay(param)));
+    }
+
+    /**
+     * 내 이번주 매일 습관 전체 작성여부 확인 **쿼리에 매우 문제가 많음(N+1문제) 추후 반드시 수정이 필요함
+     *
+     * @param param 진행중인 습관 ID, 기준 날짜
+     * @return 배열(기준 날짜, 습관기록 전체 작성 여부)
+     */
+    @GetMapping(value = "/history/week-total-write")
+    public ResponseEntity<?> doGetHistoryTotalWrite(RunGetRequest param) {
+        HabitValidator.validate(param);
+        return ResponseEntity.ok(new DataResponse(runHabitQueryService.getHistoryTotalWrite(param)));
+    }
+
+
+    /**
      * 내 종료 습관 조회
      *
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)

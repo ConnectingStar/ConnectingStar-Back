@@ -39,13 +39,14 @@ public class HabitAlertCommandService {
         }
     }
 
-    public LocalTime updateHabitAlert(LocalTime changeTime, List<HabitAlert> alerts, Integer alertOrder) {
+    public LocalTime updateHabitAlert(LocalTime changeTime, List<HabitAlert> alerts, Integer alertOrder, Boolean alertStatus) {
         HabitAlert habitAlert = alerts
                 .stream()
                 .filter(alert -> Objects.equals(alert.getAlertOrder(), alertOrder))
                 .findFirst()
                 .orElseThrow(() -> new ValidationException(ALERT_NOT_FOUND));
         habitAlert.updateAlertTime(changeTime);
+        habitAlert.updateAlertStatus(alertStatus);
         return habitAlert.getAlertTime();
     }
 

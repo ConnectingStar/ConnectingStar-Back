@@ -108,13 +108,22 @@ public class RunHabit extends Auditable {
         this.alerts.add(habitAlert);
     }
 
-    public void updateData(RunPutRequest param) {
-        this.identity = param.getIdentity() != null ? param.getIdentity() : this.identity;
+    public void updateData(RunPutRequest param, User user) {
+        this.identity = checkIdentity(user, param.getIdentity());
         this.runTime = param.getRunTime() != null ? param.getRunTime().toLocalTime() : this.runTime;
         this.place = param.getPlace() != null ? param.getPlace() : this.place;
         this.action = param.getBehavior() != null ? param.getBehavior() : this.action;
         this.value = param.getBehaviorValue() != null ? param.getBehaviorValue() : this.value;
         this.unit = param.getBehaviorUnit() != null ? param.getBehaviorUnit() : this.unit;
+    }
+
+    private String checkIdentity(User user, String paramIdentity) {
+        if (paramIdentity != null && user.getRunHabits().stream().anyMatch(rh -> rh.getIdentity().equals(paramIdentity)))
+            return paramIdentity;
+        else {
+            return this.identity;
+        }
+
 
     }
 }

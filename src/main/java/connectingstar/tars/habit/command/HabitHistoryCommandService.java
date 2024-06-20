@@ -82,7 +82,7 @@ public class HabitHistoryCommandService {
         Optional<HabitHistory> recentHistory = user.getHabitHistories()
                 .stream()
                 .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), param.getRunHabitId()))
-                .filter(habitHistory -> LocalDate.now().minusDays(2).isAfter(habitHistory.getRunDate().toLocalDate()))
+                .filter(habitHistory -> param.getReferenceDate().isEqual(habitHistory.getRunDate().toLocalDate()))
                 .sorted(Comparator.comparingInt(HabitHistory::getHabitHistoryId).reversed())
                 .findFirst();
         if (recentHistory.isPresent()) {

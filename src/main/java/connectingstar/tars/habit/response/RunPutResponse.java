@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"runHabitId", "userId", "userName", "identity", "runTime", "place", "action", "value", "unit", "firstAlert", "secondAlert","historyInfo"})
+@JsonPropertyOrder({"runHabitId", "userId", "userName", "identity", "runTime", "place", "action", "value", "unit", "firstAlert", "firstAlertStatus", "secondAlert", "secondAlertStatus"})
 public class RunPutResponse {
 
 
@@ -76,23 +76,20 @@ public class RunPutResponse {
     private final TimeInfo firstAlert;
 
     /**
+     * 1차 알림 상태
+     */
+    private final Boolean firstAlertStatus;
+
+
+    /**
      * 2차 알림
      */
     private final TimeInfo secondAlert;
 
-    public RunPutResponse(RunHabit runHabit, LocalTime firstAlert, LocalTime secondAlert) {
-        this.runHabitId = runHabit.getRunHabitId();
-        this.userId = runHabit.getUser().getId();
-        this.userNickname = runHabit.getUser().getNickname();
-        this.identity = runHabit.getIdentity();
-        this.runTime = new TimeInfo(runHabit.getRunTime());
-        this.place = runHabit.getPlace();
-        this.behavior = runHabit.getAction();
-        this.behaviorValue = runHabit.getValue();
-        this.behaviorUnit = runHabit.getUnit();
-        this.firstAlert = new TimeInfo(firstAlert);
-        this.secondAlert = new TimeInfo(secondAlert);
-    }
+    /**
+     * 2차 알림 상태
+     */
+    private final Boolean secondAlertStatus;
 
     public RunPutResponse(RunHabit runHabit) {
         this.runHabitId = runHabit.getRunHabitId();
@@ -105,6 +102,9 @@ public class RunPutResponse {
         this.behaviorValue = runHabit.getValue();
         this.behaviorUnit = runHabit.getUnit();
         this.firstAlert = new TimeInfo(runHabit.getAlerts().get(0).getAlertTime());
+        this.firstAlertStatus = runHabit.getAlerts().get(0).getAlertStatus();
         this.secondAlert = new TimeInfo(runHabit.getAlerts().get(1).getAlertTime());
+        this.secondAlertStatus = runHabit.getAlerts().get(1).getAlertStatus();
+
     }
 }

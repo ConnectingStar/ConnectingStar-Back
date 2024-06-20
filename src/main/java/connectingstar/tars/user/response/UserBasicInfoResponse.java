@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import connectingstar.tars.common.domain.TimeInfo;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.user.domain.User;
+import java.time.LocalTime;
 import lombok.Getter;
 
 @Getter
@@ -82,5 +83,20 @@ public class UserBasicInfoResponse {
     this.behaviorUnit = runHabit.getUnit();
     this.firstAlert = new TimeInfo(runHabit.getAlerts().get(0).getAlertTime());
     this.secondAlert = new TimeInfo(runHabit.getAlerts().get(1).getAlertTime());
+  }
+
+  public UserBasicInfoResponse(User user) {
+    this.nickname = user.getNickname();
+    this.genderType = user.getGender().getCode();
+    this.ageRangeType = user.getAgeRange().getCode();
+    this.referrer = user.getReferrer();
+    this.identity = user.getIdentity();
+    this.runTime = new TimeInfo(LocalTime.now());
+    this.place = "기본장소";
+    this.behavior = "기본행동";
+    this.behaviorValue = 0;
+    this.behaviorUnit = "기본단위";
+    this.firstAlert = new TimeInfo(LocalTime.now());
+    this.secondAlert = new TimeInfo(LocalTime.now());
   }
 }

@@ -12,6 +12,7 @@ import connectingstar.tars.habit.domain.QRunHabit;
 import connectingstar.tars.habit.request.HistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HistoryGetListRequest;
 import connectingstar.tars.habit.request.HistoryListRequest;
+import connectingstar.tars.habit.request.RunGetRequest;
 import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
@@ -128,6 +129,7 @@ public class HabitHistoryDao {
                 .where(getPredicate(param, habitHistory, startDateTime, endDateTime))
                 .fetch();
     }
+
 
     public HistoryCreateCheckResponse getCheckTodayCreate(HistoryCreateCheckRequest param) {
         QUser user = QUser.user;
