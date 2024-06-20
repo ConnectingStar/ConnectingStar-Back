@@ -3,15 +3,13 @@ package connectingstar.tars.habit.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.common.domain.TimeInfo;
-import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
-import java.time.LocalDate;
 import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"runHabitId", "userNickname", "identity", "runTime", "place", "behavior", "behaviorValue", "behaviorUnit", "habitStatus"})
-public class HabitGetHomeResponse {
+public class HabitDayGetResponse {
 
   /**
    * 진행중인 습관 ID
@@ -59,7 +57,7 @@ public class HabitGetHomeResponse {
   private final Integer habitStatus;
 
 
-  public HabitGetHomeResponse(Integer runHabitId, String userNickname, String identity, TimeInfo runTime, String place, String behavior,
+  public HabitDayGetResponse(Integer runHabitId, String userNickname, String identity, TimeInfo runTime, String place, String behavior,
       Integer behaviorValue, String behaviorUnit, Integer habitStatus) {
     this.runHabitId = runHabitId;
     this.userNickname = userNickname;
@@ -71,7 +69,7 @@ public class HabitGetHomeResponse {
     this.behaviorUnit = behaviorUnit;
     this.habitStatus = habitStatus;
   }
-  public HabitGetHomeResponse(RunHabit runHabit, Integer habitStatus) {
+  public HabitDayGetResponse(RunHabit runHabit, Integer habitStatus) {
     this.runHabitId = runHabit.getRunHabitId();
     this.userNickname = runHabit.getUser().getNickname();
     this.identity = runHabit.getIdentity();
