@@ -25,6 +25,7 @@ import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserStarResponse;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,9 +63,9 @@ public class UserCommandService {
    */
   public UserBasicInfoResponse getUserBasicInfo() {
     User getUser = userQueryService.getUser();
-    RunHabit firstRunHabit = getUser.getRunHabits().stream().filter(runHabit -> getUser.getIdentity().equals(runHabit.getIdentity()))
-        .findFirst().orElseThrow(() -> new ValidationException(USER_IDENTITY_NOT_FOUNT));
-    return new UserBasicInfoResponse(getUser, firstRunHabit);
+    Optional<RunHabit> first = getUser.getRunHabits().stream().filter(runHabit -> getUser.getIdentity().equals(runHabit.getIdentity()))
+        .findFirst();
+    return first.map(runHabit -> new UserBasicInfoResponse(getUser, runHabit)).orElseGet(() -> new UserBasicInfoResponse(getUser));
   }
 
   /**

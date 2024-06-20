@@ -60,7 +60,17 @@ public class RunPutRequest {
     private TimeInfo firstAlert;
 
     /**
+     * 1차 알림 상태값
+     */
+    private Boolean firstAlertStatus;
+
+    /**
      * 2차 알림 (값이 없을 시 자동으로 runTime 30분 후로 설정)
      */
     private TimeInfo secondAlert;
+
+    /**
+     * 2차 알림 상태값
+     */
+    private Boolean secondAlertStatus;
 }

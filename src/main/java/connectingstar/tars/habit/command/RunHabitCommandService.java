@@ -13,8 +13,10 @@ import connectingstar.tars.habit.request.RunPostRequest;
 import connectingstar.tars.habit.request.RunPutRequest;
 import connectingstar.tars.habit.response.RunPostResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
+import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 /**
  * 진행중인 습관의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -39,6 +42,7 @@ public class RunHabitCommandService {
     public static final int SECOND_ALERT_STATUS = 2;
     public static final boolean NOT_REST = false;
     public static final boolean REST = true;
+    public static final String IDENTITY_NOTHING = "없음";
 
     private final HabitAlertCommandService habitAlertCommandService;
     private final RunHabitRepository runHabitRepository;
@@ -82,14 +86,12 @@ public class RunHabitCommandService {
     @Transactional
     public RunPutResponse updateRun(RunPutRequest param) {
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
-
-        runHabit.updateData(param);
+        User user = userRepository.findById(UserUtils.getUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+        runHabit.updateData(param,user);
         List<HabitAlert> alerts = runHabit.getAlerts();
-        LocalTime firstAlertTime
-                = habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts, FIRST_ALERT_STATUS);
-        LocalTime secondAlertTime
-                = habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS);
-        return new RunPutResponse(runHabit, firstAlertTime, secondAlertTime);
+        habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts,FIRST_ALERT_STATUS, param.getFirstAlertStatus());
+        habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS, param.getSecondAlertStatus() );
+        return new RunPutResponse(runHabit);
 
     }
 
@@ -102,7 +104,11 @@ public class RunHabitCommandService {
         User user = findUserByUserId(UserUtils.getUserId());
         RunHabit runHabit = runHabitDao.checkUserId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
-
+        if(runHabit.getIdentity().equals(user.getIdentity())) {
+            Optional<RunHabit> first = user.getRunHabits().stream().filter(rh -> !rh.getIdentity().equals(user.getIdentity())).findFirst();
+            if(first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
+            else user.updateIdentity(first.get().getIdentity());
+        }
         QuitHabit quitHabit = QuitHabit.postQuitHabit()
                 .runTime(runHabit.getRunTime())
                 .user(user)
@@ -122,7 +128,7 @@ public class RunHabitCommandService {
 
     private User findUserByUserId(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() ->
-                new ValidationException(UserErrorCode.USER_NOT_FOUND));
+                new ValidationException(USER_NOT_FOUND));
     }
 
     private RunHabit findRunHabitByRunHabitId(Integer runHabitId) {
