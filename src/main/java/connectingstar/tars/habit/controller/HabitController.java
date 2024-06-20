@@ -87,7 +87,7 @@ public class HabitController {
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
      */
     @GetMapping(value = "/day")
-    public ResponseEntity<?> doGetRunDay(RunGetRequest param) {
+    public ResponseEntity<?> doGetRunDay(RunDayGetRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(new DataResponse(runHabitQueryService.getDay(param)));
     }
@@ -99,7 +99,7 @@ public class HabitController {
      * @return 배열(기준 날짜, 습관기록 전체 작성 여부)
      */
     @GetMapping(value = "/history/week-total-write")
-    public ResponseEntity<?> doGetHistoryTotalWrite(RunGetRequest param) {
+    public ResponseEntity<?> doGetHistoryTotalWrite(RunDayGetRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(new DataResponse(runHabitQueryService.getHistoryTotalWrite(param)));
     }
