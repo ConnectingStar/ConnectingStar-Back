@@ -5,10 +5,15 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
+import connectingstar.tars.habit.domain.QHabitHistory;
 import connectingstar.tars.habit.domain.QRunHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.request.RunGetRequest;
 import connectingstar.tars.habit.request.RunListRequest;
+import connectingstar.tars.habit.response.HabitGetHomeResponse;
+import connectingstar.tars.habit.response.HistoryListResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

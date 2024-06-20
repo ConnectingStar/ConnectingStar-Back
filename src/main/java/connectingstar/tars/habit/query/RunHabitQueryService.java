@@ -115,6 +115,7 @@ public class RunHabitQueryService {
           HabitHistoryWeekelyWriteResponse habitHistoryWeekelyWriteResponse = new HabitHistoryWeekelyWriteResponse(startDay,
               checkTodayAllHabitHistoryCreate(startDay, userByUserId, size));
           responses.add(habitHistoryWeekelyWriteResponse);
+
           startDay = startDay.plusDays(1);
           count++;
       }
