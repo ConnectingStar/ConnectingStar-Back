@@ -39,6 +39,14 @@ public class HabitValidator {
      */
     public void validate(RunGetRequest param) {
         validateNull(param.getRunHabitId(), PARAM_REFERENCE_DATE_EMPTY);
+        validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
+    }
+
+    /**
+     * 나의 진행중인 습관 조회 요청 검증
+     */
+    public void validate(RunDayGetRequest param) {
+        validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
     }
 
     /**
