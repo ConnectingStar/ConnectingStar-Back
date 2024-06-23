@@ -10,16 +10,14 @@ import lombok.Getter;
 @Getter
 public class OAuthLoginResponse {
 
-  /**
-   * 엑세스 토큰
-   */
-  private String accessToken;
-
   public OAuthLoginResponse(Boolean onboard, String accessToken) {
     this.onboard = onboard;
     this.accessToken = accessToken;
   }
-
+  /**
+   * 엑세스 토큰
+   */
+  private final String accessToken;
   /**
    * 온보딩 통과 여부
    */
