@@ -66,8 +66,8 @@ public class OAuthService {
     String accessToken = jwtService.generateAccessToken(user.get());
     String refreshToken = jwtService.generateRefreshToken(user.get());
 
-    //리프레시 토큰은 쿠키에 저장 (24 * 60 * 60 * 7)
-    CookieUtils.setCookie(jwtProperties.cookieName(), refreshToken, 30, response);
+    //리프레시 토큰은 쿠키에 저장 (24 * 60 * 60 * 7) = 7일
+    CookieUtils.setCookie(jwtProperties.cookieName(), refreshToken, 24 * 60 * 60 * 7, response);
     SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(refreshToken));
 
     return new OAuthLoginResponse(UserUtils.getUser().getOnboard(), accessToken);
