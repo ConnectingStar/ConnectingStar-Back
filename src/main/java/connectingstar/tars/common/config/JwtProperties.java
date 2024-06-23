@@ -14,7 +14,7 @@ public record JwtProperties(
 
     Long accessExpiration,
 
-    //Long refreshExpiration,
+    Long refreshExpiration,
 
     String cookieName) {
 

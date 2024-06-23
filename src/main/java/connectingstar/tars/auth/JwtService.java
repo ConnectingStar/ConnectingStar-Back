@@ -7,6 +7,8 @@ import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.UNSUP
 
 import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.common.utils.CookieUtils;
+import connectingstar.tars.oauth.response.IssueTokenResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserDetail;
 import connectingstar.tars.user.query.UserQueryService;
@@ -19,6 +21,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
@@ -26,7 +29,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * Jwt 서비스
@@ -71,16 +76,42 @@ public class JwtService {
    * @param user 회원 엔티티
    * @return 리프레쉬 토큰
    */
-//  public String generateRefreshToken(User user) {
-//    final Map<String, Object> claims = Map.of("email", user.getEmail());
-//    return Jwts.builder()
-//        .setClaims(claims)
-//        .setSubject(user.getId().toString())
-//        .setIssuedAt(new Date(System.currentTimeMillis()))
-//        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.refreshExpiration()))
-//        .signWith(key, SignatureAlgorithm.HS512)
-//        .compact();
-//  }
+  public String generateRefreshToken(User user) {
+    final Map<String, Object> claims = Map.of("email", user.getEmail());
+
+    return Jwts.builder()
+        .setClaims(claims)
+        .setSubject(user.getId().toString())
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.refreshExpiration()))
+        .signWith(key, SignatureAlgorithm.HS512)
+        .compact();
+  }
+
+  /**
+   * refreshToken을 통해 accessToken 재발급, refreshToken 이 만료되었으면 401 에러
+   *
+   * @param request
+   * @return
+   */
+  public IssueTokenResponse issueAccessToken(HttpServletRequest request) {
+    //쿠키에서 리프레시 토큰을 꺼내 만료되었는지 확인
+    String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
+
+    log.info("Refresh token: {}", refreshTokenValue);
+
+    // 유효하지 않으면 쿠키의 리프레시 토큰 확인
+    if (StringUtils.hasText(refreshTokenValue) && validateToken(refreshTokenValue)) {
+      // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
+      String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(refreshTokenValue))));
+      SecurityContextHolder.getContext().setAuthentication(getAuthentication(newAccessToken));
+      return new IssueTokenResponse(newAccessToken);
+    } else {
+      // 리프레시 토큰도 유효하지 않으면 인증 실패 처리
+      log.info("토큰이 유효하지 않습니다");
+      throw new ValidationException(INVALID_TOKEN);
+    }
+  }
 
   /**
    * 토큰을 통해 Authentication 객체 생성 후, 반환
@@ -89,12 +120,20 @@ public class JwtService {
    * @return Authentication
    */
   public Authentication getAuthentication(String token) {
-    Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-
     // userId로 조회하여 userDetail 생성
-    UserDetail userDetail = new UserDetail(userQueryService.getUser(Integer.valueOf(claims.getSubject())));
-
+    UserDetail userDetail = new UserDetail(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(token))));
     return new UsernamePasswordAuthenticationToken(userDetail, token, userDetail.getAuthorities());
+  }
+
+  /**
+   * Token에서 UserName 정보 가져오기
+   *
+   * @param token
+   * @return
+   */
+  public String getUsernameFromToken(String token) {
+    Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    return claims.getSubject();
   }
 
   /**
