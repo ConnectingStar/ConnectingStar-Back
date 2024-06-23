@@ -8,6 +8,7 @@ import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.UNSUP
 import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.CookieUtils;
+import connectingstar.tars.oauth.response.IssueTokenResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserDetail;
 import connectingstar.tars.user.query.UserQueryService;
@@ -93,7 +94,7 @@ public class JwtService {
    * @param request
    * @return
    */
-  public String issueAccessToken(HttpServletRequest request) {
+  public IssueTokenResponse issueAccessToken(HttpServletRequest request) {
     //쿠키에서 리프레시 토큰을 꺼내 만료되었는지 확인
     String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
 
@@ -104,7 +105,7 @@ public class JwtService {
       // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
       String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(refreshTokenValue))));
       SecurityContextHolder.getContext().setAuthentication(getAuthentication(newAccessToken));
-      return newAccessToken;
+      return new IssueTokenResponse(newAccessToken);
     } else {
       // 리프레시 토큰도 유효하지 않으면 인증 실패 처리
       log.info("토큰이 유효하지 않습니다");
