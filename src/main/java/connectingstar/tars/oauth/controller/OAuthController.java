@@ -1,15 +1,15 @@
 package connectingstar.tars.oauth.controller;
 
+import connectingstar.tars.auth.JwtService;
 import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.common.response.SuccessResponse;
 import connectingstar.tars.common.utils.CookieUtils;
-import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.oauth.request.OAuthLoginRequest;
-import connectingstar.tars.oauth.response.OAuthLoginResponse;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.oauth.validation.OAuthValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -36,6 +36,7 @@ public class OAuthController {
 
   private final OAuthService oauthService;
   private final JwtProperties jwtProperties;
+  private final JwtService jwtService;
 
   /**
    * 소셜 타입에 따른 AuthCode 요청 Url 반환
@@ -69,11 +70,16 @@ public class OAuthController {
   @PostMapping(value = "/login")
   public ResponseEntity<?> doPostLogin(@RequestBody OAuthLoginRequest param, HttpServletResponse response) {
     OAuthValidator.validate(param);
+    return ResponseEntity.ok(
+        new DataResponse(oauthService.login(SocialType.fromCode(param.getSocialType()), param.getAuthCode(), response)));
+  }
 
-    CookieUtils.setCookie(jwtProperties.cookieName(),
-        oauthService.login(SocialType.fromCode(param.getSocialType()), param.getAuthCode()),
-        24 * 60 * 60, response);
-    return ResponseEntity.ok(new DataResponse(new OAuthLoginResponse(UserUtils.getUser().getOnboard())));
+  /**
+   * 토큰 재발급
+   */
+  @GetMapping(value = "/issue")
+  public ResponseEntity<?> doPostIssue(HttpServletRequest request) {
+    return ResponseEntity.ok(new DataResponse(jwtService.issueAccessToken(request)));
   }
 
   /**
@@ -81,7 +87,6 @@ public class OAuthController {
    */
   @DeleteMapping("/unlink/kakao")
   public ResponseEntity<?> unlinkKakao(@RequestParam(required = false) String accessToken) {
-    log.info("accessToken = ", accessToken);
     oauthService.unlinkKaKao(accessToken);
     return ResponseEntity.ok(new SuccessResponse());
   }
