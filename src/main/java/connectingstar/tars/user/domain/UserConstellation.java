@@ -44,6 +44,7 @@ public class UserConstellation {
   private Integer starCount = 0;
   /**
    * 별자리 등록 여부
+   * 보유 여부
    */
   @Column(name = "reg_yn", nullable = false)
   private Boolean regYn = Boolean.FALSE;

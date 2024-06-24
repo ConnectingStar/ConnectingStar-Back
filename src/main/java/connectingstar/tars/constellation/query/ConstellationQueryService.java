@@ -120,6 +120,9 @@ public class ConstellationQueryService {
     }
   }
 
+  /**
+   * 카테고리 정보 - type 테이블에 존재하는 지 여부 반환
+   */
   private void verifyTypeIdNotFound(Integer typeId) {
     if (Objects.nonNull(typeId)) {
       if (!constellationTypeRepository.existsById(typeId)) {
