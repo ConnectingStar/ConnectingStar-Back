@@ -14,10 +14,4 @@ public class RunGetRequest {
    */
   private Integer runHabitId;
 
-  /**
-   * 조회 기준 날짜
-   */
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-  private LocalDate referenceDate;
-
 }
