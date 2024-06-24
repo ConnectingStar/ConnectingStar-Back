@@ -39,7 +39,6 @@ public class HabitValidator {
      */
     public void validate(RunGetRequest param) {
         validateNull(param.getRunHabitId(), PARAM_REFERENCE_DATE_EMPTY);
-        validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
     }
 
     /**
