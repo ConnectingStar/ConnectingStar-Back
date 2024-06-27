@@ -4,6 +4,7 @@ import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -46,4 +47,13 @@ public class Device extends Auditable {
     @Column(name = "is_fcm_token_active")
     @ColumnDefault("1")
     private Boolean isFcmTokenActive;
+
+    @Builder(builderMethodName = "creationBuilder")
+    public Device(User owningUser,
+                  String fcmRegistrationToken,
+                  Boolean isFcmTokenActive) {
+        this.owningUser = owningUser;
+        this.fcmRegistrationToken = fcmRegistrationToken;
+        this.isFcmTokenActive = isFcmTokenActive;
+    }
 }
