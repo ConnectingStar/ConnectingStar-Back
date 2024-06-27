@@ -16,6 +16,7 @@ import org.hibernate.annotations.ColumnDefault;
  * @author 이우진
  */
 @Entity
+@Table(indexes = @Index(name = "IX_owning_user_id", columnList = "owning_user_id"))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
@@ -28,8 +29,8 @@ public class Device extends Auditable {
     /**
      * 디바이스를 소유하고 있는 회원
      */
-    @OneToOne
-    @JoinColumn(name = "owning_user_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owning_user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User owningUser;
 
     /**

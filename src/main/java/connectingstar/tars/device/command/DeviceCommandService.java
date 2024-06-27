@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 @Service
@@ -32,15 +34,19 @@ public class DeviceCommandService {
     public DevicePostResponse saveAndDeleteExistingAsync(DevicePostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
-        Device device = Device.creationBuilder()
+        // 기존 기기 삭제
+        deviceRepository.deleteAllByOwningUser(user);
+
+        // 새 기기 생성
+        Device newDevice = Device.creationBuilder()
                 .owningUser(user)
                 .fcmRegistrationToken(param.getFcmRegistrationToken())
                 .isFcmTokenActive(Boolean.TRUE)
                 .build();
 
-        deviceRepository.save(device);
+        deviceRepository.save(newDevice);
 
-        return new DevicePostResponse(device.getId());
+        return new DevicePostResponse(newDevice.getId());
     }
 
     private User findUserByUserId(Integer userId) {

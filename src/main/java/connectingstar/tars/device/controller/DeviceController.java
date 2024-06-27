@@ -1,7 +1,9 @@
 package connectingstar.tars.device.controller;
 
+import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.device.command.DeviceCommandService;
 import connectingstar.tars.device.request.DevicePostRequest;
+import connectingstar.tars.device.response.DevicePostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ public class DeviceController {
      */
     @PostMapping
     public ResponseEntity<?> doPostDevice(@RequestBody DevicePostRequest param) {
-        deviceCommandService.saveAndDeleteExistingAsync(param);
+        DevicePostResponse devicePostResponse = deviceCommandService.saveAndDeleteExistingAsync(param);
+
+        return ResponseEntity.ok(new DataResponse(devicePostResponse));
     }
 }
