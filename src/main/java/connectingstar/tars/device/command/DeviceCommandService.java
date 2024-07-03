@@ -27,7 +27,6 @@ public class DeviceCommandService {
 
     /**
      * 사용자의 기기 정보를 저장하고 기존에 존재하던 기기는 삭제합니다
-     * 비동기적으로 동작합니다.
      *
      * @param param 사용자의 기기 정보. 알림 받기 위한 fcm 토큰.
      */
@@ -46,8 +45,6 @@ public class DeviceCommandService {
                 .build();
 
         deviceRepository.save(newDevice);
-
-        log.info("new device:" + newDevice);
 
         return new DevicePostResponse(newDevice.getId());
     }
