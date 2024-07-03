@@ -1,6 +1,6 @@
 package connectingstar.tars.habit;
 
-import connectingstar.tars.habit.domain.HabitAlert;
+import connectingstar.tars.habit.dto.HabitAlertWithDevice;
 import connectingstar.tars.habit.query.HabitAlertQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class HabitAlertSendJob implements Job {
         Date firedTime = jobExecutionContext.getFireTime();
         LocalTime firedLocalTime = LocalTime.ofInstant(firedTime.toInstant(), ZoneId.systemDefault());
 
-        List<HabitAlert> habitAlerts = habitAlertQueryService.getListByAlertTimeMinute(firedLocalTime);
+        List<HabitAlertWithDevice> habitAlertWithDevices = habitAlertQueryService.getListByAlertTimeMinuteWithRunHabitAndDevice(firedLocalTime);
 
         // fcm 토큰 획득
         // N개씩 전송

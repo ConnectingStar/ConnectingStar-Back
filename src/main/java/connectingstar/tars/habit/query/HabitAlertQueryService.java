@@ -1,15 +1,11 @@
 package connectingstar.tars.habit.query;
 
-import connectingstar.tars.habit.domain.HabitAlert;
-import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.dto.HabitAlertWithDevice;
 import connectingstar.tars.habit.repository.HabitAlertRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,10 +27,10 @@ public class HabitAlertQueryService {
      *
      * @author 이우진
      */
-    public List<HabitAlert> getListByAlertTimeMinute(LocalTime alertTime) {
+    public List<HabitAlertWithDevice> getListByAlertTimeMinuteWithRunHabitAndDevice(LocalTime alertTime) {
         LocalTime startTime = alertTime.withSecond(0).withNano(0);
         LocalTime endTime = startTime.plusMinutes(1).minusNanos(1);
 
-        return habitAlertRepository.findByAlertTimeBetween(startTime, endTime);
+        return habitAlertRepository.findByAlertTimeBetweenWithRunHabitAndDevice(startTime, endTime);
     }
 }

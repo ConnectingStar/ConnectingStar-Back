@@ -52,6 +52,9 @@ dependencies {
 
 	// Quartz. 정해진 시간에 작업 수행 용도 (습관 알림)
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
+	// Firebase Admin. 기기에 FCM 전송 (습관 알림)
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 tasks.named('bootBuildImage') {
