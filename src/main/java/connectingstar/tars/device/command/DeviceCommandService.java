@@ -10,15 +10,17 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DeviceCommandService {
     private final DeviceRepository deviceRepository;
     private final UserRepository userRepository;
@@ -30,8 +32,7 @@ public class DeviceCommandService {
      * @param param 사용자의 기기 정보. 알림 받기 위한 fcm 토큰.
      */
     @Transactional
-    @Async
-    public DevicePostResponse saveAndDeleteExistingAsync(DevicePostRequest param) {
+    public DevicePostResponse saveAndDeleteExisting(DevicePostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
         // 기존 기기 삭제
@@ -45,6 +46,8 @@ public class DeviceCommandService {
                 .build();
 
         deviceRepository.save(newDevice);
+
+        log.info("new device:" + newDevice);
 
         return new DevicePostResponse(newDevice.getId());
     }
