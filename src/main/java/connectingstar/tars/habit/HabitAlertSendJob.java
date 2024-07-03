@@ -1,12 +1,18 @@
 package connectingstar.tars.habit;
 
+import connectingstar.tars.habit.domain.HabitAlert;
+import connectingstar.tars.habit.query.HabitAlertQueryService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 습관 알림을 전송하는 Quartz Job.
@@ -16,9 +22,19 @@ import java.util.Date;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class HabitAlertSendJob implements Job {
+    private final HabitAlertQueryService habitAlertQueryService;
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        log.info("습관 알림 Job 실행" + new Date());
+        // 일정에 맞는 habit alert fetch
+        Date firedTime = jobExecutionContext.getFireTime();
+        LocalTime firedLocalTime = LocalTime.ofInstant(firedTime.toInstant(), ZoneId.systemDefault());
+
+        List<HabitAlert> habitAlerts = habitAlertQueryService.getListByAlertTimeMinute(firedLocalTime);
+
+        // fcm 토큰 획득
+        // N개씩 전송
     }
 }
