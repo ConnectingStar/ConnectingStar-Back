@@ -1,5 +1,6 @@
 package connectingstar.tars.habit.domain;
 
+import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.time.LocalTime;
  */
 @Getter
 @Entity
+@Table(indexes = @Index(name = "IX_user_id", columnList = "user_id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
 public class HabitAlert {
@@ -53,12 +55,23 @@ public class HabitAlert {
     @Column(name = "alert_status", nullable = false)
     private Boolean alertStatus;
 
+    /**
+     * (비정규화) 알림을 보낼 유저의 id
+     * RunHabit과 같은 정보를 저장. device 이중 조인을 방지하기 위해 추가함.
+     *
+     * @author 이우진
+     */
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private User user;
+
     @Builder(builderMethodName = "postHabitAlert")
     public HabitAlert(RunHabit runHabit, Integer alertOrder, LocalTime alertTime, Boolean alertStatus) {
         this.runHabit = runHabit;
         this.alertOrder = alertOrder;
         this.alertTime = alertTime;
         this.alertStatus = alertStatus;
+        this.user = runHabit.getUser();
     }
 
     public void updateAlertTime(LocalTime alertTime) {
