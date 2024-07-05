@@ -26,6 +26,7 @@ public class HabitAlertQueryService {
     /**
      * 입력으로 받은 알림 시각과 시, 분 정보가 일치하는 습관 알림 리스트를 반환합니다.
      * User, RunHabit, Device 테이블을 조인해서 데이터를 반환합니다.
+     * status = TRUE로 활성화된 알람만 반환합니다.
      *
      * @example
      * alertTime = 2024.07.01 12:01:02
@@ -33,11 +34,11 @@ public class HabitAlertQueryService {
      *
      * @author 이우진
      */
-    public List<HabitAlertWithDevice> getListByAlertTimeMinuteWithUserAndRunHabitAndDevice(LocalTime alertTime) {
+    public List<HabitAlertWithDevice> getActiveListByAlertTimeMinuteWithUserAndRunHabitAndDevice(LocalTime alertTime) {
         LocalTime startTime = alertTime.withSecond(0).withNano(0);
         LocalTime endTime = startTime.plusMinutes(1).minusNanos(1);
 
-        return habitAlertRepository.findByAlertTimeBetweenWithUserAndRunHabitAndDevice(startTime, endTime);
+        return habitAlertRepository.findActiveByAlertTimeBetweenWithUserAndRunHabitAndDevice(startTime, endTime);
     }
 
     /**
