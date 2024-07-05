@@ -49,6 +49,7 @@ public class UserCommandService {
 
   /**
    * 유저 삭제
+   * hard delete
    */
   @Transactional
   public void deleteUser() {
