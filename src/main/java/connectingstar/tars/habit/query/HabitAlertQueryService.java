@@ -1,5 +1,6 @@
 package connectingstar.tars.habit.query;
 
+import connectingstar.tars.device.domain.Device;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.HabitAlertWithDevice;
@@ -47,11 +48,10 @@ public class HabitAlertQueryService {
      *
      * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4076-4527&m=dev">Figma</a>
      */
-    public PushNotificationMessage generatePushNotificationMessage(HabitAlertWithDevice habitAlertWithDevice) {
+    public PushNotificationMessage generatePushNotificationMessage(HabitAlert habitAlert, Device device) {
         PushNotificationMessage.PushNotificationMessageBuilder pushNotificationMessageBuilder = PushNotificationMessage.builder()
-                .token(habitAlertWithDevice.getDevice().getFcmRegistrationToken());
+                .token(device.getFcmRegistrationToken());
 
-        HabitAlert habitAlert = habitAlertWithDevice.getHabitAlert();
         RunHabit runHabit = habitAlert.getRunHabit();
         User user = habitAlert.getUser();
 
@@ -69,11 +69,9 @@ public class HabitAlertQueryService {
                                 "실천과 휴식을 기록하면 정체성이 강화됩니다\uD83D\uDCAA\n")
                         .build();
             case MISSING_HISTORY:
-                return pushNotificationMessageBuilder
-                        .title(runHabit.getAction() + " 기록 리마인더\n")
-                        .body("앗,, 어제 "+ runHabit.getAction() +" 기록이 없네요\uD83D\uDE25\n" +
-                                "마감(자정) 전에 남기고 \"" + runHabit.getIdentity() +"\" 강화하기!")
-                        .build();
+                // 기록 독려 알림은 HabitAlert 도메인이 아닌 별도의 Job으로 관리.
+                // RunHabitQueryService.generateMissingHistoryPushNotificationMessage
+                throw new IllegalArgumentException("Missing history notification is not managed in HabitAlert domain.");
             default:
                 throw new IllegalArgumentException("Unexpected habitAlert.alertOrder");
         }

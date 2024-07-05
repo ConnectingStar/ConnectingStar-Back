@@ -25,6 +25,9 @@ public enum AlertOrderType {
     WRITE_HISTORY(2),
 
     /**
+     * @deprecated AlertOrder 테이블에서 관리하지 않습니다.
+     * 별도의 MissingHabitHistoryAlertSendJob으로 동작을 정의합니다.
+     *
      * 3차 알림. 기록 독려 알림.
      * 어제 기록이 없을 때 기록 요청하는 알림.
      */

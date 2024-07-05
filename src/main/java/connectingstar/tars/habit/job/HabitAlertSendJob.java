@@ -50,7 +50,7 @@ public class HabitAlertSendJob implements Job {
 
         // 메세지 내용 생성
         List<PushNotificationMessage> pushNotificationMessages = habitAlertWithDevices.stream()
-                .map(habitAlertWithDevice -> habitAlertQueryService.generatePushNotificationMessage(habitAlertWithDevice))
+                .map(habitAlertWithDevice -> habitAlertQueryService.generatePushNotificationMessage(habitAlertWithDevice.getHabitAlert(), habitAlertWithDevice.getDevice()))
                 .toList();
 
         // 전송

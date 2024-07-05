@@ -3,8 +3,10 @@ package connectingstar.tars.habit.query;
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.device.domain.Device;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.dto.RunHabitWithDevice;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
 import connectingstar.tars.habit.repository.RunHabitDao;
 import connectingstar.tars.habit.repository.RunHabitRepository;
@@ -14,6 +16,7 @@ import connectingstar.tars.habit.response.HabitHistoryWeekelyWriteResponse;
 import connectingstar.tars.habit.response.HabitDayGetResponse;
 import connectingstar.tars.habit.response.RunGetListResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
+import connectingstar.tars.pushnotification.dto.PushNotificationMessage;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
 import java.time.DayOfWeek;
@@ -129,9 +132,23 @@ public class RunHabitQueryService {
      *
      * @author 이우진
      */
-    public List<RunHabit> getListByYesterdayHistoryNotExist() {
+    public List<RunHabitWithDevice> getListByYesterdayHistoryNotExistWithDevice() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
 
-        return runHabitRepository.findAllByHistoryOfRunDateNotExist(yesterday);
+        return runHabitRepository.findAllByHistoryOfRunDateNotExistWithDevice(yesterday);
+    }
+
+    /**
+     * 기록 독려 알림 메세지를 생성합니다
+     *
+     * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4076-4527&m=dev">Figma</a>
+     */
+    public PushNotificationMessage generateMissingHistoryPushNotificationMessage(RunHabit runHabit, Device device) {
+        return PushNotificationMessage.builder()
+                .token(device.getFcmRegistrationToken())
+                .title(runHabit.getAction() + " 기록 리마인더\n")
+                .body("앗,, 어제 "+ runHabit.getAction() +" 기록이 없네요\uD83D\uDE25\n" +
+                        "마감(자정) 전에 남기고 \"" + runHabit.getIdentity() +"\" 강화하기!")
+                .build();
     }
 }
