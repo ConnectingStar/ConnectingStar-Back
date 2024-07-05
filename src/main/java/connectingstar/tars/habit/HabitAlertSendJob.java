@@ -32,9 +32,11 @@ public class HabitAlertSendJob implements Job {
         Date firedTime = jobExecutionContext.getFireTime();
         LocalTime firedLocalTime = LocalTime.ofInstant(firedTime.toInstant(), ZoneId.systemDefault());
 
-        List<HabitAlertWithDevice> habitAlertWithDevices = habitAlertQueryService.getListByAlertTimeMinuteWithRunHabitAndDevice(firedLocalTime);
+        List<HabitAlertWithDevice> habitAlertWithDevices = habitAlertQueryService.getListByAlertTimeMinuteWithUserAndRunHabitAndDevice(firedLocalTime);
 
         // fcm 토큰 획득
-        // N개씩 전송
+        // 메세지 내용 생성
+
+        // 전송
     }
 }

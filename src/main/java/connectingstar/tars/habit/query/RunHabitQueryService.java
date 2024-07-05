@@ -122,12 +122,4 @@ public class RunHabitQueryService {
             .filter(rh -> rh.getHabitHistories().stream().anyMatch(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate))).toList();
         return list.size() == runHabitSize;
     }
-
-    /**
-     * RunHabit 데이터를 FCM 알림 메세지 형식으로 변환합니다.
-     * 습관 알림 메세지 형식.
-     *
-     * @author 이우진
-     */
-//    public  toFcmNotification
 }
