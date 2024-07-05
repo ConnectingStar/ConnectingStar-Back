@@ -1,4 +1,4 @@
-package connectingstar.tars.habit;
+package connectingstar.tars.habit.job;
 
 import connectingstar.tars.habit.dto.HabitAlertWithDevice;
 import connectingstar.tars.habit.query.HabitAlertQueryService;

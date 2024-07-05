@@ -1,6 +1,6 @@
 package connectingstar.tars.common.config;
 
-import connectingstar.tars.habit.HabitAlertSendJob;
+import connectingstar.tars.habit.job.HabitAlertSendJob;
 import org.quartz.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
