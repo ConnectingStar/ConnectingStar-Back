@@ -122,4 +122,16 @@ public class RunHabitQueryService {
             .filter(rh -> rh.getHabitHistories().stream().anyMatch(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate))).toList();
         return list.size() == runHabitSize;
     }
+
+    /**
+     * 유저의 수행 시각이 1일 전인 기록이 존재하지 않는 습관을 fetch 합니다.
+     * runDate가 어제인 history가 없는 습관 fetch.
+     *
+     * @author 이우진
+     */
+    public List<RunHabit> getListByYesterdayHistoryNotExist() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+
+        return runHabitRepository.findAllByHistoryOfRunDateNotExist(yesterday);
+    }
 }

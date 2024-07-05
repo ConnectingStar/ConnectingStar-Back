@@ -17,8 +17,8 @@ import java.time.LocalTime;
 @Getter
 @Entity
 @Table(indexes = {
-        @Index(name = "IX_user_id", columnList = "user_id"),
-        @Index(name = "IX_alert_time", columnList = "alert_time") // 알림 전송 시 시간 기준으로 찾기 위해서 사용
+        @Index(name = "IX_HabitAlert_UserId", columnList = "user_id"),
+        @Index(name = "IX_HabitAlert_AlertTime", columnList = "alert_time") // 알림 전송 시 시간 기준으로 찾기 위해서 사용
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)

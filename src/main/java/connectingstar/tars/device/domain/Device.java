@@ -16,7 +16,7 @@ import org.hibernate.annotations.ColumnDefault;
  * @author 이우진
  */
 @Entity
-@Table(indexes = @Index(name = "IX_owning_user_id", columnList = "owning_user_id"))
+@Table(indexes = @Index(name = "IX_Device_OwningUserId", columnList = "owning_user_id"))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
