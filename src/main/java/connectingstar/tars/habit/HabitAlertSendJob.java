@@ -2,6 +2,8 @@ package connectingstar.tars.habit;
 
 import connectingstar.tars.habit.dto.HabitAlertWithDevice;
 import connectingstar.tars.habit.query.HabitAlertQueryService;
+import connectingstar.tars.pushnotification.command.PushNotificationCommandService;
+import connectingstar.tars.pushnotification.dto.PushNotificationMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
@@ -21,10 +23,11 @@ import java.util.List;
  * @author 이우진
  */
 @Component
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class HabitAlertSendJob implements Job {
     private final HabitAlertQueryService habitAlertQueryService;
+    private final PushNotificationCommandService pushNotificationCommandService;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -34,9 +37,20 @@ public class HabitAlertSendJob implements Job {
 
         List<HabitAlertWithDevice> habitAlertWithDevices = habitAlertQueryService.getListByAlertTimeMinuteWithUserAndRunHabitAndDevice(firedLocalTime);
 
-        // fcm 토큰 획득
+        if (habitAlertWithDevices == null || habitAlertWithDevices.isEmpty()) {
+            return;
+        }
+
         // 메세지 내용 생성
+        List<PushNotificationMessage> pushNotificationMessages = habitAlertWithDevices.stream()
+                .map(habitAlertWithDevice -> habitAlertQueryService.generatePushNotificationMessage(habitAlertWithDevice))
+                .toList();
 
         // 전송
+        try {
+            pushNotificationCommandService.sendMany(pushNotificationMessages);
+        } catch (Exception exception) {
+            log.error(exception.toString());
+        }
     }
 }
