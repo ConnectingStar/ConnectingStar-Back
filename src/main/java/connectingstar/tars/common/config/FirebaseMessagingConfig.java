@@ -21,14 +21,14 @@ public class FirebaseMessagingConfig {
     @Bean
     FirebaseMessaging firebaseMessaging() throws IOException {
         GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource("firebase-service-account.json").getInputStream());
+                .fromStream(new ClassPathResource("habbit-buddy-firebase-service-account.json").getInputStream());
 
         FirebaseOptions firebaseOptions = FirebaseOptions
                 .builder()
                 .setCredentials(googleCredentials)
                 .build();
 
-        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-app");
+        FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "habit-buddy");
         return FirebaseMessaging.getInstance(app);
     }
 }
