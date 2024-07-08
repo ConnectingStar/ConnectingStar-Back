@@ -1,3 +1,5 @@
+-- DB 초기 스키마 설정
+
 create table IF not exists tars.delete_account_reason
 (
     delete_account_reason_id
