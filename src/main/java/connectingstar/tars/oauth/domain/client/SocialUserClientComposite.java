@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Resource Server 회원 정보 요청
+ * 카카오에서 사용자 정보를 받아오는 클래스
+ * Composite 패턴으로 구현
  *
  * @author 송병선
  */
