@@ -55,6 +55,10 @@ dependencies {
 
 	// Firebase Admin. 기기에 FCM 전송 (습관 알림)
 	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+	// Flyway. DB migration.
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-mysql'
 }
 
 tasks.named('bootBuildImage') {
