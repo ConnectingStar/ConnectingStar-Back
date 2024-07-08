@@ -84,6 +84,10 @@ public class OAuthController {
 
   /**
    * 소셜 로그인 해제
+   *
+   * @deprecated
+   * 탈퇴할 때 Unlink는 하지 않음
+   * deletUser - DB에서 삭제하는 방식으로 구현
    */
   @DeleteMapping("/unlink/kakao")
   public ResponseEntity<?> unlinkKakao(@RequestParam(required = false) String accessToken) {

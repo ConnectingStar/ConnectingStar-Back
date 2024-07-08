@@ -26,6 +26,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
 
+  /**
+   * OK 응답이나, 응답에 Onboarding false로 기록한다
+   */
   private static void writeFalseValue(HttpServletResponse response) throws IOException {
     DataResponse dataResponse = new DataResponse(new UserOnboardCheckResponse(false));
     response.setContentType("application/json;charset=UTF-8");

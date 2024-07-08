@@ -15,6 +15,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 유저 탈퇴 시 탈퇴 이유를 저장.
+ * 프론트에서 탈퇴 이유를 입력받는다.
+ */
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
