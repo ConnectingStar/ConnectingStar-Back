@@ -2,6 +2,7 @@ package connectingstar.tars.pushnotification.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 푸시 알림 메세지 DTO.
@@ -11,6 +12,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
+@ToString
 public class PushNotificationMessage {
     /**
      * 푸시 알림을 보낼 기기 토큰.

@@ -37,7 +37,7 @@ public enum AlertOrderType {
 
     public static AlertOrderType fromInt(int value) {
         for (AlertOrderType type : values()) {
-            if (type.ordinal() == value) {
+            if (type.value == value) {
                 return type;
             }
         }

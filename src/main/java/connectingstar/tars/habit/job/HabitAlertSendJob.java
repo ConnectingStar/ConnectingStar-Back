@@ -44,7 +44,7 @@ public class HabitAlertSendJob implements Job {
 
         List<HabitAlertWithDevice> habitAlertWithDevices = habitAlertQueryService.getActiveListByAlertTimeMinuteWithUserAndRunHabitAndDevice(firedLocalTime);
 
-        log.info("habitAlertWithDevices: ", habitAlertWithDevices);
+        log.info("habitAlertWithDevices: " + habitAlertWithDevices.stream().count() + " " + habitAlertWithDevices.toString());
         if (habitAlertWithDevices == null || habitAlertWithDevices.isEmpty()) {
             log.info("habitAlert is null");
             return;
@@ -52,10 +52,11 @@ public class HabitAlertSendJob implements Job {
 
         // 메세지 내용 생성
         List<PushNotificationMessage> pushNotificationMessages = habitAlertWithDevices.stream()
+                .filter(habitAlertWithDevice -> habitAlertWithDevice.getDevice() != null) // device 정보 없으면 스킵.
                 .map(habitAlertWithDevice -> habitAlertQueryService.generatePushNotificationMessage(habitAlertWithDevice.getHabitAlert(), habitAlertWithDevice.getDevice()))
                 .toList();
 
-        log.info("pushNotificationMessages", pushNotificationMessages.toString());
+        log.info("pushNotificationMessages: "+ pushNotificationMessages.toString());
 
         // 전송
         try {

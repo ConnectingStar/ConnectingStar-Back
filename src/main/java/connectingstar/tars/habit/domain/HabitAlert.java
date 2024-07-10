@@ -2,10 +2,7 @@ package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalTime;
 
@@ -22,6 +19,7 @@ import java.time.LocalTime;
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
+@ToString
 public class HabitAlert {
 
     /**

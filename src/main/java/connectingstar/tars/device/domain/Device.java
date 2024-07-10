@@ -3,10 +3,7 @@ package connectingstar.tars.device.domain;
 import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 /**
@@ -19,6 +16,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
+@ToString
 public class Device extends Auditable {
     @Id
     @Column(name = "device_id", nullable = false)

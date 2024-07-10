@@ -5,6 +5,7 @@ import connectingstar.tars.habit.domain.HabitAlert;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * HabitAlert와 Device를 JOIN 했을 때 사용하는 DTO
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString
 public class HabitAlertWithDevice {
     private HabitAlert habitAlert;
     private Device device;
