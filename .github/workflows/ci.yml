@@ -3,6 +3,7 @@ name: PR Test
 on:
   pull_request:
     branches: [ dev, main ] # master branch에 PR을 보낼 때 실행
+  workflow_dispatch:
 
 jobs:
   test:
