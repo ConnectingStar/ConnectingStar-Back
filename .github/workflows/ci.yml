@@ -39,4 +39,4 @@ jobs:
 
       # Gradle test를 실행한다
       - name: Test with Gradle
-        run: ./gradlew --info test -Dspring.profiles.active=test
+        run: SPRING_PROFILES_ACTIVE=test ./gradlew --info test
