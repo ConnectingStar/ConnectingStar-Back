@@ -28,7 +28,6 @@ jobs:
 
       # Data Submodule에서 파일 복사
       - name: Copy files from submodule
-        uses: actions/checkout@v3
         run: ls .
              ls ./ConnectingStar-Back-Data/ConnectingStar-Back-Data &
              cp ./ConnectingStar-Back-Data/ConnectingStar-Back-Data/application*.yml ./src/main/resources &
