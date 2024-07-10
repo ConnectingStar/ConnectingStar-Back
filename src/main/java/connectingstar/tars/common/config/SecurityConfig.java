@@ -43,7 +43,7 @@ public class SecurityConfig {
             .requestMatchers("/oauth/code/url", "/oauth/login", "/oauth2/**")
             .anonymous()
             .requestMatchers("/user/**", "/constellation/**", "/alert/**",
-                "/habit/**", "/oauth/logout", "/oauth/unlink/**", "/oauth/issue")
+                "/habit/**", "/oauth/logout", "/oauth/unlink/**", "/oauth/issue", "/device/**")
             .authenticated()
             .anyRequest()
             .denyAll())
