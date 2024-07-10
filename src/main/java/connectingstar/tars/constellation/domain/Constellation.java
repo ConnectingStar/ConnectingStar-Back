@@ -49,18 +49,24 @@ public class Constellation {
    */
   @Column(name = "constellation_identity", nullable = false)
   private String identity;
+
   /**
-   * 별자리 이미지
+   * 별자리 이미지, 흑백
+   * 해금 완료 시 이벤트성
    */
   @Column(name = "constellation_image", nullable = false)
   private String image;
+
   /**
-   * 캐릭터 이미지
+   * 캐릭터 이미지, 컬러
+   * 해금 완료 시 보여지는 캐릭터 이미지, 별자리 카드 상세 조회 페이지
    */
   @Column(name = "constellation_character_image", nullable = false)
   private String characterImage;
+
   /**
    * 별자리 메인 이미지
+   * 별자리 뼈대 이미지
    */
   @Column(name = "constellation_main_image", nullable = false)
   private String mainImage;
