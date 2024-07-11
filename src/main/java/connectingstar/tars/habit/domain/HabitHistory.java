@@ -19,10 +19,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(indexes =
-    // 습관 독려 알림에서 어제 기록 조회할 때 사용
-    @Index(name = "IX_HabitHistory_RunHabitId_RunDate", columnList = "run_habit_id, run_date")
-)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
 public class HabitHistory extends Auditable {

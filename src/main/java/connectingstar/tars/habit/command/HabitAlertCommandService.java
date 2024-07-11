@@ -22,20 +22,21 @@ public class HabitAlertCommandService {
     public static final int SECOND_ALERT_DEFAULT = 30;
 
     public HabitAlert makeAlert(RunHabit runHabit, LocalTime runTime, LocalTime alert, int alertStatus) {
-        HabitAlert.HabitAlertBuilder habitAlertBuilder = HabitAlert.postHabitAlert();
-
-        habitAlertBuilder = habitAlertBuilder
-                .runHabit(runHabit)
-                .alertOrder(alertStatus)
-                .alertStatus(ALERT_ON);
-
-        if (alert == null) {
-            habitAlertBuilder = habitAlertBuilder.alertTime(changeDefaultTime(runTime, alertStatus));
+        if (alert != null) {
+            return HabitAlert.postHabitAlert()
+                    .runHabit(runHabit)
+                    .alertOrder(alertStatus)
+                    .alertTime(alert)
+                    .alertStatus(ALERT_ON)
+                    .build();
         } else {
-            habitAlertBuilder.alertTime(alert);
+            return HabitAlert.postHabitAlert()
+                    .runHabit(runHabit)
+                    .alertOrder(alertStatus)
+                    .alertTime(changeDefaultTime(runTime, alertStatus))
+                    .alertStatus(ALERT_ON)
+                    .build();
         }
-
-        return habitAlertBuilder.build();
     }
 
     public LocalTime updateHabitAlert(LocalTime changeTime, List<HabitAlert> alerts, Integer alertOrder, Boolean alertStatus) {

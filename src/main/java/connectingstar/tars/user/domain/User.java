@@ -2,7 +2,6 @@ package connectingstar.tars.user.domain;
 
 import connectingstar.tars.common.domain.BaseTimeEntity;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.device.domain.Device;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
@@ -35,65 +34,54 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     /**
      * 회원 ID
      */
     @Column(name = "email", nullable = false)
     private String email;
-
     /**
      * 닉네임
      */
     @Column(name = "nickname")
     private String nickname;
-
     /**
      * 연령대
      */
     @Convert(converter = AgeRangeType.TypeCodeConverter.class)
     @Column(name = "age_range")
     private AgeRangeType ageRange;
-
     /**
      * 정체성
      */
     @Column(name = "identity")
     private String identity;
-
     /**
      * 유입 경로
      */
     @Column(name = "referrer")
     private String referrer;
-
     /**
      * 온보딩 통과 여부
      */
     @Column(name = "onboard")
     private Boolean onboard = false;
-
     /**
      * 보유 별 개수
      */
     @Column(name = "star", nullable = false)
     private Integer star = 0;
-
     /**
      * Resource Server 타입
      */
     @Convert(converter = SocialType.TypeCodeConverter.class)
     @Column(name = "social_type", nullable = false)
     private SocialType socialType;
-
     /**
      * 성별 타입
      */
     @Convert(converter = GenderType.TypeCodeConverter.class)
     @Column(name = "gender")
     private GenderType gender;
-
-    private String fcmToken;
 
     ///////////////////////////////////////////////////////////
     // Relations
@@ -104,33 +92,26 @@ public class User extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "constellation_id")
     private Constellation constellation;
-
     /**
      * 습관 기록 리스트
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<HabitHistory> habitHistories = new ArrayList<>();
-
     /**
      * 진행중인 습관 리스트
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<RunHabit> runHabits = new ArrayList<>();
-
     /**
      * 종료한 습관 리스트
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<QuitHabit> quitHabits = new ArrayList<>();
-
     /**
      * 보유한 별자리(캐릭터) 목록
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private final List<UserConstellation> userConstellationList = new ArrayList<>();
-
-    @OneToOne(mappedBy = "owningUser", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private Device device;
 
     public User(String email, SocialType socialType) {
         this.email = email;

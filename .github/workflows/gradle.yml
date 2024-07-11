@@ -25,10 +25,6 @@ jobs:
           java-version: '17'
           distribution: "adopt"
 
-      # Data Submodule에서 파일 복사
-      - name: Copy files from submodule
-        run: cp ./ConnectingStar-Back-Data/application*.yml ./src/main/resources &
-             cp ./ConnectingStar-Back-Data/habbit-buddy-firebase-service-account.json ./src/main/resources
 
       # gradle을 통해 소스를 빌드.
       - name: Build with Gradle
