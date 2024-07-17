@@ -3,14 +3,18 @@ package connectingstar.tars.habit.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
+
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
 
 /**
- * 오늘 실천한 습관을 저장 요청
+ * 오늘 실천한 습관 기록을 저장 요청
  *
- * @author 김성수
+ * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4509-17153&t=DHr54WaoOqEj05dm-4">Figma - 실천 기록</a>
+ * @author 김성수, 이우진
  */
 @Getter
 @Setter
@@ -23,9 +27,17 @@ public class HistoryPostRequest {
     private Integer runHabitId;
 
     /**
-     * 만족도
+     * 생성 기준 날짜
      */
-    private Integer achievement;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate referenceDate;
+
+    /**
+     * 실천 시간
+     * (오후 n시에)
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime runTime;
 
     /**
      * 실천한 장소
@@ -33,10 +45,10 @@ public class HistoryPostRequest {
     private String runPlace;
 
     /**
-     * 생성 기준 날짜
+     * 액션
+     * (책 읽기를)
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate referenceDate;
+    private String action;
 
     /**
      * 실천량
@@ -44,7 +56,13 @@ public class HistoryPostRequest {
     private Integer behaviorValue;
 
     /**
-     * 느낀점
+     * 만족도
+     */
+    private Integer achievement;
+
+    /**
+     * 느낀점.
+     * 발자취 남기기
      */
     private String review;
 }

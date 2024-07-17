@@ -52,9 +52,11 @@ public class HabitValidator {
      */
     public void validate(HistoryPostRequest param) {
         validateNull(param.getRunHabitId(), PARAM_RUN_HABIT_ID_EMPTY);
-        validateNull(param.getAchievement(), PARAM_ACHIEVEMENT_EMPTY);
-        validateNull(param.getRunPlace(), PARAM_PLACE_EMPTY);
         validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
+        validateNull(param.getRunTime(), PARAM_RUN_TIME_EMPTY);
+        validateNull(param.getRunPlace(), PARAM_PLACE_EMPTY);
+        validateNull(param.getAction(), PARAM_ACTION_EMPTY);
+        validateNull(param.getAchievement(), PARAM_ACHIEVEMENT_EMPTY);
         validateNull(param.getBehaviorValue(), PARAM_VALUE_EMPTY);
         validateNull(param.getReview(), PARAM_REVIEW_EMPTY);
 
