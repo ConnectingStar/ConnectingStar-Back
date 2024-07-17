@@ -51,13 +51,14 @@ public class HabitHistoryCommandService {
         HabitHistory build = HabitHistory.builder()
                 .user(user)
                 .runHabit(runHabit)
-                // TODO: 수정 필요. "책 읽기를"을 에 해당하는 Habit 컬럼 추가 필요.
-                .achievement(param.getAchievement())
-                .review(param.getReview())
+                // TODO: add time
                 .runDate(LocalDateTime.of(param.getReferenceDate().getYear(),param.getReferenceDate().getMonth().getValue(),param.getReferenceDate().getDayOfMonth(),
                     LocalTime.now().getHour(),LocalTime.now().getMinute()))
                 .runPlace(param.getRunPlace())
+                .action(param.getAction())
                 .runValue(param.getBehaviorValue())
+                .achievement(param.getAchievement())
+                .review(param.getReview())
                 .isRest(param.getAchievement() == REST_VALUE)
                 .build();
         habitHistoryRepository.save(build);
