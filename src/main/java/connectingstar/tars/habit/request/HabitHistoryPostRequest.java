@@ -2,25 +2,22 @@ package connectingstar.tars.habit.request;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 /**
  * 오늘 실천한 습관 기록을 저장 요청
  *
- * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4509-17153&t=DHr54WaoOqEj05dm-4">Figma - 실천 기록</a>
  * @author 김성수, 이우진
+ * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4509-17153&t=DHr54WaoOqEj05dm-4">Figma - 실천 기록</a>
  */
 @Getter
 @Setter
-public class HistoryPostRequest {
-
-
+public class HabitHistoryPostRequest {
     /**
      * 진행중인 습관 ID
      */

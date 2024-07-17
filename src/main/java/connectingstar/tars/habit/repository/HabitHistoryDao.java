@@ -9,10 +9,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.QHabitHistory;
 import connectingstar.tars.habit.domain.QRunHabit;
-import connectingstar.tars.habit.request.HistoryCreateCheckRequest;
-import connectingstar.tars.habit.request.HistoryGetListRequest;
-import connectingstar.tars.habit.request.HistoryListRequest;
-import connectingstar.tars.habit.request.RunGetRequest;
+import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
+import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
+import connectingstar.tars.habit.request.HabitHistoryListRequest;
 import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
@@ -36,7 +35,7 @@ public class HabitHistoryDao {
 
     private final JPAQueryFactory queryFactory;
 
-    private static BooleanExpression isSameDate(HistoryCreateCheckRequest param,
+    private static BooleanExpression isSameDate(HabitHistoryCreateCheckRequest param,
                                                 QHabitHistory habitHistory) {
         return habitHistory.runDate.year().eq(param.getReferenceDate().getYear())
                 .and(habitHistory.runDate.month().eq(param.getReferenceDate().getMonthValue()))
@@ -49,7 +48,7 @@ public class HabitHistoryDao {
      * @param param 조회 조건
      * @return 조회 결과
      */
-    public List<HistoryGetListResponse> getList(HistoryGetListRequest param) {
+    public List<HistoryGetListResponse> getList(HabitHistoryGetListRequest param) {
 
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
         OrderSpecifier<Integer> orderSpecifier = habitHistory.habitHistoryId.desc();
@@ -77,22 +76,22 @@ public class HabitHistoryDao {
      * @param param 조회 조건
      * @return 조회 결과
      */
-    public HistoryGetListResponse get(HistoryListRequest param) {
+    public HistoryGetListResponse get(HabitHistoryListRequest param) {
 
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
 
         return queryFactory
-            .select(Projections.constructor(
-                HistoryGetListResponse.class,
-                habitHistory.runDate,
-                habitHistory.runPlace,
-                habitHistory.runValue,
-                habitHistory.runHabit.unit,
-                habitHistory.review
-            ))
-            .from(habitHistory)
-            .where(getPredicate(param, habitHistory))
-            .fetchFirst();
+                .select(Projections.constructor(
+                        HistoryGetListResponse.class,
+                        habitHistory.runDate,
+                        habitHistory.runPlace,
+                        habitHistory.runValue,
+                        habitHistory.runHabit.unit,
+                        habitHistory.review
+                ))
+                .from(habitHistory)
+                .where(getPredicate(param, habitHistory))
+                .fetchFirst();
     }
 
     /**
@@ -101,7 +100,7 @@ public class HabitHistoryDao {
      * @param param 조회 조건
      * @return 조회 결과
      */
-    public List<HistoryListResponse> getMonthlyList(HistoryListRequest param) {
+    public List<HistoryListResponse> getMonthlyList(HabitHistoryListRequest param) {
 
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
 
@@ -118,7 +117,7 @@ public class HabitHistoryDao {
      * @param param 조회 조건
      * @return 조회 결과
      */
-    public List<HistoryListResponse> getWeeklyList(HistoryListRequest param,
+    public List<HistoryListResponse> getWeeklyList(HabitHistoryListRequest param,
                                                    LocalDateTime startDateTime, LocalDateTime endDateTime) {
 
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
@@ -131,7 +130,7 @@ public class HabitHistoryDao {
     }
 
 
-    public HistoryCreateCheckResponse getCheckTodayCreate(HistoryCreateCheckRequest param) {
+    public HistoryCreateCheckResponse getCheckTodayCreate(HabitHistoryCreateCheckRequest param) {
         QUser user = QUser.user;
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
         QRunHabit runHabit = QRunHabit.runHabit;
@@ -147,7 +146,7 @@ public class HabitHistoryDao {
                 .fetchCount() > 0);
     }
 
-    private BooleanExpression getPredicate(HistoryGetListRequest param,
+    private BooleanExpression getPredicate(HabitHistoryGetListRequest param,
                                            QHabitHistory habitHistory) {
         if (param.getIsRest() != null) {
             return habitHistory.user.id.eq(UserUtils.getUserId())
@@ -158,7 +157,7 @@ public class HabitHistoryDao {
                 .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()));
     }
 
-    private BooleanExpression getPredicate(HistoryListRequest param,
+    private BooleanExpression getPredicate(HabitHistoryListRequest param,
                                            QHabitHistory habitHistory) {
         return habitHistory.user.id.eq(UserUtils.getUserId())
                 .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()))
@@ -166,7 +165,7 @@ public class HabitHistoryDao {
                 .and(habitHistory.runDate.month().eq(param.getReferenceDate().getMonthValue()));
     }
 
-    private BooleanExpression getPredicate(HistoryListRequest param, QHabitHistory habitHistory,
+    private BooleanExpression getPredicate(HabitHistoryListRequest param, QHabitHistory habitHistory,
                                            LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return habitHistory.user.id.eq(UserUtils.getUserId())
                 .and(habitHistory.runHabit.runHabitId.eq(param.getRunHabitId()))

@@ -13,7 +13,7 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
-public class HistoryCreateCheckRequest {
+public class HabitHistoryCreateCheckRequest {
 
 
     /**
