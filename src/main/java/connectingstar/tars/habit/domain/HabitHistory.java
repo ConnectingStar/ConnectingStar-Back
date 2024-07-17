@@ -1,7 +1,6 @@
 package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
-import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -34,70 +33,86 @@ public class HabitHistory extends Auditable {
     /**
      * 사용자 PK
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "user_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /**
      * 습관 PK
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE} )
-    @JoinColumn(name = "run_habit_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "run_habit_id", nullable = false)
     private RunHabit runHabit;
-
-    /**
-     * 만족도
-     * 표정 이미지로 표현됨
-     */
-    @Column(name = "achievement",nullable = false)
-    private Integer achievement;
-
-    /**
-     * 느낀점
-     */
-    @Column(name = "review",nullable = false,length = 400)
-    private String review;
 
     /**
      * 실천한 날짜, 시간
      */
-    //습관기록 데이터 ERD에는 날짜와 시간이 따로되어있으나 하나로 관리해도 괜찮을것 같습니다.
-    @Column(name = "run_date",nullable = false)
+    @Column(name = "run_date", nullable = false)
     private LocalDateTime runDate;
 
     /**
      * 실천한 장소
      */
-    @Column(name = "run_place",nullable = false)
+    @Column(name = "run_place", nullable = false)
     private String runPlace;
+
+    /**
+     * 액션
+     * (책 읽기를)
+     */
+    @Column(name = "action", nullable = false)
+    private String action;
 
     /**
      * 실천량
      */
-    @Column(name = "run_value",nullable = false)
+    @Column(name = "run_value", nullable = false)
     private Integer runValue;
+
+    /**
+     * 만족도
+     * 표정 이미지로 표현됨
+     */
+    @Column(name = "achievement", nullable = false)
+    private Integer achievement;
+
+    /**
+     * 느낀점
+     */
+    @Column(name = "review", nullable = false, length = 400)
+    private String review;
 
     /**
      * 휴식 여부
      * 성수님께서 더 이상 사용하지 않는다고 하심
      * value = rest_value로 활용
-     *
+     * <p>
      * 준식님(프론트엔드)에서 필요없다고 하심
      * achievement 0으로 표현
      */
-    @Column(name = "is_rest",nullable = false)
+    @Column(name = "is_rest", nullable = false)
     private Boolean isRest;
 
     @Builder
-    public HabitHistory(Integer habitHistoryId, User user, RunHabit runHabit, Integer achievement, String review, LocalDateTime runDate, String runPlace, Integer runValue, Boolean isRest) {
+    public HabitHistory(Integer habitHistoryId,
+                        User user,
+                        RunHabit runHabit,
+                        LocalDateTime runDate,
+                        String runPlace,
+                        String action,
+                        Integer runValue,
+                        Integer achievement,
+                        String review,
+                        Boolean isRest) {
         this.habitHistoryId = habitHistoryId;
         this.user = user;
         this.runHabit = runHabit;
-        this.achievement = achievement;
-        this.review = review;
         this.runDate = runDate;
         this.runPlace = runPlace;
+        this.action = action;
         this.runValue = runValue;
+        this.achievement = achievement;
+        this.review = review;
         this.isRest = isRest;
     }
 }

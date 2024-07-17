@@ -6,12 +6,13 @@ import connectingstar.tars.common.exception.errorcode.UserErrorCode;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.mapper.HabitHistoryMapper;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
-import connectingstar.tars.habit.request.HistoryPostRequest;
+import connectingstar.tars.habit.request.HabitHistoryPostRequest;
+import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
-import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,43 +37,55 @@ public class HabitHistoryCommandService {
     private final RunHabitRepository runHabitRepository;
     private final UserRepository userRepository;
 
+    private final HabitHistoryMapper habitHistoryMapper;
+
     /**
      * 습관기록 저장
      *
      * @param param 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
      */
-    public void saveHistory(HistoryPostRequest param) {
+    public HabitHistoryPostResponse saveHistory(HabitHistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
         checkExpiration(user, param);
         checkTodayCreateHistoryHabit(user, param);
 
         RunHabit runHabit = findRunHabitByRunHabitId(param);
-        HabitHistory build = HabitHistory.builder()
+        HabitHistory habitHistory = HabitHistory.builder()
                 .user(user)
                 .runHabit(runHabit)
-                // TODO: 수정 필요. "책 읽기를"을 에 해당하는 Habit 컬럼 추가 필요.
+                .runDate(
+                        LocalDateTime.of(
+                                param.getReferenceDate().getYear(),
+                                param.getReferenceDate().getMonth().getValue(),
+                                param.getReferenceDate().getDayOfMonth(),
+                                param.getRunTime().getHour(),
+                                param.getRunTime().getMinute()
+                        )
+                )
+                .runPlace(param.getRunPlace())
+                .action(param.getAction())
+                .runValue(param.getBehaviorValue())
                 .achievement(param.getAchievement())
                 .review(param.getReview())
-                .runDate(LocalDateTime.of(param.getReferenceDate().getYear(),param.getReferenceDate().getMonth().getValue(),param.getReferenceDate().getDayOfMonth(),
-                    LocalTime.now().getHour(),LocalTime.now().getMinute()))
-                .runPlace(param.getRunPlace())
-                .runValue(param.getBehaviorValue())
                 .isRest(param.getAchievement() == REST_VALUE)
                 .build();
-        habitHistoryRepository.save(build);
+
+        HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
+
+        return habitHistoryMapper.toPostResponse(savedHistory);
     }
 
     /**
      * 습관 기록 기간이 유효한 지 반환
      */
-    private void checkExpiration(User user, HistoryPostRequest param) {
-        if(!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
+    private void checkExpiration(User user, HabitHistoryPostRequest param) {
+        if (!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
             throw new ValidationException(HabitErrorCode.EXPIRED_DATE);
     }
 
 
-    private RunHabit findRunHabitByRunHabitId(HistoryPostRequest param) {
+    private RunHabit findRunHabitByRunHabitId(HabitHistoryPostRequest param) {
         return runHabitRepository.findById(param.getRunHabitId()).orElseThrow(()
                 -> new ValidationException(HabitErrorCode.RUN_HABIT_NOT_FOUND));
     }
@@ -82,7 +95,7 @@ public class HabitHistoryCommandService {
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
-    private void checkTodayCreateHistoryHabit(User user, HistoryPostRequest param) {
+    private void checkTodayCreateHistoryHabit(User user, HabitHistoryPostRequest param) {
         Optional<HabitHistory> recentHistory = user.getHabitHistories()
                 .stream()
                 .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), param.getRunHabitId()))

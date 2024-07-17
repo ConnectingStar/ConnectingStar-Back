@@ -9,6 +9,7 @@ import connectingstar.tars.habit.query.HabitHistoryQueryService;
 import connectingstar.tars.habit.query.QuitHabitQueryService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.*;
+import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +54,10 @@ public class HabitController {
      * @return 201 응답
      */
     @PostMapping(value = "/history")
-    public ResponseEntity<?> doPostHistory(@RequestBody HistoryPostRequest param) {
+    public ResponseEntity<?> doPostHistory(@RequestBody HabitHistoryPostRequest param) {
         HabitValidator.validate(param);
-        habitHistoryCommandService.saveHistory(param);
-        return ResponseEntity.ok(new SuccessResponse());
+        HabitHistoryPostResponse savedHistoryResponse = habitHistoryCommandService.saveHistory(param);
+        return ResponseEntity.ok(new DataResponse(savedHistoryResponse));
     }
 
     /**
@@ -125,7 +126,7 @@ public class HabitController {
      * @return 배열(습관 수행 날짜, 실천한 장소, 실천량, 단위, 느낀점)
      */
     @GetMapping(value = "/history")
-    public ResponseEntity<?> doGetHistoryList(HistoryGetListRequest param) {
+    public ResponseEntity<?> doGetHistoryList(HabitHistoryGetListRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(new ListResponse(habitHistoryQueryService.getList(param)));
     }
@@ -137,7 +138,7 @@ public class HabitController {
      * @return 습관 수행 날짜, 만족도, 실천량
      */
     @GetMapping(value = "/history/date")
-    public ResponseEntity<?> doGetHistory(HistoryListRequest param) {
+    public ResponseEntity<?> doGetHistory(HabitHistoryListRequest param) {
         HabitValidator.validate(param);
         HistoryGetListResponse historyGetListResponse = habitHistoryQueryService.get(param);
         DataResponse dataResponse = new DataResponse(historyGetListResponse);
@@ -152,7 +153,7 @@ public class HabitController {
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/weekly")
-    public ResponseEntity<?> doGetHistoryWeeklyList(HistoryListRequest param) {
+    public ResponseEntity<?> doGetHistoryWeeklyList(HabitHistoryListRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(new ListResponse(habitHistoryQueryService.getWeeklyList(param)));
     }
@@ -165,21 +166,20 @@ public class HabitController {
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
     @GetMapping(value = "/history/monthly")
-    public ResponseEntity<?> doGetHistoryMonthlyList(HistoryListRequest param) {
+    public ResponseEntity<?> doGetHistoryMonthlyList(HabitHistoryListRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(new ListResponse(habitHistoryQueryService.getMonthList(param)));
     }
 
     /**
-     * @Deprecated 메인화면 주간 기록에서 사용할 목적으로 개발했으나, weekly api로 대체함
-     * 특정 날짜 습관기록 생성여부 조회
-     *
      * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
+     * @Deprecated 메인화면 주간 기록에서 사용할 목적으로 개발했으나, weekly api로 대체함
+     * 특정 날짜 습관기록 생성여부 조회
      */
     @Deprecated
     @GetMapping(value = "/history/check")
-    public ResponseEntity<?> doGetCreateCheck(HistoryCreateCheckRequest param) {
+    public ResponseEntity<?> doGetCreateCheck(HabitHistoryCreateCheckRequest param) {
         HabitValidator.validate(param);
         return ResponseEntity.ok(new DataResponse(habitHistoryQueryService.checkTodayCreate(param)));
     }
