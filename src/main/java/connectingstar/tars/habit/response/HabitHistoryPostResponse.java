@@ -1,8 +1,8 @@
 package connectingstar.tars.habit.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import connectingstar.tars.common.domain.EntityReference;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
  * @author 이우진
  */
 @Getter
+@Setter
 public class HabitHistoryPostResponse {
     /**
      * 생성된 습관 기록 ID
@@ -21,12 +22,12 @@ public class HabitHistoryPostResponse {
     /**
      * 기록을 생성한 사용자 ID
      */
-    private EntityReference user;
+    private Integer userId;
 
     /**
      * 습관 ID
      */
-    private EntityReference runHabit;
+    private Integer runHabitId;
 
     /**
      * 실천한 날짜, 시간

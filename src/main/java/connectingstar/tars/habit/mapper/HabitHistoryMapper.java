@@ -10,7 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface HabitHistoryMapper {
     HabitHistoryMapper INSTANCE = Mappers.getMapper(HabitHistoryMapper.class);
 
-    @Mapping(source = "user.id", target = "user.id")
-    @Mapping(source = "runHabit.runHabitId", target = "runHabit.id")
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "runHabit.runHabitId", target = "runHabitId")
     HabitHistoryPostResponse toPostResponse(HabitHistory habitHistory);
 }
