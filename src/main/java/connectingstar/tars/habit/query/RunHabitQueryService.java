@@ -72,6 +72,10 @@ public class RunHabitQueryService {
             .findFirst().orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
     }
 
+    /**
+     * 메인 화면 - 날짜별 습관 여부 표시 용도
+     *
+     */
     public List<HabitDayGetResponse> getDay(RunDayGetRequest param) {
         //이전 일자에 대해선 오늘기준으로 월~ 일의 데이터를 전달 -> 모든 습관이 존재할경우 true, false
         //오늘의 습관 다 꺼내옴 -> 만약 해빗 히스토리가 없는 경우 -> 기록가능 ->0

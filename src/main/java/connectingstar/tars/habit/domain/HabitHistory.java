@@ -47,6 +47,7 @@ public class HabitHistory extends Auditable {
 
     /**
      * 만족도
+     * 표정 이미지로 표현됨
      */
     @Column(name = "achievement",nullable = false)
     private Integer achievement;
@@ -78,6 +79,11 @@ public class HabitHistory extends Auditable {
 
     /**
      * 휴식 여부
+     * 성수님께서 더 이상 사용하지 않는다고 하심
+     * value = rest_value로 활용
+     *
+     * 준식님(프론트엔드)에서 필요없다고 하심
+     * achievement 0으로 표현
      */
     @Column(name = "is_rest",nullable = false)
     private Boolean isRest;

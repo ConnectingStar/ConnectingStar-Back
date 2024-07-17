@@ -79,6 +79,7 @@ public class RunHabitCommandService {
 
     /**
      * 진행중인 습관 수정
+     * 습관 알람 수정 포함
      *
      * @param param 진행중인 습관 수정을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
      * @return 입력값을 그대로 반환합니다.(추후 필요한 값만 반환하도록 수정필요)
@@ -97,6 +98,7 @@ public class RunHabitCommandService {
 
     /**
      * 진행중인 습관 삭제
+     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다
      *
      * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
      */
@@ -135,6 +137,9 @@ public class RunHabitCommandService {
         return runHabitRepository.findById(runHabitId).orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
     }
 
+    /**
+     * 휴식이 몇 번인 지 반환한다
+     */
     private Integer findValue(List<HabitHistory> habitHistories, Boolean restValue) {
         return habitHistories.stream().filter(habitHistory -> habitHistory.getIsRest() == restValue).toList().size();
     }

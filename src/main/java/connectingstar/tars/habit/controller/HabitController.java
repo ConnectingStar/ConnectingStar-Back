@@ -47,6 +47,7 @@ public class HabitController {
 
     /**
      * 습관 기록 생성
+     * TODO: 별이 쌓여야 하는데 안 되어 있음
      *
      * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
      * @return 201 응답
@@ -82,6 +83,7 @@ public class HabitController {
 
     /**
      * 내 진행중인 당일 습관 조회
+     * 선택한 날짜의 진행중인 습관 조회
      *
      * @param param 진행중인 습관 ID, 기준 날짜
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
@@ -94,6 +96,7 @@ public class HabitController {
 
     /**
      * 내 이번주 매일 습관 전체 작성여부 확인 **쿼리에 매우 문제가 많음(N+1문제) 추후 반드시 수정이 필요함
+     * 날짜별로 습관 기록을 완성했는 지 리턴
      *
      * @param param 진행중인 습관 ID, 기준 날짜
      * @return 배열(기준 날짜, 습관기록 전체 작성 여부)
@@ -143,6 +146,7 @@ public class HabitController {
 
     /**
      * 내 습관 주간기록 조회
+     * 통계 - 표정 그래프에 사용
      *
      * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
@@ -155,6 +159,7 @@ public class HabitController {
 
     /**
      * 내 습관 월간기록 조회
+     * 통계 - 달력 - 날짜, 달성도
      *
      * @param param 습관월간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
@@ -166,11 +171,13 @@ public class HabitController {
     }
 
     /**
+     * @Deprecated 메인화면 주간 기록에서 사용할 목적으로 개발했으나, weekly api로 대체함
      * 특정 날짜 습관기록 생성여부 조회
      *
      * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
+    @Deprecated
     @GetMapping(value = "/history/check")
     public ResponseEntity<?> doGetCreateCheck(HistoryCreateCheckRequest param) {
         HabitValidator.validate(param);

@@ -99,6 +99,11 @@ public class RunGetListResponse {
   @Getter
   public static class HistoryInfo {
     private final LocalDate runDate;
+
+    /**
+     * history.achievement
+     * 휴식 여부 구분 위해 사용
+     **/
     private final Integer status;
 
 

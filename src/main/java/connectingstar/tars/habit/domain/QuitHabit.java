@@ -13,6 +13,7 @@ import java.time.LocalTime;
 
 /**
  * 종료한 습관 엔티티
+ * 습관 현황 - 히스토리
  *
  * @author 김성수
  */

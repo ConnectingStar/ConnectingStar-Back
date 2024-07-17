@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
 
   /**
-   * OK 응답이나, 응답에 Onboarding false로 기록한다
+   * /check-onboarding api에서 인증 실패하면 응답에 OK이지만, Onboarding false로 기록한다
    */
   private static void writeFalseValue(HttpServletResponse response) throws IOException {
     DataResponse dataResponse = new DataResponse(new UserOnboardCheckResponse(false));

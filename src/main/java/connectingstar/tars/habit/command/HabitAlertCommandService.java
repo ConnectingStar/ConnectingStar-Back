@@ -50,6 +50,9 @@ public class HabitAlertCommandService {
         return habitAlert.getAlertTime();
     }
 
+    /**
+     * 사용자가 알림 값 입력 안 했을 때 설정한 기본 시간으로 반환한다
+     */
     private LocalTime changeDefaultTime(LocalTime runTime, int alertStatus) {
         if (alertStatus == FIRST_ALERT_STATUS) {
             return runTime.minusMinutes(FIRST_ALERT_DEFAULT);

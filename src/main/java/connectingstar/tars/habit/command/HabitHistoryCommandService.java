@@ -39,7 +39,7 @@ public class HabitHistoryCommandService {
     /**
      * 습관기록 저장
      *
-     * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
+     * @param param 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
      */
     public void saveHistory(HistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
@@ -51,6 +51,7 @@ public class HabitHistoryCommandService {
         HabitHistory build = HabitHistory.builder()
                 .user(user)
                 .runHabit(runHabit)
+                // TODO: 수정 필요. "책 읽기를"을 에 해당하는 Habit 컬럼 추가 필요.
                 .achievement(param.getAchievement())
                 .review(param.getReview())
                 .runDate(LocalDateTime.of(param.getReferenceDate().getYear(),param.getReferenceDate().getMonth().getValue(),param.getReferenceDate().getDayOfMonth(),
@@ -62,6 +63,9 @@ public class HabitHistoryCommandService {
         habitHistoryRepository.save(build);
     }
 
+    /**
+     * 습관 기록 기간이 유효한 지 반환
+     */
     private void checkExpiration(User user, HistoryPostRequest param) {
         if(!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
             throw new ValidationException(HabitErrorCode.EXPIRED_DATE);

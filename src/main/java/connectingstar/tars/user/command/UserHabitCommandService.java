@@ -52,6 +52,9 @@ public class UserHabitCommandService {
     return findUserByUserId().getRunHabits().stream().map(habit -> new UserIdentityInfoResponse(habit.getIdentity())).toList();
   }
 
+    /**
+     * 온보딩 할 때 사용
+     */
   private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
         RunHabit runHabit = RunHabit.postRunHabit()
                 .identity(param.getIdentity())

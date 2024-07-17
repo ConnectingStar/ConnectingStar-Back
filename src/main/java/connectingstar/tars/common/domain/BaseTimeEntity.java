@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * 공통 시간 엔티티
+ * TODO: Auditable과 중복된 역할. 통일 필요.
  *
  * @author 송병선
  */
