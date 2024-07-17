@@ -11,7 +11,6 @@ import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.request.HistoryPostRequest;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
-import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,12 +47,18 @@ public class HabitHistoryCommandService {
         checkTodayCreateHistoryHabit(user, param);
 
         RunHabit runHabit = findRunHabitByRunHabitId(param);
-        HabitHistory build = HabitHistory.builder()
+        HabitHistory habitHistory = HabitHistory.builder()
                 .user(user)
                 .runHabit(runHabit)
-                // TODO: add time
-                .runDate(LocalDateTime.of(param.getReferenceDate().getYear(),param.getReferenceDate().getMonth().getValue(),param.getReferenceDate().getDayOfMonth(),
-                    LocalTime.now().getHour(),LocalTime.now().getMinute()))
+                .runDate(
+                        LocalDateTime.of(
+                                param.getReferenceDate().getYear(),
+                                param.getReferenceDate().getMonth().getValue(),
+                                param.getReferenceDate().getDayOfMonth(),
+                                param.getRunTime().getHour(),
+                                param.getRunTime().getMinute()
+                        )
+                )
                 .runPlace(param.getRunPlace())
                 .action(param.getAction())
                 .runValue(param.getBehaviorValue())
@@ -61,14 +66,15 @@ public class HabitHistoryCommandService {
                 .review(param.getReview())
                 .isRest(param.getAchievement() == REST_VALUE)
                 .build();
-        habitHistoryRepository.save(build);
+        
+        habitHistoryRepository.save(habitHistory);
     }
 
     /**
      * 습관 기록 기간이 유효한 지 반환
      */
     private void checkExpiration(User user, HistoryPostRequest param) {
-        if(!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
+        if (!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
             throw new ValidationException(HabitErrorCode.EXPIRED_DATE);
     }
 
