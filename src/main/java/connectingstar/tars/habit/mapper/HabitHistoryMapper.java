@@ -11,6 +11,6 @@ public interface HabitHistoryMapper {
     HabitHistoryMapper INSTANCE = Mappers.getMapper(HabitHistoryMapper.class);
 
     @Mapping(source = "user.id", target = "user.id")
-    @Mapping(source = "runHabit.id", target = "runHabit.id")
+    @Mapping(source = "runHabit.runHabitId", target = "runHabit.id")
     HabitHistoryPostResponse toPostResponse(HabitHistory habitHistory);
 }

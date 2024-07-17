@@ -6,9 +6,11 @@ import connectingstar.tars.common.exception.errorcode.UserErrorCode;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.mapper.HabitHistoryMapper;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.request.HabitHistoryPostRequest;
+import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,12 +37,14 @@ public class HabitHistoryCommandService {
     private final RunHabitRepository runHabitRepository;
     private final UserRepository userRepository;
 
+    private final HabitHistoryMapper habitHistoryMapper;
+
     /**
      * 습관기록 저장
      *
      * @param param 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
      */
-    public void saveHistory(HabitHistoryPostRequest param) {
+    public HabitHistoryPostResponse saveHistory(HabitHistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
         checkExpiration(user, param);
@@ -67,7 +71,9 @@ public class HabitHistoryCommandService {
                 .isRest(param.getAchievement() == REST_VALUE)
                 .build();
 
-        habitHistoryRepository.save(habitHistory);
+        HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
+
+        return habitHistoryMapper.toPostResponse(savedHistory);
     }
 
     /**

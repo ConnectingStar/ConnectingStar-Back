@@ -9,6 +9,7 @@ import connectingstar.tars.habit.query.HabitHistoryQueryService;
 import connectingstar.tars.habit.query.QuitHabitQueryService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.*;
+import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
@@ -55,8 +56,8 @@ public class HabitController {
     @PostMapping(value = "/history")
     public ResponseEntity<?> doPostHistory(@RequestBody HabitHistoryPostRequest param) {
         HabitValidator.validate(param);
-        habitHistoryCommandService.saveHistory(param);
-        return ResponseEntity.ok(new SuccessResponse());
+        HabitHistoryPostResponse savedHistoryResponse = habitHistoryCommandService.saveHistory(param);
+        return ResponseEntity.ok(new DataResponse(savedHistoryResponse));
     }
 
     /**
