@@ -1,6 +1,7 @@
 package connectingstar.tars.habit.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import connectingstar.tars.common.domain.EntityReference;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -20,12 +21,12 @@ public class HabitHistoryPostResponse {
     /**
      * 기록을 생성한 사용자 ID
      */
-    private Integer userId;
+    private EntityReference user;
 
     /**
      * 습관 ID
      */
-    private Integer runHabitId;
+    private EntityReference runHabit;
 
     /**
      * 실천한 날짜, 시간
