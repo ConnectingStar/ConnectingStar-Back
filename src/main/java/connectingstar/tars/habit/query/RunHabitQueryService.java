@@ -1,7 +1,5 @@
 package connectingstar.tars.habit.query;
 
-import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
-
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
@@ -10,24 +8,26 @@ import connectingstar.tars.habit.repository.RunHabitDao;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.request.RunDayGetRequest;
 import connectingstar.tars.habit.request.RunGetRequest;
-import connectingstar.tars.habit.response.HabitHistoryWeekelyWriteResponse;
 import connectingstar.tars.habit.response.HabitDayGetResponse;
+import connectingstar.tars.habit.response.HabitHistoryWeekelyWriteResponse;
 import connectingstar.tars.habit.response.RunGetListResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 
 /**
  * 진행중인 습관 조회 서비스
@@ -66,29 +66,30 @@ public class RunHabitQueryService {
 
         User userByUserId = userHabitCommandService.findUserByUserId();
         return userByUserId.getRunHabits()
-            .stream()
-            .filter(rh -> Objects.equals(rh.getRunHabitId(), param.getRunHabitId()))
-            .map(RunPutResponse::new)
-            .findFirst().orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
+                .stream()
+                .filter(rh -> Objects.equals(rh.getRunHabitId(), param.getRunHabitId()))
+                .map(RunPutResponse::new)
+                .findFirst().orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
     }
 
     /**
      * 메인 화면 - 날짜별 습관 여부 표시 용도
-     *
      */
     public List<HabitDayGetResponse> getDay(RunDayGetRequest param) {
         //이전 일자에 대해선 오늘기준으로 월~ 일의 데이터를 전달 -> 모든 습관이 존재할경우 true, false
         //오늘의 습관 다 꺼내옴 -> 만약 해빗 히스토리가 없는 경우 -> 기록가능 ->0
         User userByUserId = userHabitCommandService.findUserByUserId();
         return userByUserId.getRunHabits()
-            .stream()
-            .map(rh -> getDayResponse(param.getReferenceDate(), rh)).toList();
+                .stream()
+                .map(rh -> getDayResponse(param.getReferenceDate(), rh)).toList();
     }
+
+    // TODO: status Magic Number 수정
     private static @NotNull HabitDayGetResponse getDayResponse(LocalDate referenceDate, RunHabit runHabit) {
         Optional<HabitHistory> first = runHabit.getHabitHistories().stream()
-            .filter(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate)).findFirst();
+                .filter(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate)).findFirst();
         Integer habitStatus = 0;
-        if(first.isEmpty()) {
+        if (first.isEmpty()) {
             //해빗 히스토리가 없는 경우 -> 오늘의 날짜와 조회한 date가 2일 이상 차이나는 경우 -> 기록 불가 -> 1
             if (referenceDate.isBefore(LocalDate.now().minusDays(2))) {
                 habitStatus = 1;
@@ -96,9 +97,8 @@ public class RunHabitQueryService {
             }
             return new HabitDayGetResponse(runHabit, habitStatus);
         }
-        // 해빗 히스토리가 있는 경우 -> 만약 습관 status? 가 0이 아닐경우 -> 오늘 실천 완료 -> 2
         HabitHistory habitHistory = first.get();
-        if(habitHistory.getAchievement() != 0 ){
+        if (habitHistory.getIsRest() == false) {
             habitStatus = 2;
             return new HabitDayGetResponse(runHabit, habitStatus);
         }
@@ -106,7 +106,7 @@ public class RunHabitQueryService {
         return new HabitDayGetResponse(runHabit, habitStatus);
     }
 
-    public List<HabitHistoryWeekelyWriteResponse> getHistoryTotalWrite(RunDayGetRequest param){
+    public List<HabitHistoryWeekelyWriteResponse> getHistoryTotalWrite(RunDayGetRequest param) {
         User userByUserId = userHabitCommandService.findUserByUserId();
         int size = userByUserId.getRunHabits().size();
         LocalDate referenceDate = param.getReferenceDate();
@@ -114,19 +114,19 @@ public class RunHabitQueryService {
         LocalDate startDay = thisWeekSunday.atStartOfDay().toLocalDate();
         List<HabitHistoryWeekelyWriteResponse> responses = new ArrayList<>();
         int count = 1;
-      while (count <= 7) {
-          HabitHistoryWeekelyWriteResponse habitHistoryWeekelyWriteResponse = new HabitHistoryWeekelyWriteResponse(startDay,
-              checkTodayAllHabitHistoryCreate(startDay, userByUserId, size));
-          responses.add(habitHistoryWeekelyWriteResponse);
-          startDay = startDay.plusDays(1);
-          count++;
-      }
-      return responses;
+        while (count <= 7) {
+            HabitHistoryWeekelyWriteResponse habitHistoryWeekelyWriteResponse = new HabitHistoryWeekelyWriteResponse(startDay,
+                    checkTodayAllHabitHistoryCreate(startDay, userByUserId, size));
+            responses.add(habitHistoryWeekelyWriteResponse);
+            startDay = startDay.plusDays(1);
+            count++;
+        }
+        return responses;
     }
 
-    private boolean checkTodayAllHabitHistoryCreate(LocalDate referenceDate, User user, Integer runHabitSize){
+    private boolean checkTodayAllHabitHistoryCreate(LocalDate referenceDate, User user, Integer runHabitSize) {
         List<RunHabit> list = user.getRunHabits().stream()
-            .filter(rh -> rh.getHabitHistories().stream().anyMatch(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate))).toList();
+                .filter(rh -> rh.getHabitHistories().stream().anyMatch(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate))).toList();
         return list.size() == runHabitSize;
     }
 }

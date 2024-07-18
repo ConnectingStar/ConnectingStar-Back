@@ -84,11 +84,9 @@ public class HabitHistory extends Auditable {
 
     /**
      * 휴식 여부
-     * 성수님께서 더 이상 사용하지 않는다고 하심
-     * value = rest_value로 활용
      * <p>
-     * 준식님(프론트엔드)에서 필요없다고 하심
-     * achievement 0으로 표현
+     * ! 기존 코드에서 휴식을 achievement = 0으로 처리했음.
+     * ! 현 로직에서는 achievement 값과 관련 없이 isRest=true를 휴식으로 처리하므로 발견하면 수정할 것.
      */
     @Column(name = "is_rest", nullable = false)
     private Boolean isRest;

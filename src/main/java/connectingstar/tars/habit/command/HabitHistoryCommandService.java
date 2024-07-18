@@ -40,7 +40,8 @@ public class HabitHistoryCommandService {
     private final HabitHistoryMapper habitHistoryMapper;
 
     /**
-     * 습관기록 저장
+     * 습관 기록 저장.
+     * 휴식이 아닌 기록을 저장합니다. 휴식 기록 저장은 `saveRestHistory`에서 처리.
      *
      * @param param 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
      */
@@ -68,7 +69,7 @@ public class HabitHistoryCommandService {
                 .runValue(param.getBehaviorValue())
                 .achievement(param.getAchievement())
                 .review(param.getReview())
-                .isRest(param.getAchievement() == REST_VALUE)
+                .isRest(false)
                 .build();
 
         HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
