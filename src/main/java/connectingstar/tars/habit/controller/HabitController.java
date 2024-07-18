@@ -47,7 +47,8 @@ public class HabitController {
     }
 
     /**
-     * 습관 기록 생성
+     * 습관 기록 생성.
+     * 휴식이 아닌 습관 기록을 생성합니다. 휴식 기록은 `/habit/history/rest` 에서 생성.
      * TODO: 별이 쌓여야 하는데 안 되어 있음
      *
      * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
@@ -59,6 +60,11 @@ public class HabitController {
         HabitHistoryPostResponse savedHistoryResponse = habitHistoryCommandService.saveHistory(param);
         return ResponseEntity.ok(new DataResponse(savedHistoryResponse));
     }
+
+//    public ResponseEntity<?> doPostHistoryRest(@RequestBody HabitHistoryRestPostRequest param) {
+//        HabitHistoryRestPostResponse savedHistoryResponse = habitHistoryCommandService.saveRestHistory(param);
+//        return ResponseEntity.ok(new DataResponse(savedHistoryResponse));
+//    }
 
     /**
      * 내 진행중인 습관 조회 (*임시 추후 고치겠습니다)
