@@ -10,6 +10,7 @@ import connectingstar.tars.habit.query.QuitHabitQueryService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.*;
 import connectingstar.tars.habit.response.HabitHistoryPostResponse;
+import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
 import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,7 @@ public class HabitController {
      * TODO: 별이 쌓여야 하는데 안 되어 있음
      *
      * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
-     * @return 201 응답
+     * @return 201 응답, 생성된 기록
      */
     @PostMapping(value = "/history")
     public ResponseEntity<?> doPostHistory(@RequestBody HabitHistoryPostRequest param) {
@@ -61,10 +62,16 @@ public class HabitController {
         return ResponseEntity.ok(new DataResponse(savedHistoryResponse));
     }
 
-//    public ResponseEntity<?> doPostHistoryRest(@RequestBody HabitHistoryRestPostRequest param) {
-//        HabitHistoryRestPostResponse savedHistoryResponse = habitHistoryCommandService.saveRestHistory(param);
-//        return ResponseEntity.ok(new DataResponse(savedHistoryResponse));
-//    }
+    /**
+     * 휴식 기록 생성
+     *
+     * @return 201 응답, 생성된 기록
+     */
+    @PostMapping(value = "/history/rest")
+    public ResponseEntity<?> doPostHistoryRest(@RequestBody HabitHistoryRestPostRequest param) {
+        HabitHistoryRestPostResponse savedHistoryResponse = habitHistoryCommandService.saveRestHistory(param);
+        return ResponseEntity.ok(new DataResponse(savedHistoryResponse));
+    }
 
     /**
      * 내 진행중인 습관 조회 (*임시 추후 고치겠습니다)

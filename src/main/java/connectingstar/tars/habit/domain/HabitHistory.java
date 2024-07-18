@@ -53,27 +53,27 @@ public class HabitHistory extends Auditable {
     /**
      * 실천한 장소
      */
-    @Column(name = "run_place", nullable = false)
+    @Column(name = "run_place", nullable = true)
     private String runPlace;
 
     /**
      * 액션
      * (책 읽기를)
      */
-    @Column(name = "action", nullable = false)
+    @Column(name = "action", nullable = true)
     private String action;
 
     /**
      * 실천량
      */
-    @Column(name = "run_value", nullable = false)
+    @Column(name = "run_value", nullable = true)
     private Integer runValue;
 
     /**
      * 만족도
      * 표정 이미지로 표현됨
      */
-    @Column(name = "achievement", nullable = false)
+    @Column(name = "achievement", nullable = true)
     private Integer achievement;
 
     /**
@@ -88,7 +88,7 @@ public class HabitHistory extends Auditable {
      * ! 기존 코드에서 휴식을 achievement = 0으로 처리했음.
      * ! 현 로직에서는 achievement 값과 관련 없이 isRest=true를 휴식으로 처리하므로 발견하면 수정할 것.
      */
-    @Column(name = "is_rest", nullable = false)
+    @Column(name = "is_rest", nullable = true)
     private Boolean isRest;
 
     @Builder
