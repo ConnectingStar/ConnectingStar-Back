@@ -10,7 +10,9 @@ import connectingstar.tars.habit.mapper.HabitHistoryMapper;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.request.HabitHistoryPostRequest;
+import connectingstar.tars.habit.request.HabitHistoryRestPostRequest;
 import connectingstar.tars.habit.response.HabitHistoryPostResponse;
+import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,10 +50,11 @@ public class HabitHistoryCommandService {
     public HabitHistoryPostResponse saveHistory(HabitHistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
-        checkExpiration(user, param);
-        checkTodayCreateHistoryHabit(user, param);
+        validateReferenceDateForCreation(param.getReferenceDate());
+        validateAlreadyExistsOnReferenceDate(user, param.getRunHabitId(), param.getReferenceDate());
 
-        RunHabit runHabit = findRunHabitByRunHabitId(param);
+        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
+
         HabitHistory habitHistory = HabitHistory.builder()
                 .user(user)
                 .runHabit(runHabit)
@@ -78,16 +81,54 @@ public class HabitHistoryCommandService {
     }
 
     /**
-     * 습관 기록 기간이 유효한 지 반환
+     * 휴식 기록 저장
      */
-    private void checkExpiration(User user, HabitHistoryPostRequest param) {
-        if (!LocalDate.now().minusDays(2).isBefore(param.getReferenceDate()))
+    public HabitHistoryRestPostResponse saveRestHistory(HabitHistoryRestPostRequest param) {
+        User user = findUserByUserId(UserUtils.getUserId());
+
+        validateReferenceDateForCreation(param.getReferenceDate());
+        validateAlreadyExistsOnReferenceDate(user, param.getRunHabitId(), param.getReferenceDate());
+
+        RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
+
+        HabitHistory habitHistory = HabitHistory.builder()
+                .user(user)
+                .runHabit(runHabit)
+                .runDate(
+                        LocalDateTime.of(
+                                param.getReferenceDate().getYear(),
+                                param.getReferenceDate().getMonth().getValue(),
+                                param.getReferenceDate().getDayOfMonth(),
+                                runHabit.getRunTime().getHour(),
+                                runHabit.getRunTime().getMinute()
+                        )
+                )
+                .review(param.getReview())
+                .isRest(true)
+                .build();
+
+        HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
+
+        return habitHistoryMapper.toRestPostResponse(savedHistory);
+    }
+
+    /**
+     * 오늘 날짜를 기준으로 습관 기록 기준일이 유효한 지 검증합니다.
+     * <p>
+     * 습관 기록 기간이 유효하지 않으면 exception을 throw합니다.
+     * 이틀 전까지만 기록 기준일을 설정할 수 있습니다.
+     *
+     * @param referenceDate 습관 기록 기준일
+     */
+    private void validateReferenceDateForCreation(LocalDate referenceDate) {
+        // 유효 범위: 이틀 전 < 기록 기준일
+        if (!LocalDate.now().minusDays(2).isBefore(referenceDate))
             throw new ValidationException(HabitErrorCode.EXPIRED_DATE);
     }
 
 
-    private RunHabit findRunHabitByRunHabitId(HabitHistoryPostRequest param) {
-        return runHabitRepository.findById(param.getRunHabitId()).orElseThrow(()
+    private RunHabit findRunHabitByRunHabitId(Integer runHabitId) {
+        return runHabitRepository.findById(runHabitId).orElseThrow(()
                 -> new ValidationException(HabitErrorCode.RUN_HABIT_NOT_FOUND));
     }
 
@@ -96,15 +137,20 @@ public class HabitHistoryCommandService {
                 -> new ValidationException(UserErrorCode.USER_NOT_FOUND));
     }
 
-    private void checkTodayCreateHistoryHabit(User user, HabitHistoryPostRequest param) {
+    /**
+     * 기록하려는 습관 기준일에 같은 날짜의 습관 기록이 존재하는 지 확인합니다.
+     * 같은 날짜의 습관 기록이 존재하면 예외를 throw합니다.
+     */
+    private void validateAlreadyExistsOnReferenceDate(User user, Integer runHabitId, LocalDate referenceDate) {
+        // TODO: 필요한 기록만 불러오도록 리팩토링
         Optional<HabitHistory> recentHistory = user.getHabitHistories()
                 .stream()
-                .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), param.getRunHabitId()))
-                .filter(habitHistory -> param.getReferenceDate().isEqual(habitHistory.getRunDate().toLocalDate()))
+                .filter(habitHistory -> Objects.equals(habitHistory.getRunHabit().getRunHabitId(), runHabitId))
+                .filter(habitHistory -> referenceDate.isEqual(habitHistory.getRunDate().toLocalDate()))
                 .sorted(Comparator.comparingInt(HabitHistory::getHabitHistoryId).reversed())
                 .findFirst();
         if (recentHistory.isPresent()) {
-            if (recentHistory.get().getRunDate().toLocalDate().isEqual(param.getReferenceDate()))
+            if (recentHistory.get().getRunDate().toLocalDate().isEqual(referenceDate))
                 throw new ValidationException(HabitErrorCode.ALREADY_CREATED_HABIT_HISTORY);
         }
     }
