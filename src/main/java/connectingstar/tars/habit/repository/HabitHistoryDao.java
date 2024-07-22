@@ -12,8 +12,8 @@ import connectingstar.tars.habit.domain.QRunHabit;
 import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
+import connectingstar.tars.habit.response.HabitHistoryDateGetResponse;
 import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
-import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
 import connectingstar.tars.user.domain.QUser;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class HabitHistoryDao {
      * @param param 조회 조건
      * @return 조회 결과
      */
-    public List<HistoryGetListResponse> getList(HabitHistoryGetListRequest param) {
+    public List<HabitHistoryDateGetResponse> getList(HabitHistoryGetListRequest param) {
 
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
         OrderSpecifier<Integer> orderSpecifier = habitHistory.habitHistoryId.desc();
@@ -57,7 +57,7 @@ public class HabitHistoryDao {
         }
         return queryFactory
                 .select(Projections.constructor(
-                        HistoryGetListResponse.class,
+                        HabitHistoryDateGetResponse.class,
                         habitHistory.runDate,
                         habitHistory.runPlace,
                         habitHistory.runValue,
@@ -76,13 +76,13 @@ public class HabitHistoryDao {
      * @param param 조회 조건
      * @return 조회 결과
      */
-    public HistoryGetListResponse get(HabitHistoryListRequest param) {
+    public HabitHistoryDateGetResponse get(HabitHistoryListRequest param) {
 
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
 
         return queryFactory
                 .select(Projections.constructor(
-                        HistoryGetListResponse.class,
+                        HabitHistoryDateGetResponse.class,
                         habitHistory.runDate,
                         habitHistory.runPlace,
                         habitHistory.runValue,

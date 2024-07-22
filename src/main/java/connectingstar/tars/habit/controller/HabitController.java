@@ -9,9 +9,9 @@ import connectingstar.tars.habit.query.HabitHistoryQueryService;
 import connectingstar.tars.habit.query.QuitHabitQueryService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.*;
+import connectingstar.tars.habit.response.HabitHistoryDateGetResponse;
 import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
-import connectingstar.tars.habit.response.HistoryGetListResponse;
 import connectingstar.tars.habit.validation.HabitValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -153,8 +153,8 @@ public class HabitController {
     @GetMapping(value = "/history/date")
     public ResponseEntity<?> doGetHistory(HabitHistoryListRequest param) {
         HabitValidator.validate(param);
-        HistoryGetListResponse historyGetListResponse = habitHistoryQueryService.get(param);
-        DataResponse dataResponse = new DataResponse(historyGetListResponse);
+        HabitHistoryDateGetResponse habitHistoryDateGetResponse = habitHistoryQueryService.get(param);
+        DataResponse dataResponse = new DataResponse(habitHistoryDateGetResponse);
         return ResponseEntity.ok(dataResponse);
     }
 
