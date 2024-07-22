@@ -43,9 +43,8 @@ public class HabitHistoryQueryService {
      * 단일 습관 기록 목록 조회
      *
      * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
-     * @return 배열(습관 수행 날짜, 만족도, 실천량)
      */
-    public HabitHistoryDateGetResponse get(HabitHistoryListRequest param) {
+    public HabitHistoryDateGetResponse getByDate(HabitHistoryListRequest param) {
         return habitHistoryDao.get(param);
     }
 

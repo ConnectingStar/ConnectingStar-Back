@@ -1,17 +1,47 @@
 package connectingstar.tars.habit.response;
 
-import connectingstar.tars.habit.dto.HabitHistoryDto;
-import connectingstar.tars.habit.dto.RunHabitDto;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 /**
  * GET /habit/history/date API의 response
  */
 @Getter
-@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HabitHistoryDateGetResponse {
-    private HabitHistoryDto habitHistory;
+    /**
+     * 습관 수행 날짜
+     */
+    private final LocalDateTime runDate;
 
-    private RunHabitDto runHabit;
+    /**
+     * 실천한 장소
+     */
+    private final String runPlace;
+
+    /**
+     * 실천량
+     */
+    private final Integer runValue;
+
+
+    /**
+     * 단위
+     */
+    private final String behaviorUnit;
+
+    /**
+     * 느낀점
+     */
+    private final String review;
+
+    public HabitHistoryDateGetResponse(LocalDateTime runDate, String runPlace, Integer runValue, String behaviorUnit, String review) {
+        this.runDate = runDate;
+        this.runPlace = runPlace;
+        this.runValue = runValue;
+        this.behaviorUnit = behaviorUnit;
+        this.review = review;
+    }
 }

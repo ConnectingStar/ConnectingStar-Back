@@ -153,7 +153,7 @@ public class HabitController {
     @GetMapping(value = "/history/date")
     public ResponseEntity<?> doGetHistory(HabitHistoryListRequest param) {
         HabitValidator.validate(param);
-        HabitHistoryDateGetResponse habitHistoryDateGetResponse = habitHistoryQueryService.get(param);
+        HabitHistoryDateGetResponse habitHistoryDateGetResponse = habitHistoryQueryService.getByDate(param);
         DataResponse dataResponse = new DataResponse(habitHistoryDateGetResponse);
         return ResponseEntity.ok(dataResponse);
     }
