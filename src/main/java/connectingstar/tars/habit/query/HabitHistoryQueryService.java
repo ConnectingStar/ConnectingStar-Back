@@ -4,7 +4,7 @@ import connectingstar.tars.habit.repository.HabitHistoryDao;
 import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
-import connectingstar.tars.habit.response.HabitHistoryDateGetResponse;
+import connectingstar.tars.habit.response.HabitHistoryDateGetResponseV1;
 import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class HabitHistoryQueryService {
      *
      * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      */
-    public HabitHistoryDateGetResponse getByDate(HabitHistoryListRequest param) {
+    public HabitHistoryDateGetResponseV1 getByDate(HabitHistoryListRequest param) {
         return habitHistoryDao.get(param);
     }
 
@@ -69,7 +69,7 @@ public class HabitHistoryQueryService {
      * @param param 습관기록목록 조회를 위한 위한 진행중인 습관 ID, 최신,오래된 순 구분, 휴식 여부 구분
      * @return 배열(습관 수행 날짜, 실천한 장소, 실천량, 단위, 느낀점)
      */
-    public List<HabitHistoryDateGetResponse> getList(HabitHistoryGetListRequest param) {
+    public List<HabitHistoryDateGetResponseV1> getList(HabitHistoryGetListRequest param) {
         return habitHistoryDao.getList(param);
     }
 

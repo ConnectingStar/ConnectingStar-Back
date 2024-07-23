@@ -3,7 +3,7 @@ package connectingstar.tars.habit.mapper;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.HabitHistoryDto;
-import connectingstar.tars.habit.response.HabitHistoryDateGetResponse;
+import connectingstar.tars.habit.response.HabitHistoryDateGetResponseV1;
 import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
 import org.mapstruct.Mapper;
@@ -20,7 +20,7 @@ public interface HabitHistoryMapper {
 
     @Mapping(source = "habitHistory", target = "habitHistory")
     @Mapping(source = "runHabit", target = "runHabit")
-    HabitHistoryDateGetResponse toDateGetResponse(HabitHistory habitHistory, RunHabit runHabit);
+    HabitHistoryDateGetResponseV1 toDateGetResponse(HabitHistory habitHistory, RunHabit runHabit);
 
     @Mapping(source = "habitHistory", target = "habitHistory")
     HabitHistoryPostResponse toPostResponse(HabitHistory habitHistory);
