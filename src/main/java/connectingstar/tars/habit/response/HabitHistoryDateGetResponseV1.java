@@ -7,10 +7,7 @@ import java.time.LocalDateTime;
 
 /**
  * GET /habit/history/date API의 response
- *
- * @Deprecated use HabitDailyTrackingResponse instead.
  */
-@Deprecated
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HabitHistoryDateGetResponseV1 {

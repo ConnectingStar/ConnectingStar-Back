@@ -6,6 +6,10 @@ import connectingstar.tars.common.domain.TimeInfo;
 import connectingstar.tars.habit.domain.RunHabit;
 import lombok.Getter;
 
+/**
+ * @Deprecated use HabitDailyTrackingResponse instead.
+ */
+@Deprecated
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"runHabitId", "userNickname", "identity", "runTime", "place", "behavior", "behaviorValue", "behaviorUnit", "habitStatus"})

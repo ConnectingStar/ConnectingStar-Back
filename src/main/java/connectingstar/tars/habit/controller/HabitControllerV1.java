@@ -102,7 +102,9 @@ public class HabitControllerV1 {
      *
      * @param param 진행중인 습관 ID, 기준 날짜
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     * @Deprecated use GET /v2/habits/daily-trackings instead.
      */
+    @Deprecated
     @GetMapping(value = "/day")
     public ResponseEntity<?> doGetRunDay(RunDayGetRequest param) {
         HabitValidator.validate(param);
@@ -150,7 +152,6 @@ public class HabitControllerV1 {
      *
      * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
      * @return 습관 수행 날짜, 만족도, 실천량
-     * @Deprecated use GET /v2/habits/daily-trackings instead.
      */
     @Deprecated
     @GetMapping(value = "/history/date")
