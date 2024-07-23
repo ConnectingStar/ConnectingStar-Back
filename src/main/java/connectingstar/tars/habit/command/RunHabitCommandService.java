@@ -1,7 +1,6 @@
 package connectingstar.tars.habit.command;
 
 import connectingstar.tars.common.exception.ValidationException;
-import connectingstar.tars.common.exception.errorcode.UserErrorCode;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.HabitHistory;
@@ -13,17 +12,15 @@ import connectingstar.tars.habit.request.RunPostRequest;
 import connectingstar.tars.habit.request.RunPutRequest;
 import connectingstar.tars.habit.response.RunPostResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
-import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
@@ -46,7 +43,7 @@ public class RunHabitCommandService {
 
     private final HabitAlertCommandService habitAlertCommandService;
     private final RunHabitRepository runHabitRepository;
-    private final RunHabitDao runHabitDao;
+    private final RunHabitRepositoryCustom runHabitRepositoryCustom;
     private final HabitAlertRepository habitAlertRepository;
     private final QuitHabitRepository quitHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
@@ -88,10 +85,10 @@ public class RunHabitCommandService {
     public RunPutResponse updateRun(RunPutRequest param) {
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
         User user = userRepository.findById(UserUtils.getUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
-        runHabit.updateData(param,user);
+        runHabit.updateData(param, user);
         List<HabitAlert> alerts = runHabit.getAlerts();
-        habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts,FIRST_ALERT_STATUS, param.getFirstAlertStatus());
-        habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS, param.getSecondAlertStatus() );
+        habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts, FIRST_ALERT_STATUS, param.getFirstAlertStatus());
+        habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS, param.getSecondAlertStatus());
         return new RunPutResponse(runHabit);
 
     }
@@ -104,11 +101,11 @@ public class RunHabitCommandService {
      */
     public void deleteRun(RunDeleteRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
-        RunHabit runHabit = runHabitDao.checkUserId(param.getRunHabitId());
+        RunHabit runHabit = runHabitRepositoryCustom.checkUserId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
-        if(runHabit.getIdentity().equals(user.getIdentity())) {
+        if (runHabit.getIdentity().equals(user.getIdentity())) {
             Optional<RunHabit> first = user.getRunHabits().stream().filter(rh -> !rh.getIdentity().equals(user.getIdentity())).findFirst();
-            if(first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
+            if (first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
             else user.updateIdentity(first.get().getIdentity());
         }
         QuitHabit quitHabit = QuitHabit.postQuitHabit()

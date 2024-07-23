@@ -55,7 +55,7 @@ public class UserQueryService {
      * @return 회원 엔티티
      */
     @Transactional(readOnly = true)
-    public User getUser() {
+    public User getCurrentUser() {
         return userRepository.findById(UserUtils.getUserId())
                 .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }

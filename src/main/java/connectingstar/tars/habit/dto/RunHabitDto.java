@@ -1,6 +1,8 @@
 package connectingstar.tars.habit.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalTime;
 
@@ -10,6 +12,8 @@ import java.time.LocalTime;
  *
  * @author 이우진
  */
+@Getter
+@Setter
 public class RunHabitDto {
     /**
      * 진행중인 습관 ID

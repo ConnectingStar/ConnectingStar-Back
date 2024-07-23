@@ -1,8 +1,5 @@
 package connectingstar.tars.user.command;
 
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_IDENTITY_NOT_FOUNT;
-
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
@@ -16,19 +13,19 @@ import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
-import connectingstar.tars.user.request.UserAgeRangeRequest;
-import connectingstar.tars.user.request.UserConstellationRequest;
-import connectingstar.tars.user.request.UserGenderRequest;
-import connectingstar.tars.user.request.UserIdentityRequest;
-import connectingstar.tars.user.request.UserNicknameRequest;
+import connectingstar.tars.user.request.*;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
 import connectingstar.tars.user.response.UserStarResponse;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_IDENTITY_NOT_FOUNT;
 
 /**
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -40,131 +37,131 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserCommandService {
 
-  private final OAuthService oauthService;
-  private final UserRepository userRepository;
-  private final UserQueryService userQueryService;
-  private final ConstellationQueryService constellationQueryService;
-  private final UserConstellationRepository userConstellationRepository;
-  private final RunHabitRepository runHabitRepository;
+    private final OAuthService oauthService;
+    private final UserRepository userRepository;
+    private final UserQueryService userQueryService;
+    private final ConstellationQueryService constellationQueryService;
+    private final UserConstellationRepository userConstellationRepository;
+    private final RunHabitRepository runHabitRepository;
 
-  /**
-   * 유저 삭제
-   * hard delete
-   */
-  @Transactional
-  public void deleteUser() {
-    //(1)카제오 계정과 연동 해제
-    //oauthService.unlinkKaKao(accessToken);
-    //(2)사용자 데이터 삭제
-    userRepository.deleteById(UserUtils.getUserId());
-  }
+    /**
+     * 유저 삭제
+     * hard delete
+     */
+    @Transactional
+    public void deleteUser() {
+        //(1)카제오 계정과 연동 해제
+        //oauthService.unlinkKaKao(accessToken);
+        //(2)사용자 데이터 삭제
+        userRepository.deleteById(UserUtils.getUserId());
+    }
 
-  /**
-   * 닉네임 + 정체성 + 캐릭터 이미지
-   */
-  public UserBasicInfoResponse getUserBasicInfo() {
-    User getUser = userQueryService.getUser();
-    Optional<RunHabit> first = getUser.getRunHabits().stream().filter(runHabit -> getUser.getIdentity().equals(runHabit.getIdentity()))
-        .findFirst();
-    return first.map(runHabit -> new UserBasicInfoResponse(getUser, runHabit)).orElseGet(() -> new UserBasicInfoResponse(getUser));
-  }
+    /**
+     * 닉네임 + 정체성 + 캐릭터 이미지
+     */
+    public UserBasicInfoResponse getUserBasicInfo() {
+        User getUser = userQueryService.getCurrentUser();
+        Optional<RunHabit> first = getUser.getRunHabits().stream().filter(runHabit -> getUser.getIdentity().equals(runHabit.getIdentity()))
+                .findFirst();
+        return first.map(runHabit -> new UserBasicInfoResponse(getUser, runHabit)).orElseGet(() -> new UserBasicInfoResponse(getUser));
+    }
 
-  /**
-   * 닉네임 + 정체성 + 캐릭터 이미지 + 습관
-   */
-  public Object getUserBasicInfoAndHabit() {
-    User getUser = userQueryService.getUser();
-    List<RunHabit> runHabitList = getRunHabit(getUser);
-    return new UserBasicInfoAndHabitResponse(getUser.getId(), getUser.getNickname(), getUser.getIdentity()
-        //, getUser.getConstellation().getCharacterImage()
-        , runHabitList);
-  }
+    /**
+     * 닉네임 + 정체성 + 캐릭터 이미지 + 습관
+     */
+    public Object getUserBasicInfoAndHabit() {
+        User getUser = userQueryService.getCurrentUser();
+        List<RunHabit> runHabitList = getRunHabit(getUser);
+        return new UserBasicInfoAndHabitResponse(getUser.getId(), getUser.getNickname(), getUser.getIdentity()
+                //, getUser.getConstellation().getCharacterImage()
+                , runHabitList);
+    }
 
-  public UserStarResponse getUserStar() {
-    return new UserStarResponse(userQueryService.getUser().getStar());
-  }
+    public UserStarResponse getUserStar() {
+        return new UserStarResponse(userQueryService.getCurrentUser().getStar());
+    }
 
-  public boolean isHavingConstellation(Integer userId, Integer constellationId) {
-    return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
-  }
+    public boolean isHavingConstellation(Integer userId, Integer constellationId) {
+        return userConstellationRepository.existsByUser_IdAndConstellation_ConstellationId(userId, constellationId);
+    }
 
-  /**
-   * 프로필 별자리 수정
-   *
-   * @param param 수정 정보
-   */
-  @Transactional
-  public void update(UserConstellationRequest param) {
-    User user = userQueryService.getUser();
+    /**
+     * 프로필 별자리 수정
+     *
+     * @param param 수정 정보
+     */
+    @Transactional
+    public void update(UserConstellationRequest param) {
+        User user = userQueryService.getCurrentUser();
 
-    UserConstellation userConstellation = user.getUserConstellationList()
-        .stream()
-        .filter(it -> it.getConstellation()
-            .getConstellationId()
-            .equals(param.getConstellationId()) &&
-            it.getRegYn().equals(Boolean.TRUE))
-        .findFirst()
-        .orElseThrow(
-            () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
+        UserConstellation userConstellation = user.getUserConstellationList()
+                .stream()
+                .filter(it -> it.getConstellation()
+                        .getConstellationId()
+                        .equals(param.getConstellationId()) &&
+                        it.getRegYn().equals(Boolean.TRUE))
+                .findFirst()
+                .orElseThrow(
+                        () -> new ValidationException(USER_CONSTELLATION_NOT_REGISTER));
 
-    user.updateConstellation(userConstellation.getConstellation());
-  }
+        user.updateConstellation(userConstellation.getConstellation());
+    }
 
-  /**
-   * 회원 닉네임 수정
-   *
-   * @param param 수정 정보
-   */
-  @Transactional
-  public void update(UserNicknameRequest param) {
-    User user = userQueryService.getUser();
+    /**
+     * 회원 닉네임 수정
+     *
+     * @param param 수정 정보
+     */
+    @Transactional
+    public void update(UserNicknameRequest param) {
+        User user = userQueryService.getCurrentUser();
 
-    user.updateNickname(param.getNickname());
-  }
+        user.updateNickname(param.getNickname());
+    }
 
-  /**
-   * 회원 닉네임 수정
-   *
-   * @param param 수정 정보
-   */
-  @Transactional
-  public void update(UserIdentityRequest param) {
-    User user = userQueryService.getUser();
+    /**
+     * 회원 닉네임 수정
+     *
+     * @param param 수정 정보
+     */
+    @Transactional
+    public void update(UserIdentityRequest param) {
+        User user = userQueryService.getCurrentUser();
 
-    user.getRunHabits()
-        .stream()
-        .filter(habit -> habit.getIdentity().equals(param.getIdentity()))
-        .findFirst()
-        .orElseThrow(() -> new ValidationException(USER_IDENTITY_NOT_FOUNT));
+        user.getRunHabits()
+                .stream()
+                .filter(habit -> habit.getIdentity().equals(param.getIdentity()))
+                .findFirst()
+                .orElseThrow(() -> new ValidationException(USER_IDENTITY_NOT_FOUNT));
 
-    user.updateIdentity(param.getIdentity());
-  }
+        user.updateIdentity(param.getIdentity());
+    }
 
-  /**
-   * 회원 성별 수정
-   *
-   * @param param 수정 정보
-   */
-  @Transactional
-  public void update(UserGenderRequest param) {
-    User user = userQueryService.getUser();
+    /**
+     * 회원 성별 수정
+     *
+     * @param param 수정 정보
+     */
+    @Transactional
+    public void update(UserGenderRequest param) {
+        User user = userQueryService.getCurrentUser();
 
-    user.updateGender(GenderType.fromCode(param.getGenderType()));
-  }
+        user.updateGender(GenderType.fromCode(param.getGenderType()));
+    }
 
-  /**
-   * 회원 나이대 수정
-   *
-   * @param param 수정 정보
-   */
-  @Transactional
-  public void update(UserAgeRangeRequest param) {
-    User user = userQueryService.getUser();
+    /**
+     * 회원 나이대 수정
+     *
+     * @param param 수정 정보
+     */
+    @Transactional
+    public void update(UserAgeRangeRequest param) {
+        User user = userQueryService.getCurrentUser();
 
-    user.updateAgeRange(AgeRangeType.fromCode(param.getAgeRangeType()));
-  }
+        user.updateAgeRange(AgeRangeType.fromCode(param.getAgeRangeType()));
+    }
 
-  private List<RunHabit> getRunHabit(User user) {
-    return runHabitRepository.findAllByUser(user);
-  }
+    private List<RunHabit> getRunHabit(User user) {
+        return runHabitRepository.findAllByUser(user);
+    }
 }

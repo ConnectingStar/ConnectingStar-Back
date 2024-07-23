@@ -18,20 +18,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class DeleteAccountReasonCommandService {
 
-  private final UserQueryService userQueryService;
-  private final DeleteAccountReasonRepository deleteAccountReasonRepository;
+    private final UserQueryService userQueryService;
+    private final DeleteAccountReasonRepository deleteAccountReasonRepository;
 
-  public void saveDeleteAccountReason(DeleteAccountReasonRequest param) {
-    User user = userQueryService.getUser();
+    public void saveDeleteAccountReason(DeleteAccountReasonRequest param) {
+        User user = userQueryService.getCurrentUser();
 
-    DeleteAccountReason deleteAccountReason = DeleteAccountReason.builder()
-        .reason(param.getReason())
-        .content(param.getContent())
-        .ageRange(user.getAgeRange())
-        .genderType(user.getGender())
-        .createdDt(String.valueOf(user.getCreatedDt()))
-        .deletedDt(param.getDeletedDt())
-        .build();
-    deleteAccountReasonRepository.save(deleteAccountReason);
-  }
+        DeleteAccountReason deleteAccountReason = DeleteAccountReason.builder()
+                .reason(param.getReason())
+                .content(param.getContent())
+                .ageRange(user.getAgeRange())
+                .genderType(user.getGender())
+                .createdDt(String.valueOf(user.getCreatedDt()))
+                .deletedDt(param.getDeletedDt())
+                .build();
+        deleteAccountReasonRepository.save(deleteAccountReason);
+    }
 }
