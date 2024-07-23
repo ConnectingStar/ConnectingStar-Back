@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+// 날짜별 조회, 조인 위해
+@Table(indexes = @Index(name = "ix_habitHistory_runDate", columnList = "run_date"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
 public class HabitHistory extends Auditable {

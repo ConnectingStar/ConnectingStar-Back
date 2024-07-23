@@ -3,17 +3,20 @@ package connectingstar.tars.habit.query;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.dto.RunHabitWithHistoryDto;
+import connectingstar.tars.habit.enums.DailyTrackingStatus;
+import connectingstar.tars.habit.mapper.HabitHistoryMapper;
+import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.repository.HabitHistoryRepository;
-import connectingstar.tars.habit.repository.RunHabitDao;
 import connectingstar.tars.habit.repository.RunHabitRepository;
+import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.RunDayGetRequest;
 import connectingstar.tars.habit.request.RunGetRequest;
-import connectingstar.tars.habit.response.HabitDayGetResponse;
-import connectingstar.tars.habit.response.HabitHistoryWeekelyWriteResponse;
-import connectingstar.tars.habit.response.RunGetListResponse;
-import connectingstar.tars.habit.response.RunPutResponse;
+import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.response.*;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -39,10 +42,15 @@ import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_
 @RequiredArgsConstructor
 public class RunHabitQueryService {
 
+    private final UserQueryService userQueryService;
+    private final UserHabitCommandService userHabitCommandService;
+
     private final RunHabitRepository runHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
-    private final RunHabitDao runHabitDao;
-    private final UserHabitCommandService userHabitCommandService;
+    private final RunHabitRepositoryCustom runHabitRepositoryCustom;
+
+    private final RunHabitMapper runHabitMapper;
+    private final HabitHistoryMapper habitHistoryMapper;
 
     /**
      * 진행중인 습관 목록 조회
@@ -84,7 +92,10 @@ public class RunHabitQueryService {
                 .map(rh -> getDayResponse(param.getReferenceDate(), rh)).toList();
     }
 
-    // TODO: status Magic Number 수정
+    /**
+     * @Deprecated use .getDailyTrackingList() instead.
+     */
+    @Deprecated
     private static @NotNull HabitDayGetResponse getDayResponse(LocalDate referenceDate, RunHabit runHabit) {
         Optional<HabitHistory> first = runHabit.getHabitHistories().stream()
                 .filter(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate)).findFirst();
@@ -122,6 +133,57 @@ public class RunHabitQueryService {
             count++;
         }
         return responses;
+    }
+
+    /**
+     * 날짜를 입력받아 해당 날짜의 습관, 기록, 상태를 조회한다.
+     * 홈 페이지 - 캘린더 - 날짜별 습관 수행을 조회할 때 사용한다.
+     * <p>
+     * 기록이 없어도 history=null, habit, status를 반환한다.
+     */
+    public List<HabitDailyTrackingResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
+        User user = userQueryService.getCurrentUser();
+
+        List<RunHabitWithHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
+
+        List<HabitDailyTrackingResponse> responses = runHabitWithHistories.stream()
+                .map(runHabitWithHistory -> {
+                    HabitHistory history = runHabitWithHistory.getHabitHistory();
+                    RunHabit runHabit = runHabitWithHistory.getRunHabit();
+
+                    return HabitDailyTrackingResponse.builder()
+                            .history(habitHistoryMapper.toDto(history))
+                            .habit(runHabitMapper.toDto(runHabit))
+                            .status(this.getDailyTrackingStatus(history, requestParam.getDate()))
+                            .build();
+                })
+                .toList();
+
+        return responses;
+    }
+
+    /**
+     * 특정 날짜의 습관 수행 상태를 반환합니다.
+     *
+     * @param history (nullable) 해당 날짜의 습관 기록.
+     * @param date    습관 기록을 확인하려는 날짜.
+     */
+    private DailyTrackingStatus getDailyTrackingStatus(HabitHistory history, LocalDate date) {
+        // 기록 없음
+        if (history == null) {
+            // 만료 여부 - 이틀 이상 지나면 만료.
+            if (date.isBefore(LocalDate.now().minusDays(2))) {
+                return DailyTrackingStatus.EXPIRED;
+            }
+            return DailyTrackingStatus.TO_DO;
+        }
+
+        // 기록 있음
+        // 휴식 여부
+        if (history.getIsRest() == true) {
+            return DailyTrackingStatus.REST;
+        }
+        return DailyTrackingStatus.COMPLETED;
     }
 
     private boolean checkTodayAllHabitHistoryCreate(LocalDate referenceDate, User user, Integer runHabitSize) {

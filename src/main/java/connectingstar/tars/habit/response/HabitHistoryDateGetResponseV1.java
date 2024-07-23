@@ -5,10 +5,15 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+/**
+ * GET /habit/history/date API의 response
+ *
+ * @Deprecated use HabitDailyTrackingResponse instead.
+ */
+@Deprecated
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class HistoryGetListResponse {
-
+public class HabitHistoryDateGetResponseV1 {
     /**
      * 습관 수행 날짜
      */
@@ -35,7 +40,7 @@ public class HistoryGetListResponse {
      */
     private final String review;
 
-    public HistoryGetListResponse(LocalDateTime runDate, String runPlace, Integer runValue, String behaviorUnit, String review) {
+    public HabitHistoryDateGetResponseV1(LocalDateTime runDate, String runPlace, Integer runValue, String behaviorUnit, String review) {
         this.runDate = runDate;
         this.runPlace = runPlace;
         this.runValue = runValue;

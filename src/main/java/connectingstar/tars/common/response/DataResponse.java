@@ -8,11 +8,11 @@ import lombok.Getter;
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DataResponse extends SuccessResponse {
+public class DataResponse<TData> extends SuccessResponse {
 
-  private final Object data;
+    private final TData data;
 
-  public DataResponse(Object data) {
-    this.data = data;
-  }
+    public DataResponse(TData data) {
+        this.data = data;
+    }
 }

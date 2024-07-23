@@ -5,26 +5,31 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
+import connectingstar.tars.habit.domain.QHabitHistory;
 import connectingstar.tars.habit.domain.QRunHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.dto.RunHabitWithHistoryDto;
 import connectingstar.tars.habit.request.RunListRequest;
 import connectingstar.tars.habit.response.RunPutResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.NOT_USER_RUN_HABIT;
 
 /**
- * 진행중인 습관 Repository
+ * 진행중인 습관 QueryDSL Repository
  *
  * @author 김성수
  */
-
 @RequiredArgsConstructor
 @Repository
-public class RunHabitDao {
+@Slf4j
+public class RunHabitRepositoryCustomImpl implements RunHabitRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
@@ -44,6 +49,21 @@ public class RunHabitDao {
                 .fetch();
     }
 
+    @Override
+    public List<RunHabitWithHistoryDto> getListOfUserWithHistoryByDate(Integer userId, LocalDate date) {
+        QRunHabit runHabit = QRunHabit.runHabit;
+        QHabitHistory habitHistory = QHabitHistory.habitHistory;
+        
+        return queryFactory
+                .select(Projections.constructor(RunHabitWithHistoryDto.class,
+                        runHabit,
+                        habitHistory))
+                .from(runHabit)
+                .where(runHabit.user.id.eq(userId))
+                .leftJoin(runHabit.habitHistories, habitHistory)
+                .on(habitHistory.runDate.between(date.atStartOfDay(), date.atTime(LocalTime.MAX)))
+                .fetch();
+    }
 
     /**
      * 진행중인 습관 해당유저 소유여부 확인
