@@ -7,6 +7,7 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.mapper.UserMapper;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.response.UserMeGetResponse;
 import connectingstar.tars.user.response.UserMeProfileGetResponse;
 import connectingstar.tars.user.response.UserOnboardCheckResponse;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +67,18 @@ public class UserQueryService {
     }
 
     /**
-     * 유저 조회 - 마이페이지에서 사용할 데이터
+     * 로그인한 유저를 조회하고 /v2/users/me response dto를 반환합니다.
+     *
+     * @return /v2/users/me response DTO.
+     */
+    public UserMeGetResponse getCurrentUserResponse() {
+        User user = getCurrentUser();
+
+        return userMapper.toMeGetResponse(user);
+    }
+
+    /**
+     * 로그인한 유저 조회 - 마이페이지에서 사용할 데이터
      *
      * @return 선택한 별자리 객체가 포함된 유저 DTO.
      */
@@ -89,4 +101,6 @@ public class UserQueryService {
                 .filter(it -> it.getConstellation().getConstellationId().equals(constellationId))
                 .findFirst();
     }
+
+
 }

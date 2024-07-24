@@ -58,7 +58,10 @@ public class UserCommandService {
 
     /**
      * 닉네임 + 정체성 + 캐릭터 이미지
+     *
+     * @deprecated use UserQueryService.getMeResponse() instead.
      */
+    @Deprecated
     public UserBasicInfoResponse getUserBasicInfo() {
         User currentUser = userQueryService.getCurrentUser();
         Optional<RunHabit> first = currentUser.getRunHabits().stream().filter(runHabit -> currentUser.getIdentity().equals(runHabit.getIdentity()))

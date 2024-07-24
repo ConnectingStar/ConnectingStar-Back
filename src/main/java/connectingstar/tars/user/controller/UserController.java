@@ -2,6 +2,7 @@ package connectingstar.tars.user.controller;
 
 import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.user.query.UserQueryService;
+import connectingstar.tars.user.response.UserMeGetResponse;
 import connectingstar.tars.user.response.UserMeProfileGetResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,6 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
     private final UserQueryService userQueryService;
+
+    @GetMapping(value = "/me")
+    public ResponseEntity<DataResponse<UserMeGetResponse>> getMe() {
+        UserMeGetResponse responseDto = userQueryService.getCurrentUserResponse();
+
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
 
     /**
      * 마이 페이지에서 사용할 유저 정보를 반환합니다.

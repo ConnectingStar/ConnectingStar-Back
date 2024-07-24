@@ -189,7 +189,12 @@ public class UserControllerV1 {
      * 유저 기본 정보 반환
      *
      * @return 유저 닉네임 + 정체성
+     * @deprecated use UserController.getMe() instead
+     * <p>
+     * 프론트에서 범용으로 사용되나 유저 외 다른 엔티티까지 사용됨.
+     * 성능 고려하여 deprecated 처리.
      */
+    @Deprecated
     @GetMapping(value = "/basic-info")
     public ResponseEntity<?> getUserBasicInfo() {
         return ResponseEntity.ok(new DataResponse(userCommandService.getUserBasicInfo()));
