@@ -35,7 +35,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     /**
-     * 회원 ID
+     * 이메일
      */
     @Column(name = "email", nullable = false)
     private String email;

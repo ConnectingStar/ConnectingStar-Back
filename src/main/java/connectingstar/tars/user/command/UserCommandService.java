@@ -60,10 +60,10 @@ public class UserCommandService {
      * 닉네임 + 정체성 + 캐릭터 이미지
      */
     public UserBasicInfoResponse getUserBasicInfo() {
-        User getUser = userQueryService.getCurrentUser();
-        Optional<RunHabit> first = getUser.getRunHabits().stream().filter(runHabit -> getUser.getIdentity().equals(runHabit.getIdentity()))
+        User currentUser = userQueryService.getCurrentUser();
+        Optional<RunHabit> first = currentUser.getRunHabits().stream().filter(runHabit -> currentUser.getIdentity().equals(runHabit.getIdentity()))
                 .findFirst();
-        return first.map(runHabit -> new UserBasicInfoResponse(getUser, runHabit)).orElseGet(() -> new UserBasicInfoResponse(getUser));
+        return first.map(runHabit -> new UserBasicInfoResponse(currentUser, runHabit)).orElseGet(() -> new UserBasicInfoResponse(currentUser));
     }
 
     /**
