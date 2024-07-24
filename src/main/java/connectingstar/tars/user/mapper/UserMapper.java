@@ -27,5 +27,6 @@ public interface UserMapper {
     UserMeGetResponse toMeGetResponse(User user);
 
     @Mapping(target = "user", expression = "java(toWithConstellationDto(user, constellation))")
-    UserMeProfileGetResponse toMeProfileGetResponse(User user, Constellation constellation);
+    @Mapping(target = "defaultCharacterImage", source = "defaultCharacterImage")
+    UserMeProfileGetResponse toMeProfileGetResponse(User user, Constellation constellation, String defaultCharacterImage);
 }

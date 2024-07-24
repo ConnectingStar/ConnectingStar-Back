@@ -1,5 +1,7 @@
 package connectingstar.tars.constellation.domain;
 
+import connectingstar.tars.constellation.converter.ConstellationCodeConverter;
+import connectingstar.tars.constellation.enums.ConstellationCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,6 +26,15 @@ public class Constellation {
     @Column(name = "constellation_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer constellationId;
+
+    /**
+     * 별자리 코드.
+     * 별자리를 식별하는 유일한 값.
+     */
+    @Column(name = "constellation_code", nullable = false, unique = true, columnDefinition = "VARCHAR(255)")
+    @Convert(converter = ConstellationCodeConverter.class)
+    private ConstellationCode code;
+
     /**
      * 이름
      */
