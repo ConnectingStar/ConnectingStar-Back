@@ -82,7 +82,7 @@ public class UserDto {
     private String referrer;
 
     /**
-     * 선택한 별자리의 id.
+     * 프로필로 설정한 별자리의 id.
      */
     private Integer constellationId;
 }

@@ -10,6 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface ConstellationMapper {
     ConstellationMapper INSTANCE = Mappers.getMapper(ConstellationMapper.class);
 
-    @Mapping(source = "constellationType.constellationTypeId", target = "constellationTypeId")
+    @Mapping(source = "constellation.constellationId", target = "constellationId")
     ConstellationDto toDto(Constellation constellation);
 }
