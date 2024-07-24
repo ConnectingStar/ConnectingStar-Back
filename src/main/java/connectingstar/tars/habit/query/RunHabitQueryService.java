@@ -3,7 +3,7 @@ package connectingstar.tars.habit.query;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
-import connectingstar.tars.habit.dto.RunHabitWithHistoryDto;
+import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
 import connectingstar.tars.habit.mapper.HabitHistoryMapper;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
@@ -141,17 +141,17 @@ public class RunHabitQueryService {
      * <p>
      * 기록이 없어도 history=null, habit, status를 반환한다.
      */
-    public List<HabitDailyTrackingResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
+    public List<HabitDailyTrackingGetResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
         User user = userQueryService.getCurrentUser();
 
-        List<RunHabitWithHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
+        List<RunHabitAndHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
 
-        List<HabitDailyTrackingResponse> responses = runHabitWithHistories.stream()
+        List<HabitDailyTrackingGetResponse> responses = runHabitWithHistories.stream()
                 .map(runHabitWithHistory -> {
                     HabitHistory history = runHabitWithHistory.getHabitHistory();
                     RunHabit runHabit = runHabitWithHistory.getRunHabit();
 
-                    return HabitDailyTrackingResponse.builder()
+                    return HabitDailyTrackingGetResponse.builder()
                             .history(habitHistoryMapper.toDto(history))
                             .habit(runHabitMapper.toDto(runHabit))
                             .status(this.getDailyTrackingStatus(history, requestParam.getDate()))

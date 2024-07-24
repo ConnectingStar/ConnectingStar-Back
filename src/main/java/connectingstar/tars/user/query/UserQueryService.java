@@ -5,7 +5,10 @@ import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
+import connectingstar.tars.user.mapper.UserMapper;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.response.UserMeGetResponse;
+import connectingstar.tars.user.response.UserMeProfileGetResponse;
 import connectingstar.tars.user.response.UserOnboardCheckResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,8 @@ public class UserQueryService {
 
     private final UserRepository userRepository;
     private final UserHabitCommandService userHabitCommandService;
+
+    private final UserMapper userMapper;
 
     /**
      * 온보딩 여부 조회
@@ -49,6 +54,7 @@ public class UserQueryService {
                 .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }
 
+
     /**
      * 로그인 회원 엔티티 조회
      *
@@ -58,6 +64,28 @@ public class UserQueryService {
     public User getCurrentUser() {
         return userRepository.findById(UserUtils.getUserId())
                 .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
+    }
+
+    /**
+     * 로그인한 유저를 조회하고 /v2/users/me response dto를 반환합니다.
+     *
+     * @return /v2/users/me response DTO.
+     */
+    public UserMeGetResponse getCurrentUserResponse() {
+        User user = getCurrentUser();
+
+        return userMapper.toMeGetResponse(user);
+    }
+
+    /**
+     * 로그인한 유저 조회 - 마이페이지에서 사용할 데이터
+     *
+     * @return 선택한 별자리 객체가 포함된 유저 DTO.
+     */
+    public UserMeProfileGetResponse getCurrentUserProfile() {
+        User user = getCurrentUser();
+
+        return userMapper.toMeProfileGetResponse(user, user.getConstellation());
     }
 
     /**
@@ -73,4 +101,6 @@ public class UserQueryService {
                 .filter(it -> it.getConstellation().getConstellationId().equals(constellationId))
                 .findFirst();
     }
+
+
 }

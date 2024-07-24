@@ -43,8 +43,15 @@ public class SecurityConfig {
                         .requestMatchers("/oauth/code/url", "/oauth/login", "/oauth2/**")
                         .anonymous()
                         // TODO: 기본 - authenticated, 예외 - 허용 처리
-                        .requestMatchers("/user/**", "/constellation/**", "/alert/**",
-                                "/habit/**", "/v2/habits/**", "/oauth/logout", "/oauth/unlink/**", "/oauth/issue")
+                        .requestMatchers("/user/**",
+                                "/constellation/**",
+                                "/alert/**",
+                                "/habit/**",
+                                "/v2/habits/**",
+                                "/v2/users/**",
+                                "/oauth/logout",
+                                "/oauth/unlink/**",
+                                "/oauth/issue")
                         .authenticated()
                         .anyRequest()
                         .denyAll())
