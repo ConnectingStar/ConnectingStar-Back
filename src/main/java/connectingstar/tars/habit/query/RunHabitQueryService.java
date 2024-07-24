@@ -3,7 +3,7 @@ package connectingstar.tars.habit.query;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
-import connectingstar.tars.habit.dto.RunHabitWithHistoryDto;
+import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
 import connectingstar.tars.habit.mapper.HabitHistoryMapper;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
@@ -144,7 +144,7 @@ public class RunHabitQueryService {
     public List<HabitDailyTrackingResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
         User user = userQueryService.getCurrentUser();
 
-        List<RunHabitWithHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
+        List<RunHabitAndHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
 
         List<HabitDailyTrackingResponse> responses = runHabitWithHistories.stream()
                 .map(runHabitWithHistory -> {

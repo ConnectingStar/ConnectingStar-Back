@@ -1,7 +1,7 @@
 package connectingstar.tars.habit.repository;
 
 import connectingstar.tars.habit.domain.RunHabit;
-import connectingstar.tars.habit.dto.RunHabitWithHistoryDto;
+import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.request.RunListRequest;
 import connectingstar.tars.habit.response.RunPutResponse;
 
@@ -20,7 +20,7 @@ public interface RunHabitRepositoryCustom {
      * 유저의 모든 RunHabit을 조회합니다.
      * 날짜가 일치하는 HabitHistory를 조인해서 반환합니다.
      */
-    public List<RunHabitWithHistoryDto> getListOfUserWithHistoryByDate(Integer userId, LocalDate date);
+    public List<RunHabitAndHistoryDto> getListOfUserWithHistoryByDate(Integer userId, LocalDate date);
 
     /**
      * 진행중인 습관 해당유저 소유여부 확인

@@ -8,7 +8,7 @@ import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.QHabitHistory;
 import connectingstar.tars.habit.domain.QRunHabit;
 import connectingstar.tars.habit.domain.RunHabit;
-import connectingstar.tars.habit.dto.RunHabitWithHistoryDto;
+import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.request.RunListRequest;
 import connectingstar.tars.habit.response.RunPutResponse;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +50,12 @@ public class RunHabitRepositoryCustomImpl implements RunHabitRepositoryCustom {
     }
 
     @Override
-    public List<RunHabitWithHistoryDto> getListOfUserWithHistoryByDate(Integer userId, LocalDate date) {
+    public List<RunHabitAndHistoryDto> getListOfUserWithHistoryByDate(Integer userId, LocalDate date) {
         QRunHabit runHabit = QRunHabit.runHabit;
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
-        
+
         return queryFactory
-                .select(Projections.constructor(RunHabitWithHistoryDto.class,
+                .select(Projections.constructor(RunHabitAndHistoryDto.class,
                         runHabit,
                         habitHistory))
                 .from(runHabit)

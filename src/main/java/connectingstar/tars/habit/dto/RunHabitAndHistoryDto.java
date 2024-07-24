@@ -9,7 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @ToString
-public class RunHabitWithHistoryDto {
+public class RunHabitAndHistoryDto {
     private RunHabit runHabit;
     private HabitHistory habitHistory;
 }
