@@ -10,12 +10,14 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
+import connectingstar.tars.user.mapper.UserMapper;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.*;
 import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
 import connectingstar.tars.user.response.UserBasicInfoResponse;
+import connectingstar.tars.user.response.UserMeOnboardingPatchResponse;
 import connectingstar.tars.user.response.UserStarResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,12 +39,15 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 @Service
 public class UserCommandService {
 
-    private final OAuthService oauthService;
     private final UserRepository userRepository;
+    private final RunHabitRepository runHabitRepository;
+    private final UserConstellationRepository userConstellationRepository;
+
+    private final OAuthService oauthService;
     private final UserQueryService userQueryService;
     private final ConstellationQueryService constellationQueryService;
-    private final UserConstellationRepository userConstellationRepository;
-    private final RunHabitRepository runHabitRepository;
+
+    private final UserMapper userMapper;
 
     /**
      * 유저 삭제
@@ -164,7 +169,26 @@ public class UserCommandService {
         user.updateAgeRange(AgeRangeType.fromCode(param.getAgeRangeType()));
     }
 
+    /**
+     * 온보딩 과정에서 입력받은 내 정보를 업데이트합니다.
+     */
+    @Transactional
+    public UserMeOnboardingPatchResponse updateCurrentUserOnboarding(UserMeOnboardingPatchRequest request) {
+        User user = userQueryService.getCurrentUser();
+
+        user.updateNickname(request.getNickname());
+        user.updateGender(GenderType.fromCode(request.getGenderType()));
+        user.updateAgeRange(AgeRangeType.fromCode(request.getAgeRangeType()));
+        user.updateReferrer(request.getReferrer());
+        user.updateIdentity(request.getIdentity());
+        user.updateOnboard(true);
+
+        return userMapper.toMeOnboardingPatchResponse(user);
+    }
+
     private List<RunHabit> getRunHabit(User user) {
         return runHabitRepository.findAllByUser(user);
     }
+
+
 }

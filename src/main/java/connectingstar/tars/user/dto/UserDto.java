@@ -1,6 +1,8 @@
 package connectingstar.tars.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import connectingstar.tars.common.serializer.CodableSerializer;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
@@ -44,6 +46,7 @@ public class UserDto {
     /**
      * Resource Server 타입
      */
+    @JsonSerialize(using = CodableSerializer.class)
     private SocialType socialType;
 
     /**
@@ -54,11 +57,13 @@ public class UserDto {
     /**
      * 연령대
      */
+    @JsonSerialize(using = CodableSerializer.class)
     private AgeRangeType ageRange;
 
     /**
      * 성별 타입
      */
+    @JsonSerialize(using = CodableSerializer.class)
     private GenderType gender;
 
     /**

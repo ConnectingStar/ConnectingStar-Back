@@ -97,7 +97,7 @@ public class UserControllerV1 {
     @PostMapping(value = "/onboarding")
     public ResponseEntity<?> doPostOnboarding(@RequestBody UserOnboardingRequest param) {
         UserValidator.validate(param);
-        return ResponseEntity.ok(new DataResponse(userHabitCommandService.save(param)));
+        return ResponseEntity.ok(new DataResponse(userHabitCommandService.updateMeOnboardingParams(param)));
     }
 
     /**

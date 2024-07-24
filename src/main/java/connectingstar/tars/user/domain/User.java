@@ -175,4 +175,12 @@ public class User extends BaseTimeEntity {
     public void updateStar() {
         this.star -= 1;
     }
+
+    public void updateReferrer(String referrer) {
+        this.referrer = referrer;
+    }
+
+    public void updateOnboard(boolean onboard) {
+        this.onboard = onboard;
+    }
 }
