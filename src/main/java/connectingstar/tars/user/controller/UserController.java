@@ -1,15 +1,17 @@
 package connectingstar.tars.user.controller;
 
 import connectingstar.tars.common.response.DataResponse;
+import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.query.UserQueryService;
+import connectingstar.tars.user.request.UserMeOnboardingPatchRequest;
 import connectingstar.tars.user.response.UserMeGetResponse;
+import connectingstar.tars.user.response.UserMeOnboardingPatchResponse;
 import connectingstar.tars.user.response.UserMeProfileGetResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 유저 관련 api.
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
     private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
 
     /**
      * 내 정보(현재 로그인 된 유저 정보)를 반환합니다.
@@ -39,7 +42,7 @@ public class UserController {
     }
 
     /**
-     * 마이 페이지에서 사용할 유저 정보를 반환합니다.
+     * 마이 페이지에서 사용할 내 정보를 반환합니다.
      * 유저가 선택한 별자리 엔티티 정보를 포함합니다.
      * <p>
      * ! 마이 페이지 외 다른 용도로 사용하지 마세요
@@ -48,6 +51,16 @@ public class UserController {
     @GetMapping(value = "/me/profile")
     public ResponseEntity<DataResponse<UserMeProfileGetResponse>> getMeProfile() {
         UserMeProfileGetResponse responseDto = userQueryService.getCurrentUserProfile();
+
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 온보딩 페이지에서 입력받은 값으로 내 정보를 업데이트합니다.
+     */
+    @PatchMapping(value = "/me/onboarding")
+    public ResponseEntity<DataResponse<UserMeOnboardingPatchResponse>> patchMeOnboarding(@RequestBody @Valid UserMeOnboardingPatchRequest request) {
+        UserMeOnboardingPatchResponse responseDto = userCommandService.updateCurrentUserOnboarding(request);
 
         return ResponseEntity.ok(new DataResponse(responseDto));
     }

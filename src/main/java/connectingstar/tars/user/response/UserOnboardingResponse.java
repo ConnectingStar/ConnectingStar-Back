@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
  * 온보딩 응답 반환
  *
  * @author 김성수
+ * @deprecated use {@link UserMeOnboardingPatchResponse} instead
  */
+@Deprecated
 @Getter
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)

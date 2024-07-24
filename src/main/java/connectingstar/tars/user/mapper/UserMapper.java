@@ -6,6 +6,7 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.dto.UserDto;
 import connectingstar.tars.user.dto.UserWithConstellationDto;
 import connectingstar.tars.user.response.UserMeGetResponse;
+import connectingstar.tars.user.response.UserMeOnboardingPatchResponse;
 import connectingstar.tars.user.response.UserMeProfileGetResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,4 +30,7 @@ public interface UserMapper {
     @Mapping(target = "user", expression = "java(toWithConstellationDto(user, constellation))")
     @Mapping(target = "defaultCharacterImage", source = "defaultCharacterImage")
     UserMeProfileGetResponse toMeProfileGetResponse(User user, Constellation constellation, String defaultCharacterImage);
+
+    @Mapping(target = "user", source = "user")
+    UserMeOnboardingPatchResponse toMeOnboardingPatchResponse(User user);
 }
