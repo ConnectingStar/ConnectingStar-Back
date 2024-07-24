@@ -141,17 +141,17 @@ public class RunHabitQueryService {
      * <p>
      * 기록이 없어도 history=null, habit, status를 반환한다.
      */
-    public List<HabitDailyTrackingResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
+    public List<HabitDailyTrackingGetResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
         User user = userQueryService.getCurrentUser();
 
         List<RunHabitAndHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
 
-        List<HabitDailyTrackingResponse> responses = runHabitWithHistories.stream()
+        List<HabitDailyTrackingGetResponse> responses = runHabitWithHistories.stream()
                 .map(runHabitWithHistory -> {
                     HabitHistory history = runHabitWithHistory.getHabitHistory();
                     RunHabit runHabit = runHabitWithHistory.getRunHabit();
 
-                    return HabitDailyTrackingResponse.builder()
+                    return HabitDailyTrackingGetResponse.builder()
                             .history(habitHistoryMapper.toDto(history))
                             .habit(runHabitMapper.toDto(runHabit))
                             .status(this.getDailyTrackingStatus(history, requestParam.getDate()))

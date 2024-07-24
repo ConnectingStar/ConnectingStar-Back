@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class HabitDailyTrackingResponse {
+public class HabitDailyTrackingGetResponse {
     @Nullable
     private HabitHistoryDto history;
 
