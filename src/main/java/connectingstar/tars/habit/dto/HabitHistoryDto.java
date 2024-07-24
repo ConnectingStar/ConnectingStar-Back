@@ -33,7 +33,7 @@ public class HabitHistoryDto {
     /**
      * 실천한 날짜, 시간
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime runDate;
 
     /**
