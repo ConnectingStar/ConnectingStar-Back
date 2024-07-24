@@ -23,6 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserQueryService userQueryService;
 
+    /**
+     * 내 정보(현재 로그인 된 유저 정보)를 반환합니다.
+     * 유저 엔티티 정보만 포함합니다.
+     * 프론트에서 범용으로 사용됩니다.
+     * <p>
+     * ! 이 API에서 유저 외 다른 엔티티 정보를 조회하지 마세요. 성능 최적화를 위해서입니다.
+     * ! 이 API에서 부하가 큰 작업을 수행하지 마세요
+     */
     @GetMapping(value = "/me")
     public ResponseEntity<DataResponse<UserMeGetResponse>> getMe() {
         UserMeGetResponse responseDto = userQueryService.getCurrentUserResponse();
