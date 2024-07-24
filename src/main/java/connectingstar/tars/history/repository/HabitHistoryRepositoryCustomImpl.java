@@ -1,4 +1,4 @@
-package connectingstar.tars.habit.repository;
+package connectingstar.tars.history.repository;
 
 
 import com.querydsl.core.types.ConstructorExpression;
@@ -7,7 +7,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.common.utils.UserUtils;
-import connectingstar.tars.habit.domain.QHabitHistory;
 import connectingstar.tars.habit.domain.QRunHabit;
 import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
@@ -15,6 +14,7 @@ import connectingstar.tars.habit.request.HabitHistoryListRequest;
 import connectingstar.tars.habit.response.HabitHistoryDateGetResponseV1;
 import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
+import connectingstar.tars.history.domain.QHabitHistory;
 import connectingstar.tars.user.domain.QUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -31,7 +31,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
-public class HabitHistoryDao {
+public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 

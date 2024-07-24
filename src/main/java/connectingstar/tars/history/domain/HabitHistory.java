@@ -1,6 +1,7 @@
-package connectingstar.tars.habit.domain;
+package connectingstar.tars.history.domain;
 
 import connectingstar.tars.common.audit.Auditable;
+import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

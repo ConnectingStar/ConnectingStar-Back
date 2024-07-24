@@ -1,19 +1,19 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.common.exception.ValidationException;
-import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
-import connectingstar.tars.habit.mapper.HabitHistoryMapper;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
-import connectingstar.tars.habit.repository.HabitHistoryRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.RunDayGetRequest;
 import connectingstar.tars.habit.request.RunGetRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
 import connectingstar.tars.habit.response.*;
+import connectingstar.tars.history.domain.HabitHistory;
+import connectingstar.tars.history.mapper.HabitHistoryMapper;
+import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;

@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/habit/**",
                                 "/v2/habits/**",
                                 "/v2/users/**",
+                                "/v2/histories/**",
                                 "/oauth/logout",
                                 "/oauth/unlink/**",
                                 "/oauth/issue")
