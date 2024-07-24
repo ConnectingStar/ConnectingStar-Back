@@ -2,9 +2,9 @@ package connectingstar.tars.user.domain;
 
 import connectingstar.tars.common.domain.BaseTimeEntity;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;

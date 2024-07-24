@@ -2,6 +2,7 @@ package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.habit.request.RunPutRequest;
+import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

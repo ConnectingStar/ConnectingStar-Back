@@ -1,6 +1,6 @@
 package connectingstar.tars.habit.response;
 
-import connectingstar.tars.habit.dto.HabitHistoryDto;
+import connectingstar.tars.history.dto.HabitHistoryDto;
 import lombok.Getter;
 import lombok.Setter;
 

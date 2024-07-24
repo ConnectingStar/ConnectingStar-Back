@@ -1,8 +1,8 @@
 package connectingstar.tars.habit.response;
 
-import connectingstar.tars.habit.dto.HabitHistoryDto;
 import connectingstar.tars.habit.dto.RunHabitDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
+import connectingstar.tars.history.dto.HabitHistoryDto;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;

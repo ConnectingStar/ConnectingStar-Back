@@ -1,4 +1,4 @@
-package connectingstar.tars.habit.dto;
+package connectingstar.tars.history.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
