@@ -3,7 +3,7 @@ package connectingstar.tars.constellation.query;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.Constellation;
-import connectingstar.tars.constellation.domain.enums.ConstellationStatus;
+import connectingstar.tars.constellation.enums.ConstellationStatus;
 import connectingstar.tars.constellation.repository.ConstellationDao;
 import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.constellation.repository.ConstellationTypeRepository;
