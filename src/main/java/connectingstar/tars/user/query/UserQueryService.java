@@ -2,6 +2,9 @@ package connectingstar.tars.user.query;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
+import connectingstar.tars.constellation.domain.Constellation;
+import connectingstar.tars.constellation.enums.ConstellationCode;
+import connectingstar.tars.constellation.repository.ConstellationRepository;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
@@ -11,11 +14,13 @@ import connectingstar.tars.user.response.UserMeGetResponse;
 import connectingstar.tars.user.response.UserMeProfileGetResponse;
 import connectingstar.tars.user.response.UserOnboardCheckResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_DEFAULT_CONSTELLATION_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
 /**
@@ -25,9 +30,12 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserQueryService {
 
     private final UserRepository userRepository;
+    private final ConstellationRepository constellationRepository;
+
     private final UserHabitCommandService userHabitCommandService;
 
     private final UserMapper userMapper;
@@ -93,8 +101,20 @@ public class UserQueryService {
      */
     public UserMeProfileGetResponse getCurrentUserProfile() {
         User user = getCurrentUser();
+        String defaultCharacterImage = getDefaultCharacterImage();
 
-        return userMapper.toMeProfileGetResponse(user, user.getConstellation());
+        return userMapper.toMeProfileGetResponse(user, user.getConstellation(), defaultCharacterImage);
+    }
+
+    /**
+     * 사용자가 선택한 별자리가 없을 때 보여줄 기본 캐릭터 이미지.
+     * 타스 별자리 이미지.
+     */
+    private String getDefaultCharacterImage() {
+        Constellation tarsConstellation = constellationRepository.findByCode(ConstellationCode.TARS)
+                .orElseThrow(() -> new ValidationException(USER_DEFAULT_CONSTELLATION_NOT_FOUND));
+
+        return tarsConstellation.getCharacterImage();
     }
 
     /**
