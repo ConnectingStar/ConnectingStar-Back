@@ -1,6 +1,6 @@
 package connectingstar.tars.history.response;
 
-import connectingstar.tars.history.dto.HabitHistoryDto;
+import connectingstar.tars.history.dto.HabitHistoryWithRunHabitDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +10,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HistoryGetOneResponse {
-    private HabitHistoryDto history;
+    private HabitHistoryWithRunHabitDto history;
 }
