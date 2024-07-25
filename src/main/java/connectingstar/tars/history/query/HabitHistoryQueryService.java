@@ -65,9 +65,7 @@ public class HabitHistoryQueryService {
         }
 
         RunHabit runHabit = null;
-
-        log.info("related: {}", requestParam.getRelated());
-
+        
         // param 'related' 필드 조회
         if (requestParam.getRelated() != null) {
             for (String relatedField : requestParam.getRelated()) {
