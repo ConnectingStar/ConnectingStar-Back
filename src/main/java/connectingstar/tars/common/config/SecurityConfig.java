@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * Security Configuration
@@ -34,6 +35,15 @@ public class SecurityConfig {
         http
                 // CSRF 보안 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
+                // CORS 설정
+                .cors(httpSecurityCorsConfigurer ->
+                        httpSecurityCorsConfigurer.configurationSource(request -> {
+                            CorsConfiguration corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                            corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:8080", "http://localhost:3000", "https://localhost:3000"));
+                            corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
+                            corsConfiguration.setAllowCredentials(true);
+                            return corsConfiguration;
+                        }))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // 세션을 생성하지 않게 설정
