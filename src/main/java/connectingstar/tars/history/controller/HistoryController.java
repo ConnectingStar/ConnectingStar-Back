@@ -2,14 +2,13 @@ package connectingstar.tars.history.controller;
 
 import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.history.query.HabitHistoryQueryService;
+import connectingstar.tars.history.request.param.HistoryGetOneRequestParam;
 import connectingstar.tars.history.response.HistoryGetOneResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 습관 기록 API.
@@ -26,10 +25,14 @@ public class HistoryController {
     /**
      * 습관 기록 상세 조회.
      * 내 기록만 조회 가능합니다.
+     *
+     * @param requestParam - .related ("runHabit") - 같이 조회(JOIN)할 필드.
      */
     @GetMapping("{habitHistoryId}")
-    public ResponseEntity<DataResponse<HistoryGetOneResponse>> getOne(@PathVariable Integer habitHistoryId) {
-        HistoryGetOneResponse responseDto = habitHistoryQueryService.getMineById(habitHistoryId);
+    public ResponseEntity<DataResponse<HistoryGetOneResponse>> getOne(
+            @PathVariable Integer habitHistoryId,
+            @ModelAttribute @Valid HistoryGetOneRequestParam requestParam) {
+        HistoryGetOneResponse responseDto = habitHistoryQueryService.getMineById(habitHistoryId, requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 }

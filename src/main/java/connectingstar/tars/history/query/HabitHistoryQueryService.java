@@ -1,6 +1,7 @@
 package connectingstar.tars.history.query;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
@@ -11,10 +12,12 @@ import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.history.repository.HabitHistoryRepositoryCustom;
+import connectingstar.tars.history.request.param.HistoryGetOneRequestParam;
 import connectingstar.tars.history.response.HistoryGetOneResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -34,6 +37,7 @@ import static connectingstar.tars.common.exception.errorcode.HistoryErrorCode.HI
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HabitHistoryQueryService {
 
     public static final int DAYS_TO_ADD = 6;
@@ -44,7 +48,13 @@ public class HabitHistoryQueryService {
 
     private final HabitHistoryMapper habitHistoryMapper;
 
-    public HistoryGetOneResponse getMineById(Integer habitHistoryId) {
+    /**
+     * 내 습관 기록 1건을 id로 조회합니다.
+     *
+     * @param requestParam - ("runHabit") .related - 같이 조회(JOIN)할 필드.
+     * @return
+     */
+    public HistoryGetOneResponse getMineById(Integer habitHistoryId, HistoryGetOneRequestParam requestParam) {
         HabitHistory habitHistory = habitHistoryRepository.findById(habitHistoryId)
                 .orElseThrow(() -> new ValidationException(HISTORY_NOT_FOUND));
 
@@ -54,7 +64,22 @@ public class HabitHistoryQueryService {
             throw new ValidationException(HISTORY_CANNOT_ACCESS);
         }
 
-        return habitHistoryMapper.toGetOneResponse(habitHistory);
+        RunHabit runHabit = null;
+
+        log.info("related: {}", requestParam.getRelated());
+
+        // param 'related' 필드 조회
+        if (requestParam.getRelated() != null) {
+            for (String relatedField : requestParam.getRelated()) {
+                switch (relatedField) {
+                    case "runHabit":
+                        runHabit = habitHistory.getRunHabit();
+                        break;
+                }
+            }
+        }
+
+        return habitHistoryMapper.toGetOneResponse(habitHistory, runHabit);
     }
 
     /**
