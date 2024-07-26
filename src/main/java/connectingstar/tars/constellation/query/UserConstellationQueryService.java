@@ -4,6 +4,7 @@ import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.domain.ConstellationType;
 import connectingstar.tars.constellation.dto.UserConstellationDto;
+import connectingstar.tars.constellation.enums.ConstellationStatus;
 import connectingstar.tars.constellation.mapper.UserConstellationMapper;
 import connectingstar.tars.constellation.repository.UserConstellationRepositoryCustom;
 import connectingstar.tars.user.domain.User;
@@ -58,7 +59,7 @@ public class UserConstellationQueryService {
                 request.getIsRegistered(),
                 request.getRelated());
 
-        List<UserConstellationDto> dtos = userConstellations
+        List<UserMeConstellationListGetResponse.UserConstellationAndStatus> responseItems = userConstellations
                 .stream()
                 .map(
                         userConstellation -> {
@@ -66,16 +67,31 @@ public class UserConstellationQueryService {
                             ConstellationType constellationType = constellation != null && Hibernate.isInitialized(constellation.getType())
                                     ? constellation.getType() : null;
 
-                            return userConstellationMapper.toDto(userConstellation, constellation, constellationType);
+                            UserConstellationDto dto = userConstellationMapper.toDto(userConstellation, constellation, constellationType);
+                            ConstellationStatus status = getStatus(userConstellation);
+
+                            return UserMeConstellationListGetResponse.UserConstellationAndStatus
+                                    .builder()
+                                    .userConstellation(dto)
+                                    .status(status.name())
+                                    .build();
                         }
                 )
                 .toList();
 
         UserMeConstellationListGetResponse response = UserMeConstellationListGetResponse
                 .builder()
-                .userConstellations(dtos)
+                .userConstellationAndStatusList(responseItems)
                 .build();
 
         return response;
+    }
+
+    private ConstellationStatus getStatus(UserConstellation userConstellation) {
+        if (userConstellation == null || userConstellation.getRegYn() == null) {
+            return ConstellationStatus.NONE;
+        }
+
+        return userConstellation.getRegYn() ? ConstellationStatus.COMPLETE : ConstellationStatus.PROGRESS;
     }
 }

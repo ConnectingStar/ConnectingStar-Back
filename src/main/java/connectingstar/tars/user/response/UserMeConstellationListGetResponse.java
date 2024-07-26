@@ -9,5 +9,17 @@ import java.util.List;
 @Builder
 @Getter
 public class UserMeConstellationListGetResponse {
-    List<UserConstellationDto> userConstellations;
+    List<UserConstellationAndStatus> userConstellationAndStatusList;
+
+    @Builder
+    @Getter
+    static public class UserConstellationAndStatus {
+        private UserConstellationDto userConstellation;
+
+        /**
+         * 별자리 상태.
+         * {@link connectingstar.tars.constellation.enums.ConstellationStatus} 참고
+         */
+        private String status;
+    }
 }
