@@ -3,6 +3,7 @@ package connectingstar.tars.user.dto;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import connectingstar.tars.common.serializer.CodableSerializer;
+import connectingstar.tars.constellation.dto.ConstellationDto;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
@@ -12,8 +13,6 @@ import lombok.Setter;
 /**
  * User 객체 단일 dto.
  * 연관 엔티티는 포함하지 않음.
- * <p>
- * constellation은 id만 포함합니다.
  *
  * @author 이우진
  */
@@ -30,7 +29,8 @@ import lombok.Setter;
         "onboard",
         "star",
         "referrer",
-        "constellationId"
+        "constellationId",
+        "constellation"
 })
 public class UserDto {
     /**
@@ -90,4 +90,9 @@ public class UserDto {
      * 프로필로 설정한 별자리의 id.
      */
     private Integer constellationId;
+
+    /**
+     * 프로필로 설정한 별자리
+     */
+    private ConstellationDto constellation;
 }

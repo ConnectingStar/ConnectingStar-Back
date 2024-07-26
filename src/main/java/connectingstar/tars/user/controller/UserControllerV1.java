@@ -115,7 +115,9 @@ public class UserControllerV1 {
      *
      * @param param 수정 정보
      * @return 요청 결과
+     * @deprecated use {@link UserController#patchMeConstellation} instead
      */
+    @Deprecated
     @PutMapping(value = "/constellation")
     public ResponseEntity<?> doPutConstellation(@RequestBody UserConstellationRequest param) {
         UserValidator.validate(param);
