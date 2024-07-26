@@ -5,6 +5,7 @@ import connectingstar.tars.constellation.mapper.ConstellationMapper;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.dto.UserDto;
 import connectingstar.tars.user.dto.UserWithConstellationDto;
+import connectingstar.tars.user.response.UserMeConstellationPatchResponse;
 import connectingstar.tars.user.response.UserMeGetResponse;
 import connectingstar.tars.user.response.UserMeOnboardingPatchResponse;
 import connectingstar.tars.user.response.UserMeProfileGetResponse;
@@ -17,7 +18,13 @@ public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(source = "constellation.constellationId", target = "constellationId")
+    @Mapping(target = "constellation", ignore = true)
     UserDto toDto(User user);
+
+    @Mapping(source = "user.constellation.constellationId", target = "constellationId")
+    @Mapping(target = "identity", source = "user.identity")
+    @Mapping(target = "constellation", source = "constellation")
+    UserDto toDto(User user, Constellation constellation);
 
     @Mapping(source = "constellation.constellationId", target = "constellationId")
     @Mapping(source = "user.identity", target = "identity")
@@ -33,4 +40,7 @@ public interface UserMapper {
 
     @Mapping(target = "user", source = "user")
     UserMeOnboardingPatchResponse toMeOnboardingPatchResponse(User user);
+
+    @Mapping(target = "user", expression = "java(toDto(user, constellation))")
+    UserMeConstellationPatchResponse toMeConstellationPatchResponse(User user, Constellation constellation);
 }

@@ -2,6 +2,7 @@ package connectingstar.tars.user.command;
 
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.UserUtils;
+import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
@@ -15,10 +16,7 @@ import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.*;
-import connectingstar.tars.user.response.UserBasicInfoAndHabitResponse;
-import connectingstar.tars.user.response.UserBasicInfoResponse;
-import connectingstar.tars.user.response.UserMeOnboardingPatchResponse;
-import connectingstar.tars.user.response.UserStarResponse;
+import connectingstar.tars.user.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,4 +189,27 @@ public class UserCommandService {
     }
 
 
+    /**
+     * 현재 로그인된 유저의 별자리를 업데이트합니다.
+     */
+    @Transactional
+    public UserMeConstellationPatchResponse updateCurrentUserConstellation(UserMeConstellationPatchRequest request) {
+        User user = userQueryService.getCurrentUser();
+        Constellation constellation = constellationQueryService.getConstellation(request.getConstellationId());
+
+        user.updateConstellation(constellation);
+
+        Constellation myConstellation = null;
+        if (request.getResponse() != null && request.getResponse().getRelated() != null) {
+            for (String relatedItem : request.getResponse().getRelated()) {
+                switch (relatedItem) {
+                    case "constellation":
+                        myConstellation = user.getConstellation();
+                        break;
+                }
+            }
+        }
+
+        return userMapper.toMeConstellationPatchResponse(user, myConstellation);
+    }
 }

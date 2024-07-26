@@ -4,12 +4,10 @@ import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.constellation.query.UserConstellationQueryService;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.query.UserQueryService;
+import connectingstar.tars.user.request.UserMeConstellationPatchRequest;
 import connectingstar.tars.user.request.UserMeOnboardingPatchRequest;
 import connectingstar.tars.user.request.param.UserMeConstellationListGetRequestParam;
-import connectingstar.tars.user.response.UserMeConstellationListGetResponse;
-import connectingstar.tars.user.response.UserMeGetResponse;
-import connectingstar.tars.user.response.UserMeOnboardingPatchResponse;
-import connectingstar.tars.user.response.UserMeProfileGetResponse;
+import connectingstar.tars.user.response.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -74,6 +72,18 @@ public class UserController {
     @PatchMapping(value = "/me/onboarding")
     public ResponseEntity<DataResponse<UserMeOnboardingPatchResponse>> patchMeOnboarding(@RequestBody @Valid UserMeOnboardingPatchRequest request) {
         UserMeOnboardingPatchResponse responseDto = userCommandService.updateCurrentUserOnboarding(request);
+
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 유저가 선택한 별자리 업데이트
+     */
+    @PatchMapping(value = "/me/constellation")
+    public ResponseEntity<DataResponse<UserMeConstellationPatchResponse>> patchMeConstellation(
+            @RequestBody @Valid UserMeConstellationPatchRequest request
+    ) {
+        UserMeConstellationPatchResponse responseDto = userCommandService.updateCurrentUserConstellation(request);
 
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
