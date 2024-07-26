@@ -6,6 +6,7 @@ import connectingstar.tars.constellation.domain.ConstellationType;
 import connectingstar.tars.constellation.dto.UserConstellationDto;
 import connectingstar.tars.constellation.mapper.UserConstellationMapper;
 import connectingstar.tars.constellation.repository.UserConstellationRepositoryCustom;
+import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.request.param.UserMeConstellationListGetRequestParam;
@@ -49,7 +50,10 @@ public class UserConstellationQueryService {
     }
 
     public UserMeConstellationListGetResponse getMany(UserMeConstellationListGetRequestParam request) {
+        User user = userQueryService.getUser(UserUtils.getUserId());
+
         List<UserConstellation> userConstellations = userConstellationRepositoryCustom.findMany(
+                user.getId(),
                 request.getConstellationTypeId(),
                 request.getIsRegistered(),
                 request.getRelated());

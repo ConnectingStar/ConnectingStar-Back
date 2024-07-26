@@ -20,10 +20,14 @@ public class UserConstellationRepositoryCustomImpl implements UserConstellationR
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<UserConstellation> findMany(Integer constellationTypeId, Boolean isRegistered, List<String> joins) {
+    public List<UserConstellation> findMany(Integer userId, Integer constellationTypeId, Boolean isRegistered, List<String> joins) {
         QUserConstellation userConstellation = QUserConstellation.userConstellation;
 
         JPAQuery<UserConstellation> query = queryFactory.selectFrom(userConstellation);
+
+        if (userId != null) {
+            query.where(userConstellation.user.id.eq(userId));
+        }
 
         if (constellationTypeId != null) {
             query.where(userConstellation.constellation.type.constellationTypeId.eq(constellationTypeId));

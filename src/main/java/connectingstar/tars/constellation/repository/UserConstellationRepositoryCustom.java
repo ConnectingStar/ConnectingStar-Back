@@ -17,5 +17,5 @@ public interface UserConstellationRepositoryCustom {
      * @param join                (nullable) 조인할 객체. "constellation" | "constellation_type"
      * @return 조회 결과
      */
-    public List<UserConstellation> findMany(Integer constellationTypeId, Boolean isRegistered, List<String> join);
+    public List<UserConstellation> findMany(Integer userId, Integer constellationTypeId, Boolean isRegistered, List<String> join);
 }
