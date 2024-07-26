@@ -84,12 +84,13 @@ public class Constellation {
     /**
      * 별자리 타입 정보
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "constellation_type_id")
     private ConstellationType type;
     /**
      * 별자리 SVG 정보
      */
-    @OneToOne(mappedBy = "constellation")
+    // TODO: id를 svg가 갖고 있어서 eager loading되는 이슈 있음
+    @OneToOne(mappedBy = "constellation", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private ConstellationSvg svg;
 }

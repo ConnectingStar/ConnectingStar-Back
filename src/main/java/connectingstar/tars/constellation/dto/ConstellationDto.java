@@ -1,6 +1,7 @@
 package connectingstar.tars.constellation.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +22,8 @@ import lombok.Setter;
         "characterImage",
         "mainImage",
         "starCount",
-        "constellationTypeId"
+        "constellationTypeId",
+        "constellationType"
 })
 public class ConstellationDto {
     /**
@@ -71,4 +73,7 @@ public class ConstellationDto {
      * 별자리 타입 엔티티의 id
      */
     private Integer constellationTypeId;
+
+    @Nullable
+    private ConstellationTypeDto type;
 }

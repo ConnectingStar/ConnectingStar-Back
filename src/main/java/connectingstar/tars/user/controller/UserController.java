@@ -1,9 +1,12 @@
 package connectingstar.tars.user.controller;
 
 import connectingstar.tars.common.response.DataResponse;
+import connectingstar.tars.constellation.query.UserConstellationQueryService;
 import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.request.UserMeOnboardingPatchRequest;
+import connectingstar.tars.user.request.param.UserMeConstellationListGetRequestParam;
+import connectingstar.tars.user.response.UserMeConstellationListGetResponse;
 import connectingstar.tars.user.response.UserMeGetResponse;
 import connectingstar.tars.user.response.UserMeOnboardingPatchResponse;
 import connectingstar.tars.user.response.UserMeProfileGetResponse;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
+    private final UserConstellationQueryService userConstellationQueryService;
 
     /**
      * 내 정보(현재 로그인 된 유저 정보)를 반환합니다.
@@ -51,6 +55,15 @@ public class UserController {
     @GetMapping(value = "/me/profile")
     public ResponseEntity<DataResponse<UserMeProfileGetResponse>> getMeProfile() {
         UserMeProfileGetResponse responseDto = userQueryService.getCurrentUserProfile();
+
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    @GetMapping(value = "/me/constellations")
+    public ResponseEntity<DataResponse<UserMeConstellationListGetResponse>> getMeConstellations(
+            @ModelAttribute @Valid UserMeConstellationListGetRequestParam request
+    ) {
+        UserMeConstellationListGetResponse responseDto = userConstellationQueryService.getMany(request);
 
         return ResponseEntity.ok(new DataResponse(responseDto));
     }

@@ -21,7 +21,7 @@ public interface UserMapper {
 
     @Mapping(source = "constellation.constellationId", target = "constellationId")
     @Mapping(source = "user.identity", target = "identity")
-    @Mapping(source = "constellation", target = "constellation")
+    @Mapping(target = "constellation", source = "constellation")
     UserWithConstellationDto toWithConstellationDto(User user, Constellation constellation);
 
     @Mapping(source = "user", target = "user")
