@@ -61,4 +61,11 @@ public class HabitPostRequest {
     @Nullable
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime secondAlert;
+
+    /**
+     * 온보딩 페이지에서 호출했으면 true.
+     * 유저의 온보딩 정보를 업데이트한다.
+     */
+    @Nullable
+    private Boolean isOnboarding;
 }

@@ -85,6 +85,11 @@ public class RunHabitCommandService {
 
         runHabitRepository.save(runHabit);
 
+        if (param.getIsOnboarding()) {
+            // set userOnboard.isHabitCreated = true
+            // update user.onboard
+        }
+
         return runHabitMapper.toPostResponse(runHabit);
     }
 
