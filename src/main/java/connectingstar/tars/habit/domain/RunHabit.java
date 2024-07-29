@@ -88,7 +88,7 @@ public class RunHabit extends Auditable {
     @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<HabitAlert> alerts = new ArrayList<>();
 
-    @Builder(builderMethodName = "postRunHabit")
+    @Builder(builderMethodName = "postBuilder")
     public RunHabit(String identity,
                     User user,
                     LocalTime runTime,

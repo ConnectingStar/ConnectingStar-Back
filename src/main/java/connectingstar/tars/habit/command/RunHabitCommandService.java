@@ -5,18 +5,22 @@ import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.repository.HabitAlertRepository;
 import connectingstar.tars.habit.repository.QuitHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
+import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.RunDeleteRequest;
 import connectingstar.tars.habit.request.RunPostRequest;
 import connectingstar.tars.habit.request.RunPutRequest;
+import connectingstar.tars.habit.response.HabitPostResponse;
 import connectingstar.tars.habit.response.RunPostResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +49,6 @@ public class RunHabitCommandService {
     public static final boolean REST = true;
     public static final String IDENTITY_NOTHING = "없음";
 
-    private final HabitAlertCommandService habitAlertCommandService;
     private final RunHabitRepository runHabitRepository;
     private final RunHabitRepositoryCustom runHabitRepositoryCustom;
     private final HabitAlertRepository habitAlertRepository;
@@ -53,15 +56,49 @@ public class RunHabitCommandService {
     private final HabitHistoryRepository habitHistoryRepository;
     private final UserRepository userRepository;
 
+    private final UserQueryService userQueryService;
+    private final HabitAlertCommandService habitAlertCommandService;
+
+    private final RunHabitMapper runHabitMapper;
+
+    /**
+     * 진행중인 습관 생성.
+     */
+    @Transactional
+    public HabitPostResponse save(HabitPostRequest param) {
+        User user = userQueryService.getCurrentUser();
+
+        RunHabit runHabit = RunHabit.postBuilder()
+                .identity(param.getIdentity())
+                .user(user)
+                .runTime(param.getRunTime())
+                .place(param.getPlace())
+                .action(param.getAction())
+                .value(param.getValue())
+                .unit(param.getUnit())
+                .build();
+
+        HabitAlert firstHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
+        HabitAlert secondHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
+        runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
+        runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
+
+        runHabitRepository.save(runHabit);
+
+        return runHabitMapper.toPostResponse(runHabit);
+    }
+
     /**
      * 진행중인 습관 생성
      *
      * @param param 진행중인 습관 생성을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
+     * @deprecated use {@link connectingstar.tars.habit.command.RunHabitCommandService#save} instead
      */
     @Transactional
-    public RunPostResponse saveRun(RunPostRequest param) {
+    @Deprecated
+    public RunPostResponse save(RunPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
-        RunHabit runHabit = RunHabit.postRunHabit()
+        RunHabit runHabit = RunHabit.postBuilder()
                 .identity(param.getIdentity())
                 .user(user)
                 .runTime(param.getRunTime().toLocalTime())
