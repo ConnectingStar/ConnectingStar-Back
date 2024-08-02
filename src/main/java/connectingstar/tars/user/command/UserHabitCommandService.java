@@ -55,9 +55,12 @@ public class UserHabitCommandService {
 
     /**
      * 온보딩 할 때 사용
+     *
+     * @deprecated use {@link connectingstar.tars.habit.command.RunHabitCommandService#save} isOnboarding=true instead
      */
+    @Deprecated
     private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
-        RunHabit runHabit = RunHabit.postRunHabit()
+        RunHabit runHabit = RunHabit.postBuilder()
                 .identity(param.getIdentity())
                 .user(user)
                 .runTime(param.getRunTime().toLocalTime())

@@ -68,6 +68,8 @@ public class UserController {
 
     /**
      * 온보딩 페이지에서 입력받은 값으로 내 정보를 업데이트합니다.
+     * <p>
+     * user.onboard는 습관 생성까지 완료해야 true로 변경됩니다.
      */
     @PatchMapping(value = "/me/onboarding")
     public ResponseEntity<DataResponse<UserMeOnboardingPatchResponse>> patchMeOnboarding(@RequestBody @Valid UserMeOnboardingPatchRequest request) {

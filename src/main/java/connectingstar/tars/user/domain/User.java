@@ -60,11 +60,17 @@ public class User extends BaseTimeEntity {
      */
     @Column(name = "referrer")
     private String referrer;
+
     /**
-     * 온보딩 통과 여부
+     * 온보딩 완료 여부.
+     * <p>
+     * {@link connectingstar.tars.onboard.command.UserOnboardCommandService}에서 관리함.
+     * 기존에는 userOnboard 엔티티 없이 이 값만 있어서 이전 버전 호환 용도 & 성능 및 편의를 위한 중복 저장 용도.
+     * 유저 업데이트, 습관 생성을 모두 완료해야 한다.
      */
     @Column(name = "onboard")
     private Boolean onboard = false;
+
     /**
      * 보유 별 개수
      */
@@ -88,6 +94,9 @@ public class User extends BaseTimeEntity {
     ///////////////////////////////////////////////////////////
     /**
      * 프로필로 설정한 별자리
+     * 유저가 보유(완성)한 버디 중 하나 선택.
+     *
+     * <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=10014-14243&t=1I8FE80hXdeDG0fl-4">Figma - 마이 페이지</a>
      */
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "constellation_id")

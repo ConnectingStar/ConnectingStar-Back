@@ -1,17 +1,18 @@
 package connectingstar.tars.habit.controller;
 
 import connectingstar.tars.common.response.DataResponse;
+import connectingstar.tars.habit.command.RunHabitCommandService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
+import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
 import connectingstar.tars.habit.response.HabitDailyTrackingGetResponse;
+import connectingstar.tars.habit.response.HabitPostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +27,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HabitController {
     private final RunHabitQueryService runHabitQueryService;
+    private final RunHabitCommandService runHabitCommandService;
+
+    /**
+     * 진행중인 습관 생성
+     *
+     * @param param 진행중인 습관 생성을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
+     */
+    @PostMapping
+    public ResponseEntity<DataResponse<HabitPostResponse>> post(@Valid @RequestBody HabitPostRequest param) {
+        HabitPostResponse response = runHabitCommandService.save(param);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DataResponse(response));
+    }
+
 
     /**
      * 날짜를 입력받아 해당 날짜의 습관, 기록, 상태를 조회한다.

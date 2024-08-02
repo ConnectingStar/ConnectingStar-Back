@@ -45,7 +45,7 @@ public class HabitControllerV1 {
     public ResponseEntity<?> doPostRun(@RequestBody RunPostRequest param) {
         HabitValidator.validate(param);
 
-        return ResponseEntity.ok(new DataResponse(runHabitCommandService.saveRun(param)));
+        return ResponseEntity.ok(new DataResponse(runHabitCommandService.save(param)));
     }
 
     /**

@@ -7,6 +7,7 @@ import connectingstar.tars.constellation.query.ConstellationQueryService;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.oauth.service.OAuthService;
+import connectingstar.tars.onboard.command.UserOnboardCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.domain.enums.AgeRangeType;
@@ -44,6 +45,7 @@ public class UserCommandService {
     private final OAuthService oauthService;
     private final UserQueryService userQueryService;
     private final ConstellationQueryService constellationQueryService;
+    private final UserOnboardCommandService userOnboardCommandService;
 
     private final UserMapper userMapper;
 
@@ -179,7 +181,8 @@ public class UserCommandService {
         user.updateAgeRange(AgeRangeType.fromCode(request.getAgeRangeType()));
         user.updateReferrer(request.getReferrer());
         user.updateIdentity(request.getIdentity());
-        user.updateOnboard(true);
+
+        userOnboardCommandService.updateIsUserUpdated(user.getId(), true);
 
         return userMapper.toMeOnboardingPatchResponse(user);
     }
