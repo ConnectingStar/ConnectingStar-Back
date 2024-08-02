@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.EXCEED_USER_MAX_COUNT;
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
@@ -44,6 +45,10 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 @Service
 public class RunHabitCommandService {
 
+    /**
+     * 사용자가 가질 수 있는 최대 진행중인 습관 수
+     */
+    public static final Integer USER_MAX_COUNT = 3;
     public static final int FIRST_ALERT_STATUS = 1;
     public static final int SECOND_ALERT_STATUS = 2;
     public static final boolean NOT_REST = false;
@@ -70,6 +75,8 @@ public class RunHabitCommandService {
     public HabitPostResponse save(HabitPostRequest param) {
         User user = userQueryService.getCurrentUser();
 
+        validateUserMaxCount(user.getId());
+
         RunHabit runHabit = RunHabit.postBuilder()
                 .identity(param.getIdentity())
                 .user(user)
@@ -87,11 +94,23 @@ public class RunHabitCommandService {
 
         runHabitRepository.save(runHabit);
 
-        if (param.getIsOnboarding()) {
+        if (param.getIsOnboarding() != null && param.getIsOnboarding()) {
             userOnboardCommandService.updateIsHabitCreated(user.getId(), true);
         }
 
         return runHabitMapper.toPostResponse(runHabit);
+    }
+
+    /**
+     * 유저별 습관 개수가 최대 개수를 초과하면 예외를 발생시킨다.
+     */
+    private void validateUserMaxCount(Integer userId) {
+        User userReference = userRepository.getReferenceById(userId);
+        Integer userRunHabitCount = runHabitRepository.countByUser(userReference);
+
+        if (userRunHabitCount >= USER_MAX_COUNT) {
+            throw new ValidationException(EXCEED_USER_MAX_COUNT);
+        }
     }
 
     /**

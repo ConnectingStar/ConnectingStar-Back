@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface RunHabitRepository extends JpaRepository<RunHabit,Integer> {
-
+public interface RunHabitRepository extends JpaRepository<RunHabit, Integer> {
     List<RunHabit> findAllByUser(User user);
+
+    Integer countByUser(User user);
 }
