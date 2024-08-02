@@ -19,6 +19,7 @@ import connectingstar.tars.habit.response.RunPostResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
+import connectingstar.tars.onboard.command.UserOnboardCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserRepository;
@@ -58,6 +59,7 @@ public class RunHabitCommandService {
 
     private final UserQueryService userQueryService;
     private final HabitAlertCommandService habitAlertCommandService;
+    private final UserOnboardCommandService userOnboardCommandService;
 
     private final RunHabitMapper runHabitMapper;
 
@@ -86,8 +88,7 @@ public class RunHabitCommandService {
         runHabitRepository.save(runHabit);
 
         if (param.getIsOnboarding()) {
-            // set userOnboard.isHabitCreated = true
-            // update user.onboard
+            userOnboardCommandService.updateIsHabitCreated(user.getId(), true);
         }
 
         return runHabitMapper.toPostResponse(runHabit);
