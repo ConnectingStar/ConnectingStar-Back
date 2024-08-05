@@ -81,7 +81,7 @@ public class UserController {
     /**
      * 유저가 선택한 별자리 업데이트
      */
-    @PatchMapping(value = "/me/constellation")
+    @PatchMapping(value = "/me/profile-constellation")
     public ResponseEntity<DataResponse<UserMeConstellationPatchResponse>> patchMeConstellation(
             @RequestBody @Valid UserMeConstellationPatchRequest request
     ) {
