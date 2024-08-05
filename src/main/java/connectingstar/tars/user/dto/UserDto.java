@@ -29,8 +29,8 @@ import lombok.Setter;
         "onboard",
         "star",
         "referrer",
-        "constellationId",
-        "constellation"
+        "profileConstellationId",
+        "profileConstellation"
 })
 public class UserDto {
     /**
@@ -89,10 +89,10 @@ public class UserDto {
     /**
      * 프로필로 설정한 별자리의 id.
      */
-    private Integer constellationId;
+    private Integer profileConstellationId;
 
     /**
      * 프로필로 설정한 별자리
      */
-    private ConstellationDto constellation;
+    private ConstellationDto profileConstellation;
 }

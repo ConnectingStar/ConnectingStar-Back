@@ -104,7 +104,7 @@ public class UserQueryService {
         User user = getCurrentUser();
         String defaultCharacterImage = getDefaultCharacterImage();
 
-        return userMapper.toMeProfileGetResponse(user, user.getConstellation(), defaultCharacterImage);
+        return userMapper.toMeProfileGetResponse(user, user.getProfileConstellation(), defaultCharacterImage);
     }
 
     /**

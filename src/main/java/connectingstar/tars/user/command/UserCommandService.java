@@ -207,7 +207,7 @@ public class UserCommandService {
             for (String relatedItem : request.getResponse().getRelated()) {
                 switch (relatedItem) {
                     case "constellation":
-                        myConstellation = user.getConstellation();
+                        myConstellation = user.getProfileConstellation();
                         break;
                 }
             }
