@@ -45,8 +45,7 @@ public class QuitHabitDto {
      * 단위
      */
     private String unit;
-
-
+    
     /**
      * 휴식 실천횟수
      */

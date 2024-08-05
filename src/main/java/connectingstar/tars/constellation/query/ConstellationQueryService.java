@@ -97,8 +97,8 @@ public class ConstellationQueryService {
                 .findFirst();
 
         // 프로필 등록 여부
-        Boolean isProfile = Objects.isNull(user.getConstellation()) ? Boolean.FALSE
-                : user.getConstellation().getConstellationId().equals(constellationId) ? Boolean.TRUE : Boolean.FALSE;
+        Boolean isProfile = Objects.isNull(user.getProfileConstellation()) ? Boolean.FALSE
+                : user.getProfileConstellation().getConstellationId().equals(constellationId) ? Boolean.TRUE : Boolean.FALSE;
 
         return userConstellation.map(constellation -> new ConstellationDetailResponse(getConstellation(constellationId),
                         getProgressStatus(constellation, constellationId), isProfile))

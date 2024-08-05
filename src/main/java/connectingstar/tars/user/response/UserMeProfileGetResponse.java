@@ -1,6 +1,6 @@
 package connectingstar.tars.user.response;
 
-import connectingstar.tars.user.dto.UserWithConstellationDto;
+import connectingstar.tars.user.dto.UserDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserMeProfileGetResponse {
-    private UserWithConstellationDto user;
+    private UserDto user;
 
     /**
      * 사용자가 선택한 별자리가 없을 때 보여줄 기본 이미지.

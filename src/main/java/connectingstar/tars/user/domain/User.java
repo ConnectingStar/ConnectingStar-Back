@@ -99,8 +99,8 @@ public class User extends BaseTimeEntity {
      * <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=10014-14243&t=1I8FE80hXdeDG0fl-4">Figma - 마이 페이지</a>
      */
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "constellation_id")
-    private Constellation constellation;
+    @JoinColumn(name = "profile_constellation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Constellation profileConstellation;
     /**
      * 습관 기록 리스트
      */
@@ -159,7 +159,7 @@ public class User extends BaseTimeEntity {
      * 프로필 별자리 수정
      */
     public void updateConstellation(Constellation constellation) {
-        this.constellation = constellation;
+        this.profileConstellation = constellation;
     }
 
     public void updateNickname(String nickname) {
