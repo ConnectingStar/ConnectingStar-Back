@@ -196,9 +196,9 @@ public class UserCommandService {
      * 현재 로그인된 유저의 별자리를 업데이트합니다.
      */
     @Transactional
-    public UserMeConstellationPatchResponse updateCurrentUserConstellation(UserMeConstellationPatchRequest request) {
+    public UserMeProfileConstellationPatchResponse updateCurrentUserConstellation(UserMeProfileConstellationPatchRequest request) {
         User user = userQueryService.getCurrentUser();
-        Constellation constellation = constellationQueryService.getConstellation(request.getConstellationId());
+        Constellation constellation = constellationQueryService.getById(request.getConstellationId());
 
         user.updateConstellation(constellation);
 

@@ -47,7 +47,7 @@ public class ConstellationQueryService {
      * @return 별자리 엔티티
      */
     @Transactional(readOnly = true)
-    public Constellation getConstellation(Integer constellationId) {
+    public Constellation getById(Integer constellationId) {
         return constellationRepository.findById(constellationId)
                 .orElseThrow(() -> new ValidationException(CONSTELLATION_NOT_FOUND));
     }
@@ -100,9 +100,9 @@ public class ConstellationQueryService {
         Boolean isProfile = Objects.isNull(user.getProfileConstellation()) ? Boolean.FALSE
                 : user.getProfileConstellation().getConstellationId().equals(constellationId) ? Boolean.TRUE : Boolean.FALSE;
 
-        return userConstellation.map(constellation -> new ConstellationDetailResponse(getConstellation(constellationId),
+        return userConstellation.map(constellation -> new ConstellationDetailResponse(getById(constellationId),
                         getProgressStatus(constellation, constellationId), isProfile))
-                .orElseGet(() -> new ConstellationDetailResponse(getConstellation(constellationId), ConstellationStatus.SELECT, isProfile));
+                .orElseGet(() -> new ConstellationDetailResponse(getById(constellationId), ConstellationStatus.SELECT, isProfile));
     }
 
     /**

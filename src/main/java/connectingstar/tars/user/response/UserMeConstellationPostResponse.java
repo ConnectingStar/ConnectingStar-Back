@@ -6,6 +6,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserMeConstellationPatchResponse {
+public class UserMeConstellationPostResponse {
+    /**
+     * 업데이트된 유저 정보
+     */
     private UserDto user;
 }
