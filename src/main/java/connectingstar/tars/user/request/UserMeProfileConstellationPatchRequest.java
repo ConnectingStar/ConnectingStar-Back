@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class UserMeConstellationPatchRequest {
+public class UserMeProfileConstellationPatchRequest {
     /**
      * 변경할 별자리 ID
      */

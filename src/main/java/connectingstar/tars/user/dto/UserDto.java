@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import connectingstar.tars.common.serializer.CodableSerializer;
 import connectingstar.tars.constellation.dto.ConstellationDto;
+import connectingstar.tars.constellation.dto.UserConstellationDto;
 import connectingstar.tars.oauth.domain.enums.SocialType;
 import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
@@ -30,7 +31,9 @@ import lombok.Setter;
         "star",
         "referrer",
         "profileConstellationId",
-        "profileConstellation"
+        "profileConstellation",
+        "unlockingUserConstellationId",
+        "unlockingConstellation"
 })
 public class UserDto {
     /**
@@ -95,4 +98,14 @@ public class UserDto {
      * 프로필로 설정한 별자리
      */
     private ConstellationDto profileConstellation;
+
+    /**
+     * 현재 해금중인 유저 별자리 상태의 id.
+     */
+    private Integer unlockingUserConstellationId;
+
+    /**
+     * 현재 해금중인 유저 별자리 상태
+     */
+    private UserConstellationDto unlockingConstellation;
 }

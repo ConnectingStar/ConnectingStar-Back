@@ -3,9 +3,11 @@ package connectingstar.tars.user.controller;
 import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.constellation.query.UserConstellationQueryService;
 import connectingstar.tars.user.command.UserCommandService;
+import connectingstar.tars.user.command.UserConstellationCommandService;
 import connectingstar.tars.user.query.UserQueryService;
-import connectingstar.tars.user.request.UserMeConstellationPatchRequest;
+import connectingstar.tars.user.request.UserMeConstellationPostRequest;
 import connectingstar.tars.user.request.UserMeOnboardingPatchRequest;
+import connectingstar.tars.user.request.UserMeProfileConstellationPatchRequest;
 import connectingstar.tars.user.request.param.UserMeConstellationListGetRequestParam;
 import connectingstar.tars.user.response.*;
 import jakarta.validation.Valid;
@@ -27,6 +29,7 @@ public class UserController {
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
     private final UserConstellationQueryService userConstellationQueryService;
+    private final UserConstellationCommandService userConstellationCommandService;
 
     /**
      * 내 정보(현재 로그인 된 유저 정보)를 반환합니다.
@@ -57,6 +60,23 @@ public class UserController {
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
+    /**
+     * 내가 해금 중인 별자리를 추가합니다.
+     * 이미 진행 중인 별자리가 있을 경우, 추가하지 않습니다.
+     */
+    @PostMapping(value = "/me/constellations")
+    public ResponseEntity<DataResponse<UserMeConstellationPostResponse>> postMeConstellation(
+            @RequestBody @Valid UserMeConstellationPostRequest request
+    ) {
+        UserMeConstellationPostResponse responseDto = userConstellationCommandService.saveMyUnlocking(request);
+
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 나의 별자리 상태 목록.
+     * 회원이 보유, 진행중인 별자리 목록을 반환합니다.
+     */
     @GetMapping(value = "/me/constellations")
     public ResponseEntity<DataResponse<UserMeConstellationListGetResponse>> getMeConstellations(
             @ModelAttribute @Valid UserMeConstellationListGetRequestParam request
@@ -82,10 +102,10 @@ public class UserController {
      * 유저가 선택한 별자리 업데이트
      */
     @PatchMapping(value = "/me/profile-constellation")
-    public ResponseEntity<DataResponse<UserMeConstellationPatchResponse>> patchMeConstellation(
-            @RequestBody @Valid UserMeConstellationPatchRequest request
+    public ResponseEntity<DataResponse<UserMeProfileConstellationPatchResponse>> patchMeConstellation(
+            @RequestBody @Valid UserMeProfileConstellationPatchRequest request
     ) {
-        UserMeConstellationPatchResponse responseDto = userCommandService.updateCurrentUserConstellation(request);
+        UserMeProfileConstellationPatchResponse responseDto = userCommandService.updateCurrentUserConstellation(request);
 
         return ResponseEntity.ok(new DataResponse(responseDto));
     }

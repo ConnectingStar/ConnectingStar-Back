@@ -92,6 +92,7 @@ public class User extends BaseTimeEntity {
     ///////////////////////////////////////////////////////////
     // Relations
     ///////////////////////////////////////////////////////////
+
     /**
      * 프로필로 설정한 별자리
      * 유저가 보유(완성)한 버디 중 하나 선택.
@@ -101,6 +102,14 @@ public class User extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_constellation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Constellation profileConstellation;
+
+    /**
+     * 유저가 별을 채우고 있는(해금 중인) 별자리 상태
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unlocking_user_constellation_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private UserConstellation unlockingConstellation;
+
     /**
      * 습관 기록 리스트
      */
@@ -141,6 +150,10 @@ public class User extends BaseTimeEntity {
 
         this.userConstellationList.add(userConstellation);
         userConstellation.setUser(this);
+    }
+
+    public void updateUnlockingConstellation(UserConstellation userConstellation) {
+        this.unlockingConstellation = userConstellation;
     }
 
     /**

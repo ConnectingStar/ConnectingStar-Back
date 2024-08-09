@@ -11,8 +11,16 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
+@Named("UserConstellationMapper")
 public interface UserConstellationMapper {
     UserConstellationMapper INSTANCE = Mappers.getMapper(UserConstellationMapper.class);
+
+    @Mapping(source = "userConstellation.user.id", target = "userId")
+    @Mapping(source = "userConstellation.constellation.constellationId", target = "constellationId")
+    @Mapping(source = "userConstellation.starCount", target = "starCount")
+    @Mapping(target = "constellation", ignore = true)
+    @Named("toDto(UserConstellation)")
+    UserConstellationDto toDto(UserConstellation userConstellation);
 
     @Mapping(source = "userConstellation.user.id", target = "userId")
     @Mapping(source = "userConstellation.constellation.constellationId", target = "constellationId")

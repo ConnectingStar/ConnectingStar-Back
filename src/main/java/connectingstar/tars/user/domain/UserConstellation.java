@@ -3,6 +3,7 @@ package connectingstar.tars.user.domain;
 import connectingstar.tars.constellation.domain.Constellation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -54,6 +55,7 @@ public class UserConstellation {
     @JoinColumn(name = "constellation_id")
     private Constellation constellation;
 
+    @Builder
     public UserConstellation(Constellation constellation) {
         setConstellation(constellation);
     }
