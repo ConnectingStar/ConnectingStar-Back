@@ -25,6 +25,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(indexes = @Index(name = "IX_user_profileConstellationId", columnList = "profile_constellation_id"))
 public class User extends BaseTimeEntity {
 
     /**
