@@ -94,13 +94,25 @@ public class RunHabitQueryService {
      * 습관 id를 이용해서 습관을 조회합니다.
      * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
      */
-    public HabitGetOneResponse getMyOneById(Integer runHabitId) {
+    public RunHabit getMyOneByIdOrElseThrow(Integer runHabitId) {
         User currentUser = userQueryService.getCurrentUser();
         RunHabit runHabit = getByIdOrElseThrow(runHabitId);
 
         if (runHabit.getUser().getId() != currentUser.getId()) {
             throw new ValidationException(NOT_USER_RUN_HABIT);
         }
+
+        return runHabit;
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
+     *
+     * @return 습관 조회 응답 DTO
+     */
+    public HabitGetOneResponse getMyOneById(Integer runHabitId) {
+        RunHabit runHabit = getMyOneByIdOrElseThrow(runHabitId);
 
         return runHabitMapper.toGetOneResponse(runHabit);
     }

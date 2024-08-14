@@ -6,14 +6,13 @@ import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
+import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.repository.HabitAlertRepository;
 import connectingstar.tars.habit.repository.QuitHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
-import connectingstar.tars.habit.request.HabitPostRequest;
-import connectingstar.tars.habit.request.RunDeleteRequest;
-import connectingstar.tars.habit.request.RunPostRequest;
-import connectingstar.tars.habit.request.RunPutRequest;
+import connectingstar.tars.habit.request.*;
+import connectingstar.tars.habit.response.HabitPatchResponse;
 import connectingstar.tars.habit.response.HabitPostResponse;
 import connectingstar.tars.habit.response.RunPostResponse;
 import connectingstar.tars.habit.response.RunPutResponse;
@@ -62,7 +61,9 @@ public class RunHabitCommandService {
     private final HabitHistoryRepository habitHistoryRepository;
     private final UserRepository userRepository;
 
+    private final RunHabitQueryService runHabitQueryService;
     private final UserQueryService userQueryService;
+
     private final HabitAlertCommandService habitAlertCommandService;
     private final UserOnboardCommandService userOnboardCommandService;
 
@@ -147,6 +148,7 @@ public class RunHabitCommandService {
      * @param param 진행중인 습관 수정을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
      * @return 입력값을 그대로 반환합니다.(추후 필요한 값만 반환하도록 수정필요)
      */
+    @Deprecated
     @Transactional
     public RunPutResponse updateRun(RunPutRequest param) {
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
@@ -157,6 +159,43 @@ public class RunHabitCommandService {
         habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS, param.getSecondAlertStatus());
         return new RunPutResponse(runHabit);
 
+    }
+
+    /**
+     * 진행중인 내 습관을 일부 수정합니다.
+     * null인 필드는 수정하지 않습니다.
+     */
+    @Transactional
+    public HabitPatchResponse patchMineById(Integer runHabitId, HabitPatchRequest param) {
+        RunHabit runHabit = runHabitQueryService.getMyOneByIdOrElseThrow(runHabitId);
+
+        if (param.getIdentity() != null) {
+            runHabit.setIdentity(param.getIdentity());
+        }
+        if (param.getRunTime() != null) {
+            runHabit.setRunTime(param.getRunTime());
+        }
+        if (param.getPlace() != null) {
+            runHabit.setPlace(param.getPlace());
+        }
+        if (param.getAction() != null) {
+            runHabit.setAction(param.getAction());
+        }
+        if (param.getValue() != null) {
+            runHabit.setValue(param.getValue());
+        }
+        if (param.getUnit() != null) {
+            runHabit.setUnit(param.getUnit());
+        }
+
+        if (param.getFirstAlert() != null) {
+            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(), 1, param.getFirstAlert());
+        }
+        if (param.getSecondAlert() != null) {
+            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(), 2, param.getSecondAlert());
+        }
+
+        return runHabitMapper.toPatchResponse(runHabit, runHabit.getAlerts());
     }
 
     /**

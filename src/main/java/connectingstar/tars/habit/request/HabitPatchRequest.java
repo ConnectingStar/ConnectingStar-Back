@@ -1,31 +1,14 @@
-package connectingstar.tars.habit.dto;
+package connectingstar.tars.habit.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalTime;
-import java.util.List;
 
-/**
- * 진행중인 습관(RunHabit) 단일 정보를 표현하는 DTO
- *
- * @author 이우진
- */
 @Getter
 @Setter
-public class RunHabitDto {
-    /**
-     * 진행중인 습관 ID
-     */
-    private Integer runHabitId;
-
-    /**
-     * 습관을 소유한 사용자 id.
-     */
-    private Integer userId;
-
+public class HabitPatchRequest {
     /**
      * 정체성
      */
@@ -58,8 +41,14 @@ public class RunHabitDto {
     private String unit;
 
     /**
-     * 1차 알림, 2차 알림
+     * 1차 알림 (값이 없을 시 자동으로 runTime 10분 전으로 설정)
      */
-    @Nullable
-    private List<HabitAlertDto> habitAlerts;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime firstAlert;
+
+    /**
+     * 2차 알림 (값이 없을 시 자동으로 runTime 30분 후로 설정)
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime secondAlert;
 }
