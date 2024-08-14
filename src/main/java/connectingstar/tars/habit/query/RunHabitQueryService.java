@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.NOT_USER_RUN_HABIT;
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 
 /**
@@ -78,6 +79,30 @@ public class RunHabitQueryService {
                 .filter(rh -> Objects.equals(rh.getRunHabitId(), param.getRunHabitId()))
                 .map(RunPutResponse::new)
                 .findFirst().orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * 습관이 없으면 RUN_HABIT_NOT_FOUND 예외를 발생합니다.
+     */
+    public RunHabit getByIdOrElseThrow(Integer runHabitId) {
+        return runHabitRepository.findByRunHabitId(runHabitId)
+                .orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
+     */
+    public HabitGetOneResponse getMyOneById(Integer runHabitId) {
+        User currentUser = userQueryService.getCurrentUser();
+        RunHabit runHabit = getByIdOrElseThrow(runHabitId);
+
+        if (runHabit.getUser().getId() != currentUser.getId()) {
+            throw new ValidationException(NOT_USER_RUN_HABIT);
+        }
+
+        return runHabitMapper.toGetOneResponse(runHabit);
     }
 
     public HabitGetListResponse getMyList() {

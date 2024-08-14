@@ -7,6 +7,7 @@ import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
 import connectingstar.tars.habit.response.HabitDailyTrackingGetResponse;
 import connectingstar.tars.habit.response.HabitGetListResponse;
+import connectingstar.tars.habit.response.HabitGetOneResponse;
 import connectingstar.tars.habit.response.HabitPostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,17 @@ public class HabitController {
     @GetMapping
     public ResponseEntity<DataResponse<HabitGetListResponse>> getList() {
         HabitGetListResponse responseDto = runHabitQueryService.getMyList();
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 내 습관 1개 조회
+     */
+    @GetMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitGetOneResponse>> getOne(
+            @PathVariable Integer runHabitId
+    ) {
+        HabitGetOneResponse responseDto = runHabitQueryService.getMyOneById(runHabitId);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
