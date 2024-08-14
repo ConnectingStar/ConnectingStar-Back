@@ -28,8 +28,8 @@ public interface RunHabitMapper {
 
     List<RunHabitDto> toDtoList(List<RunHabit> runHabits);
 
-    @Mapping(source = "runHabit", target = "runHabit")
-    HabitGetOneResponse toGetOneResponse(RunHabit runHabit);
+    @Mapping(target = "runHabit", expression = "java( toDto(runHabit, habitAlerts) )")
+    HabitGetOneResponse toGetOneResponse(RunHabit runHabit, List<HabitAlert> habitAlerts);
 
     @Mapping(source = "runHabit", target = "runHabit")
     HabitPostResponse toPostResponse(RunHabit runHabit);

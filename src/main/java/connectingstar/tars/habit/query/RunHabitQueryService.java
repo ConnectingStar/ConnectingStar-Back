@@ -1,6 +1,7 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
@@ -10,6 +11,7 @@ import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.RunDayGetRequest;
 import connectingstar.tars.habit.request.RunGetRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
@@ -111,10 +113,20 @@ public class RunHabitQueryService {
      *
      * @return 습관 조회 응답 DTO
      */
-    public HabitGetOneResponse getMyOneById(Integer runHabitId) {
+    public HabitGetOneResponse getMyOneById(Integer runHabitId, HabitGetOneRequestParam requestParam) {
         RunHabit runHabit = getMyOneByIdOrElseThrow(runHabitId);
 
-        return runHabitMapper.toGetOneResponse(runHabit);
+        List<HabitAlert> habitAlerts = null;
+
+        if (requestParam.getRelated() != null) {
+            for (String related : requestParam.getRelated()) {
+                if (related.equals("habitAlerts")) {
+                    habitAlerts = runHabit.getAlerts();
+                }
+            }
+        }
+
+        return runHabitMapper.toGetOneResponse(runHabit, habitAlerts);
     }
 
     public HabitGetListResponse getMyList() {

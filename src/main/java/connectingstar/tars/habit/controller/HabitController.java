@@ -6,6 +6,7 @@ import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.HabitPatchRequest;
 import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +56,10 @@ public class HabitController {
      */
     @GetMapping("/{runHabitId}")
     public ResponseEntity<DataResponse<HabitGetOneResponse>> getOne(
-            @PathVariable Integer runHabitId
+            @PathVariable Integer runHabitId,
+            @ModelAttribute @Valid HabitGetOneRequestParam requestParam
     ) {
-        HabitGetOneResponse responseDto = runHabitQueryService.getMyOneById(runHabitId);
+        HabitGetOneResponse responseDto = runHabitQueryService.getMyOneById(runHabitId, requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
