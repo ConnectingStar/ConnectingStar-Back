@@ -81,6 +81,12 @@ public class RunHabitQueryService {
     }
 
     public HabitGetListResponse getMyList() {
+        User user = userQueryService.getCurrentUser();
+        List<RunHabit> runHabits = runHabitRepository.findAllByUser(user);
+
+        return HabitGetListResponse.builder()
+                .runHabits(runHabitMapper.toDtoList(runHabits))
+                .build();
     }
 
     /**
