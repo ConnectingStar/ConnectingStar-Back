@@ -78,8 +78,10 @@ public class HabitControllerV1 {
      * 내 진행중인 습관 조회 (*임시 추후 고치겠습니다)
      *
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     * @deprecated use {@link HabitController#getList()} instead
      */
     @GetMapping
+    @Deprecated
     public ResponseEntity<?> doGetRunList() {
         return ResponseEntity.ok(new ListResponse(runHabitQueryService.getList()));
     }

@@ -6,6 +6,7 @@ import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
 import connectingstar.tars.habit.response.HabitDailyTrackingGetResponse;
+import connectingstar.tars.habit.response.HabitGetListResponse;
 import connectingstar.tars.habit.response.HabitPostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,15 @@ public class HabitController {
         HabitPostResponse response = runHabitCommandService.save(param);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new DataResponse(response));
+    }
+
+    /**
+     * 내 습관 목록 조회
+     */
+    @GetMapping
+    public ResponseEntity<DataResponse<HabitGetListResponse>> getList() {
+        HabitGetListResponse responseDto = runHabitQueryService.getMyList();
+        return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
 

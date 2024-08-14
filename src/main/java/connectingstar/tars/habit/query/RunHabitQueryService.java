@@ -80,6 +80,9 @@ public class RunHabitQueryService {
                 .findFirst().orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
     }
 
+    public HabitGetListResponse getMyList() {
+    }
+
     /**
      * 메인 화면 - 날짜별 습관 여부 표시 용도
      */
@@ -191,4 +194,6 @@ public class RunHabitQueryService {
                 .filter(rh -> rh.getHabitHistories().stream().anyMatch(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate))).toList();
         return list.size() == runHabitSize;
     }
+
+
 }
