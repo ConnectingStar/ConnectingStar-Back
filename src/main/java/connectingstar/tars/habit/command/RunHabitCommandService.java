@@ -258,18 +258,16 @@ public class RunHabitCommandService {
             if (first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
             else user.updateIdentity(first.get().getIdentity());
         }
-        QuitHabit quitHabit = QuitHabit.postQuitHabit()
+        QuitHabit quitHabit = QuitHabit.builder()
                 .runTime(runHabit.getRunTime())
                 .user(user)
                 .place(runHabit.getPlace())
                 .action(runHabit.getAction())
                 // TODO: repository.count
-                // TODO: completedHistoryCount로 이름 변경
-                .value(findValue(habitHistories, NOT_REST))
+                .completedHistoryCount(findValue(habitHistories, NOT_REST))
                 .unit(runHabit.getUnit())
                 // TODO: count
-                // TODO: restHistoryCount로 이름 변경
-                .restValue(findValue(habitHistories, REST))
+                .restHistoryCount(findValue(habitHistories, REST))
                 .reasonOfQuit(param.getReason())
                 .startDate(runHabit.getCreatedAt())
                 .quitDate(LocalDateTime.now())
