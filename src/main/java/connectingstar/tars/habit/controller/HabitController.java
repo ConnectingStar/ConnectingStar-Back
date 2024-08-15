@@ -59,7 +59,19 @@ public class HabitController {
             @PathVariable Integer runHabitId,
             @ModelAttribute @Valid HabitGetOneRequestParam requestParam
     ) {
-        HabitGetOneResponse responseDto = runHabitQueryService.getMyOneById(runHabitId, requestParam);
+        HabitGetOneResponse responseDto = runHabitQueryService.getMineById(runHabitId, requestParam);
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 날짜를 입력받아 해당 날짜의 습관, 기록, 상태를 조회한다.
+     * 홈 페이지 - 캘린더 - 날짜별 습관 수행을 조회할 때 사용한다.
+     */
+    @GetMapping("/daily-trackings")
+    public ResponseEntity<DataResponse<HabitDailyTrackingGetResponse>> getDailyTrackingList(
+            @ModelAttribute @Valid HabitDailyTrackingRequestParam requestParam
+    ) {
+        List<HabitDailyTrackingGetResponse> responseDto = runHabitQueryService.getDailyTrackingList(requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
@@ -81,14 +93,16 @@ public class HabitController {
     }
 
     /**
-     * 날짜를 입력받아 해당 날짜의 습관, 기록, 상태를 조회한다.
-     * 홈 페이지 - 캘린더 - 날짜별 습관 수행을 조회할 때 사용한다.
+     * 내 습관 삭제
+     *
+     * @returns response.quitHabit {QuitHabitDto} - 삭제된 습관 정보
      */
-    @GetMapping("/daily-trackings")
-    public ResponseEntity<DataResponse<HabitDailyTrackingGetResponse>> getDailyTrackingList(
-            @ModelAttribute @Valid HabitDailyTrackingRequestParam requestParam
+    @DeleteMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitDeleteResponse>> delete(
+            @PathVariable Integer runHabitId
     ) {
-        List<HabitDailyTrackingGetResponse> responseDto = runHabitQueryService.getDailyTrackingList(requestParam);
-        return ResponseEntity.ok(new DataResponse(responseDto));
+        HabitDeleteResponse response = runHabitCommandService.deleteMineById(runHabitId);
+
+        return ResponseEntity.ok(new DataResponse(response));
     }
 }

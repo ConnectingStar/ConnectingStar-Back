@@ -12,10 +12,7 @@ import connectingstar.tars.habit.repository.QuitHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.*;
-import connectingstar.tars.habit.response.HabitPatchResponse;
-import connectingstar.tars.habit.response.HabitPostResponse;
-import connectingstar.tars.habit.response.RunPostResponse;
-import connectingstar.tars.habit.response.RunPutResponse;
+import connectingstar.tars.habit.response.*;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.onboard.command.UserOnboardCommandService;
@@ -74,7 +71,7 @@ public class RunHabitCommandService {
      */
     @Transactional
     public HabitPostResponse save(HabitPostRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         validateUserMaxCount(user.getId());
 
@@ -167,7 +164,7 @@ public class RunHabitCommandService {
      */
     @Transactional
     public HabitPatchResponse patchMineById(Integer runHabitId, HabitPatchRequest param) {
-        RunHabit runHabit = runHabitQueryService.getMyOneByIdOrElseThrow(runHabitId);
+        RunHabit runHabit = runHabitQueryService.getMineByIdOrElseThrow(runHabitId);
 
         if (param.getIdentity() != null) {
             runHabit.setIdentity(param.getIdentity());
@@ -244,5 +241,46 @@ public class RunHabitCommandService {
      */
     private Integer findValue(List<HabitHistory> habitHistories, Boolean restValue) {
         return habitHistories.stream().filter(habitHistory -> habitHistory.getIsRest() == restValue).toList().size();
+    }
+
+    /**
+     * 진행중인 습관 삭제.
+     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다.
+     * runHabitId에 해당하는 습관이 현재 로그인한 유저의 습관이 아니면 예외를 발생시킨다.
+     */
+    public HabitDeleteResponse deleteMineById(Integer runHabitId) {
+        User user = userQueryService.getCurrentUserOrElseThrow();
+        RunHabit runHabit = runHabitQueryService.getMineByIdOrElseThrow(runHabitId, user);
+
+        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
+        if (runHabit.getIdentity().equals(user.getIdentity())) {
+            Optional<RunHabit> first = user.getRunHabits().stream().filter(rh -> !rh.getIdentity().equals(user.getIdentity())).findFirst();
+            if (first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
+            else user.updateIdentity(first.get().getIdentity());
+        }
+        QuitHabit quitHabit = QuitHabit.postQuitHabit()
+                .runTime(runHabit.getRunTime())
+                .user(user)
+                .place(runHabit.getPlace())
+                .action(runHabit.getAction())
+                // TODO: repository.count
+                // TODO: completedHistoryCount로 이름 변경
+                .value(findValue(habitHistories, NOT_REST))
+                .unit(runHabit.getUnit())
+                // TODO: count
+                // TODO: restHistoryCount로 이름 변경
+                .restValue(findValue(habitHistories, REST))
+                .reasonOfQuit(param.getReason())
+                .startDate(runHabit.getCreatedAt())
+                .quitDate(LocalDateTime.now())
+                .build();
+        quitHabitRepository.save(quitHabit);
+        habitHistoryRepository.deleteAll(habitHistories);
+        runHabitRepository.delete(runHabit);
+
+
+        runHabitRepository.delete(runHabit);
+
+        return new HabitDeleteResponse(runHabitId);
     }
 }

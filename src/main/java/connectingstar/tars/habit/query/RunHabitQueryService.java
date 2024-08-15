@@ -96,8 +96,17 @@ public class RunHabitQueryService {
      * 습관 id를 이용해서 습관을 조회합니다.
      * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
      */
-    public RunHabit getMyOneByIdOrElseThrow(Integer runHabitId) {
-        User currentUser = userQueryService.getCurrentUser();
+    public RunHabit getMineByIdOrElseThrow(Integer runHabitId) {
+        User currentUser = userQueryService.getCurrentUserOrElseThrow();
+
+        return getMineByIdOrElseThrow(runHabitId, currentUser);
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
+     */
+    public RunHabit getMineByIdOrElseThrow(Integer runHabitId, User currentUser) {
         RunHabit runHabit = getByIdOrElseThrow(runHabitId);
 
         if (runHabit.getUser().getId() != currentUser.getId()) {
@@ -113,8 +122,8 @@ public class RunHabitQueryService {
      *
      * @return 습관 조회 응답 DTO
      */
-    public HabitGetOneResponse getMyOneById(Integer runHabitId, HabitGetOneRequestParam requestParam) {
-        RunHabit runHabit = getMyOneByIdOrElseThrow(runHabitId);
+    public HabitGetOneResponse getMineById(Integer runHabitId, HabitGetOneRequestParam requestParam) {
+        RunHabit runHabit = getMineByIdOrElseThrow(runHabitId);
 
         List<HabitAlert> habitAlerts = null;
 
@@ -130,7 +139,7 @@ public class RunHabitQueryService {
     }
 
     public HabitGetListResponse getMyList() {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
         List<RunHabit> runHabits = runHabitRepository.findAllByUser(user);
 
         return HabitGetListResponse.builder()
@@ -200,7 +209,7 @@ public class RunHabitQueryService {
      * 기록이 없어도 history=null, habit, status를 반환한다.
      */
     public List<HabitDailyTrackingGetResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         List<RunHabitAndHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
 
