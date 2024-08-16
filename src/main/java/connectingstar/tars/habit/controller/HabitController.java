@@ -3,6 +3,7 @@ package connectingstar.tars.habit.controller;
 import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.habit.command.RunHabitCommandService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
+import connectingstar.tars.habit.request.HabitDeleteRequest;
 import connectingstar.tars.habit.request.HabitPatchRequest;
 import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
@@ -99,9 +100,10 @@ public class HabitController {
      */
     @DeleteMapping("/{runHabitId}")
     public ResponseEntity<DataResponse<HabitDeleteResponse>> delete(
-            @PathVariable Integer runHabitId
+            @PathVariable Integer runHabitId,
+            @Valid @RequestBody HabitDeleteRequest request
     ) {
-        HabitDeleteResponse response = runHabitCommandService.deleteMineById(runHabitId);
+        HabitDeleteResponse response = runHabitCommandService.deleteMineById(runHabitId, request);
 
         return ResponseEntity.ok(new DataResponse(response));
     }

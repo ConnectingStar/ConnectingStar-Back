@@ -51,4 +51,6 @@ public interface HabitHistoryRepositoryCustom {
 
 
     public HistoryCreateCheckResponse getCheckTodayCreate(HabitHistoryCreateCheckRequest param);
+
+    public void deleteByRunHabitId(Integer runHabitId);
 }

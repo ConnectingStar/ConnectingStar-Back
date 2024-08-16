@@ -5,16 +5,15 @@ import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.mapper.QuitHabitMapper;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.query.RunHabitQueryService;
-import connectingstar.tars.habit.repository.HabitAlertRepository;
-import connectingstar.tars.habit.repository.QuitHabitRepository;
-import connectingstar.tars.habit.repository.RunHabitRepository;
-import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
+import connectingstar.tars.habit.repository.*;
 import connectingstar.tars.habit.request.*;
 import connectingstar.tars.habit.response.*;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
+import connectingstar.tars.history.repository.HabitHistoryRepositoryCustom;
 import connectingstar.tars.onboard.command.UserOnboardCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
@@ -54,8 +53,10 @@ public class RunHabitCommandService {
     private final RunHabitRepository runHabitRepository;
     private final RunHabitRepositoryCustom runHabitRepositoryCustom;
     private final HabitAlertRepository habitAlertRepository;
+    private final HabitAlertRepositoryCustom habitAlertRepositoryCustom;
     private final QuitHabitRepository quitHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
+    private final HabitHistoryRepositoryCustom habitHistoryRepositoryCustom;
     private final UserRepository userRepository;
 
     private final RunHabitQueryService runHabitQueryService;
@@ -65,6 +66,7 @@ public class RunHabitCommandService {
     private final UserOnboardCommandService userOnboardCommandService;
 
     private final RunHabitMapper runHabitMapper;
+    private final QuitHabitMapper quitHabitMapper;
 
     /**
      * 진행중인 습관 생성.
@@ -195,38 +197,6 @@ public class RunHabitCommandService {
         return runHabitMapper.toPatchResponse(runHabit, runHabit.getAlerts());
     }
 
-    /**
-     * 진행중인 습관 삭제
-     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다
-     *
-     * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
-     */
-    public void deleteRun(RunDeleteRequest param) {
-        User user = findUserByUserId(UserUtils.getUserId());
-        RunHabit runHabit = runHabitRepositoryCustom.checkUserId(param.getRunHabitId());
-        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
-        if (runHabit.getIdentity().equals(user.getIdentity())) {
-            Optional<RunHabit> first = user.getRunHabits().stream().filter(rh -> !rh.getIdentity().equals(user.getIdentity())).findFirst();
-            if (first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
-            else user.updateIdentity(first.get().getIdentity());
-        }
-        QuitHabit quitHabit = QuitHabit.postQuitHabit()
-                .runTime(runHabit.getRunTime())
-                .user(user)
-                .place(runHabit.getPlace())
-                .action(runHabit.getAction())
-                .value(findValue(habitHistories, NOT_REST))
-                .unit(runHabit.getUnit())
-                .restValue(findValue(habitHistories, REST))
-                .reasonOfQuit(param.getReason())
-                .startDate(runHabit.getCreatedAt())
-                .quitDate(LocalDateTime.now())
-                .build();
-        quitHabitRepository.save(quitHabit);
-        habitHistoryRepository.deleteAll(habitHistories);
-        runHabitRepository.delete(runHabit);
-    }
-
     private User findUserByUserId(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new ValidationException(USER_NOT_FOUND));
@@ -237,21 +207,16 @@ public class RunHabitCommandService {
     }
 
     /**
-     * 휴식이 몇 번인 지 반환한다
+     * 진행중인 습관 삭제
+     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다
+     *
+     * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
+     * @deprecated use {@link connectingstar.tars.habit.command.RunHabitCommandService#deleteMineById} instead
      */
-    private Integer findValue(List<HabitHistory> habitHistories, Boolean restValue) {
-        return habitHistories.stream().filter(habitHistory -> habitHistory.getIsRest() == restValue).toList().size();
-    }
-
-    /**
-     * 진행중인 습관 삭제.
-     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다.
-     * runHabitId에 해당하는 습관이 현재 로그인한 유저의 습관이 아니면 예외를 발생시킨다.
-     */
-    public HabitDeleteResponse deleteMineById(Integer runHabitId) {
-        User user = userQueryService.getCurrentUserOrElseThrow();
-        RunHabit runHabit = runHabitQueryService.getMineByIdOrElseThrow(runHabitId, user);
-
+    @Deprecated
+    public void deleteRun(RunDeleteRequest param) {
+        User user = findUserByUserId(UserUtils.getUserId());
+        RunHabit runHabit = runHabitRepositoryCustom.checkUserId(param.getRunHabitId());
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
         if (runHabit.getIdentity().equals(user.getIdentity())) {
             Optional<RunHabit> first = user.getRunHabits().stream().filter(rh -> !rh.getIdentity().equals(user.getIdentity())).findFirst();
@@ -263,10 +228,8 @@ public class RunHabitCommandService {
                 .user(user)
                 .place(runHabit.getPlace())
                 .action(runHabit.getAction())
-                // TODO: repository.count
                 .completedHistoryCount(findValue(habitHistories, NOT_REST))
                 .unit(runHabit.getUnit())
-                // TODO: count
                 .restHistoryCount(findValue(habitHistories, REST))
                 .reasonOfQuit(param.getReason())
                 .startDate(runHabit.getCreatedAt())
@@ -275,10 +238,48 @@ public class RunHabitCommandService {
         quitHabitRepository.save(quitHabit);
         habitHistoryRepository.deleteAll(habitHistories);
         runHabitRepository.delete(runHabit);
+    }
+
+    /**
+     * 휴식이 몇 번인 지 반환한다
+     */
+    private Integer findValue(List<HabitHistory> habitHistories, Boolean restValue) {
+        return habitHistories.stream().filter(habitHistory -> habitHistory.getIsRest() == restValue).toList().size();
+    }
 
 
+    /**
+     * 진행중인 습관 삭제.
+     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다.
+     * runHabitId에 해당하는 습관이 현재 로그인한 유저의 습관이 아니면 예외를 발생시킨다.
+     */
+    @Transactional
+    public HabitDeleteResponse deleteMineById(Integer runHabitId, HabitDeleteRequest request) {
+        User user = userQueryService.getCurrentUserOrElseThrow();
+        RunHabit runHabit = runHabitQueryService.getMineByIdOrElseThrow(runHabitId, user);
+
+        Integer completedHistoryCount = habitHistoryRepository.countByRunHabitAndIsRest(runHabit, false);
+        Integer restHistoryCount = habitHistoryRepository.countByRunHabitAndIsRest(runHabit, true);
+
+        QuitHabit quitHabit = QuitHabit.builder()
+                .runTime(runHabit.getRunTime())
+                .user(user)
+                .place(runHabit.getPlace())
+                .action(runHabit.getAction())
+                .completedHistoryCount(completedHistoryCount)
+                .unit(runHabit.getUnit())
+                .restHistoryCount(restHistoryCount)
+                .reasonOfQuit(request.getReasonOfQuit())
+                .startDate(runHabit.getCreatedAt())
+                .quitDate(LocalDateTime.now())
+                .build();
+
+        quitHabitRepository.save(quitHabit);
+
+        habitAlertRepositoryCustom.deleteByRunHabitId(runHabit.getRunHabitId());
+        habitHistoryRepositoryCustom.deleteByRunHabitId(runHabit.getRunHabitId());
         runHabitRepository.delete(runHabit);
 
-        return new HabitDeleteResponse(runHabitId);
+        return quitHabitMapper.toHabitDeleteResponse(quitHabit);
     }
 }

@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface HabitAlertRepository extends JpaRepository<HabitAlert, Integer> {
     Optional<HabitAlert> findByRunHabitAndAlertOrder(RunHabit runHabit, Integer alertOrder);
+
+    void deleteInBatchByRunHabit(RunHabit runHabit);
 }
