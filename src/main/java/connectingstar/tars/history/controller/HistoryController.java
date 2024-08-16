@@ -1,9 +1,12 @@
 package connectingstar.tars.history.controller;
 
 import connectingstar.tars.common.response.DataResponse;
+import connectingstar.tars.history.command.HabitHistoryCommandService;
 import connectingstar.tars.history.query.HabitHistoryQueryService;
+import connectingstar.tars.history.request.HistoryPostRequest;
 import connectingstar.tars.history.request.param.HistoryGetOneRequestParam;
 import connectingstar.tars.history.response.HistoryGetOneResponse;
+import connectingstar.tars.history.response.HistoryPostResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,6 +24,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class HistoryController {
     private final HabitHistoryQueryService habitHistoryQueryService;
+    private final HabitHistoryCommandService habitHistoryCommandService;
+
+    @PostMapping
+    public ResponseEntity<DataResponse<HistoryPostResponse>> post(
+            @RequestBody @Valid HistoryPostRequest request
+    ) {
+        HistoryPostResponse responseDto = habitHistoryCommandService.save(request);
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
 
     /**
      * 습관 기록 상세 조회.

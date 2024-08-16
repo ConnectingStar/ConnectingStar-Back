@@ -13,7 +13,10 @@ import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
+import connectingstar.tars.history.request.HistoryPostRequest;
+import connectingstar.tars.history.response.HistoryPostResponse;
 import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,11 +36,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class HabitHistoryCommandService {
-
     public static final int REST_VALUE = 0;
+
     private final HabitHistoryRepository habitHistoryRepository;
     private final RunHabitRepository runHabitRepository;
     private final UserRepository userRepository;
+
+    private final UserQueryService userQueryService;
 
     private final HabitHistoryMapper habitHistoryMapper;
 
@@ -45,8 +50,49 @@ public class HabitHistoryCommandService {
      * 습관 기록 저장.
      * 휴식이 아닌 기록을 저장합니다. 휴식 기록 저장은 `saveRestHistory`에서 처리.
      *
-     * @param param 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
+     * @param request 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
      */
+    public HistoryPostResponse save(HistoryPostRequest request) {
+        User user = userQueryService.getCurrentUserOrElseThrow();
+
+        validateReferenceDateForCreation(request.getReferenceDate());
+        validateAlreadyExistsOnReferenceDate(user, request.getRunHabitId(), request.getReferenceDate());
+
+        RunHabit runHabit = findRunHabitByRunHabitId(request.getRunHabitId());
+
+        HabitHistory habitHistory = HabitHistory.builder()
+                .user(user)
+                .runHabit(runHabit)
+                .runDate(
+                        LocalDateTime.of(
+                                request.getReferenceDate().getYear(),
+                                request.getReferenceDate().getMonth().getValue(),
+                                request.getReferenceDate().getDayOfMonth(),
+                                request.getRunTime().getHour(),
+                                request.getRunTime().getMinute()
+                        )
+                )
+                .runPlace(request.getRunPlace())
+                .action(request.getAction())
+                .runValue(request.getRunValue())
+                .achievement(request.getAchievement())
+                .review(request.getReview())
+                .isRest(false)
+                .build();
+
+        HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
+
+        return habitHistoryMapper.toPostResponse(savedHistory);
+    }
+
+    /**
+     * 습관 기록 저장.
+     * 휴식이 아닌 기록을 저장합니다. 휴식 기록 저장은 `saveRestHistory`에서 처리.
+     *
+     * @param param 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
+     * @deprecated
+     */
+    @Deprecated
     public HabitHistoryPostResponse saveHistory(HabitHistoryPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
@@ -77,7 +123,7 @@ public class HabitHistoryCommandService {
 
         HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
 
-        return habitHistoryMapper.toPostResponse(savedHistory);
+        return habitHistoryMapper.toPostResponseV1(savedHistory);
     }
 
     /**

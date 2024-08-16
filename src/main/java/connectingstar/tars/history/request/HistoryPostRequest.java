@@ -1,5 +1,4 @@
-package connectingstar.tars.habit.request;
-
+package connectingstar.tars.history.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -8,18 +7,15 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-
 /**
  * 오늘 실천한 습관 기록을 저장 요청
  *
  * @author 김성수, 이우진
  * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4509-17153&t=DHr54WaoOqEj05dm-4">Figma - 실천 기록</a>
- * @deprecated use {@link connectingstar.tars.history.request.HistoryPostRequest} instead
  */
-@Deprecated
 @Getter
 @Setter
-public class HabitHistoryPostRequest {
+public class HistoryPostRequest {
     /**
      * 진행중인 습관 ID
      */
@@ -52,7 +48,7 @@ public class HabitHistoryPostRequest {
     /**
      * 실천량
      */
-    private Integer behaviorValue;
+    private Integer runValue;
 
     /**
      * 만족도
