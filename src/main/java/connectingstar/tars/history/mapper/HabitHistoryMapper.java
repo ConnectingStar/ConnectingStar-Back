@@ -4,6 +4,7 @@ import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
+import connectingstar.tars.habit.response.HistoryRestPostResponse;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.dto.HabitHistoryDto;
 import connectingstar.tars.history.dto.HabitHistoryWithRunHabitDto;
@@ -37,6 +38,10 @@ public interface HabitHistoryMapper {
     @Mapping(source = "habitHistory", target = "habitHistory")
     HistoryPostResponse toPostResponse(HabitHistory habitHistory);
 
+    @Deprecated
     @Mapping(source = "habitHistory", target = "habitHistory")
-    HabitHistoryRestPostResponse toRestPostResponse(HabitHistory habitHistory);
+    HabitHistoryRestPostResponse toRestPostResponseV1(HabitHistory habitHistory);
+
+    @Mapping(source = "habitHistory", target = "habitHistory")
+    HistoryRestPostResponse toRestPostResponse(HabitHistory habitHistory);
 }

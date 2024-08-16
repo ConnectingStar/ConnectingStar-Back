@@ -8,8 +8,10 @@ import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.request.HabitHistoryPostRequest;
 import connectingstar.tars.habit.request.HabitHistoryRestPostRequest;
+import connectingstar.tars.habit.request.HistoryRestPostRequest;
 import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
+import connectingstar.tars.habit.response.HistoryRestPostResponse;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
@@ -129,6 +131,41 @@ public class HabitHistoryCommandService {
     /**
      * 휴식 기록 저장
      */
+    public HistoryRestPostResponse saveRest(HistoryRestPostRequest request) {
+        User user = findUserByUserId(UserUtils.getUserId());
+
+        validateReferenceDateForCreation(request.getReferenceDate());
+        validateAlreadyExistsOnReferenceDate(user, request.getRunHabitId(), request.getReferenceDate());
+
+        RunHabit runHabit = findRunHabitByRunHabitId(request.getRunHabitId());
+
+        HabitHistory habitHistory = HabitHistory.builder()
+                .user(user)
+                .runHabit(runHabit)
+                .runDate(
+                        LocalDateTime.of(
+                                request.getReferenceDate().getYear(),
+                                request.getReferenceDate().getMonth().getValue(),
+                                request.getReferenceDate().getDayOfMonth(),
+                                runHabit.getRunTime().getHour(),
+                                runHabit.getRunTime().getMinute()
+                        )
+                )
+                .review(request.getReview())
+                .isRest(true)
+                .build();
+
+        HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
+
+        return habitHistoryMapper.toRestPostResponse(savedHistory);
+    }
+
+    /**
+     * 휴식 기록 저장
+     *
+     * @deprecated use {@link #saveRest(HistoryRestPostRequest)} instead
+     */
+    @Deprecated
     public HabitHistoryRestPostResponse saveRestHistory(HabitHistoryRestPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
 
@@ -155,7 +192,7 @@ public class HabitHistoryCommandService {
 
         HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
 
-        return habitHistoryMapper.toRestPostResponse(savedHistory);
+        return habitHistoryMapper.toRestPostResponseV1(savedHistory);
     }
 
     /**
@@ -200,4 +237,6 @@ public class HabitHistoryCommandService {
                 throw new ValidationException(HabitErrorCode.ALREADY_CREATED_HABIT_HISTORY);
         }
     }
+
+
 }

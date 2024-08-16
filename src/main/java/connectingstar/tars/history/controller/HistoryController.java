@@ -1,6 +1,8 @@
 package connectingstar.tars.history.controller;
 
 import connectingstar.tars.common.response.DataResponse;
+import connectingstar.tars.habit.request.HistoryRestPostRequest;
+import connectingstar.tars.habit.response.HistoryRestPostResponse;
 import connectingstar.tars.history.command.HabitHistoryCommandService;
 import connectingstar.tars.history.query.HabitHistoryQueryService;
 import connectingstar.tars.history.request.HistoryPostRequest;
@@ -31,6 +33,14 @@ public class HistoryController {
             @RequestBody @Valid HistoryPostRequest request
     ) {
         HistoryPostResponse responseDto = habitHistoryCommandService.save(request);
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    @PostMapping("/rest")
+    public ResponseEntity<DataResponse<HistoryRestPostResponse>> postRest(
+            @RequestBody @Valid HistoryRestPostRequest request
+    ) {
+        HistoryRestPostResponse responseDto = habitHistoryCommandService.saveRest(request);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
