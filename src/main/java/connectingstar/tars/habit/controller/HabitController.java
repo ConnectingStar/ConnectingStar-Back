@@ -3,10 +3,12 @@ package connectingstar.tars.habit.controller;
 import connectingstar.tars.common.response.DataResponse;
 import connectingstar.tars.habit.command.RunHabitCommandService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
+import connectingstar.tars.habit.request.HabitDeleteRequest;
+import connectingstar.tars.habit.request.HabitPatchRequest;
 import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
-import connectingstar.tars.habit.response.HabitDailyTrackingGetResponse;
-import connectingstar.tars.habit.response.HabitPostResponse;
+import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
+import connectingstar.tars.habit.response.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,6 +43,26 @@ public class HabitController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new DataResponse(response));
     }
 
+    /**
+     * 내 습관 목록 조회
+     */
+    @GetMapping
+    public ResponseEntity<DataResponse<HabitGetListResponse>> getList() {
+        HabitGetListResponse responseDto = runHabitQueryService.getMyList();
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 내 습관 1개 조회
+     */
+    @GetMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitGetOneResponse>> getOne(
+            @PathVariable Integer runHabitId,
+            @ModelAttribute @Valid HabitGetOneRequestParam requestParam
+    ) {
+        HabitGetOneResponse responseDto = runHabitQueryService.getMineById(runHabitId, requestParam);
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
 
     /**
      * 날짜를 입력받아 해당 날짜의 습관, 기록, 상태를 조회한다.
@@ -52,5 +74,37 @@ public class HabitController {
     ) {
         List<HabitDailyTrackingGetResponse> responseDto = runHabitQueryService.getDailyTrackingList(requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 내 습관을 부분 업데이트 (PATCH).
+     * null인 필드는 업데이트하지 않습니다.
+     *
+     * @param runHabitId 수정할 습관 ID
+     * @param param      수정할 값
+     */
+    @PatchMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitPatchResponse>> patch(
+            @PathVariable Integer runHabitId,
+            @Valid @RequestBody HabitPatchRequest param
+    ) {
+        HabitPatchResponse response = runHabitCommandService.patchMineById(runHabitId, param);
+
+        return ResponseEntity.ok(new DataResponse(response));
+    }
+
+    /**
+     * 내 습관 삭제
+     *
+     * @returns response.quitHabit {QuitHabitDto} - 삭제된 습관 정보
+     */
+    @DeleteMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitDeleteResponse>> delete(
+            @PathVariable Integer runHabitId,
+            @Valid @RequestBody HabitDeleteRequest request
+    ) {
+        HabitDeleteResponse response = runHabitCommandService.deleteMineById(runHabitId, request);
+
+        return ResponseEntity.ok(new DataResponse(response));
     }
 }

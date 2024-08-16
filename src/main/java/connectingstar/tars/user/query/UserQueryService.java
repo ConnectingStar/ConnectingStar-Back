@@ -73,7 +73,7 @@ public class UserQueryService {
      * @return 회원 엔티티
      */
     @Transactional(readOnly = true)
-    public User getCurrentUser() {
+    public User getCurrentUserOrElseThrow() {
         return userRepository.findById(UserUtils.getUserId())
                 .orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }
@@ -90,7 +90,7 @@ public class UserQueryService {
      * @return /v2/users/me response DTO.
      */
     public UserMeGetResponse getCurrentUserResponse() {
-        User user = getCurrentUser();
+        User user = getCurrentUserOrElseThrow();
 
         return userMapper.toMeGetResponse(user);
     }
@@ -101,7 +101,7 @@ public class UserQueryService {
      * @return 선택한 별자리 객체가 포함된 유저 DTO.
      */
     public UserMeProfileGetResponse getCurrentUserProfile() {
-        User user = getCurrentUser();
+        User user = getCurrentUserOrElseThrow();
         String defaultCharacterImage = getDefaultCharacterImage();
 
         return userMapper.toMeProfileGetResponse(user, user.getProfileConstellation(), defaultCharacterImage);

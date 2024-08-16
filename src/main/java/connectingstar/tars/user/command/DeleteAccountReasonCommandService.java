@@ -22,7 +22,7 @@ public class DeleteAccountReasonCommandService {
     private final DeleteAccountReasonRepository deleteAccountReasonRepository;
 
     public void saveDeleteAccountReason(DeleteAccountReasonRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         DeleteAccountReason deleteAccountReason = DeleteAccountReason.builder()
                 .reason(param.getReason())

@@ -42,7 +42,7 @@ public class UserConstellationCommandService {
     @Deprecated
     @Transactional
     public void save(UserConstellationRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
         Constellation constellation = constellationQueryService.getById(param.getConstellationId());
 
         // 별자리 중복, 진행중인 별자리 존재 여부 검증
@@ -59,7 +59,7 @@ public class UserConstellationCommandService {
      */
     @Transactional
     public UserMeConstellationPostResponse saveMyUnlocking(UserMeConstellationPostRequest request) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
         Constellation constellation = constellationQueryService.getById(request.getConstellationId());
 
         verifyUnlockingNotProcessing(user);
@@ -110,7 +110,7 @@ public class UserConstellationCommandService {
      */
     @Transactional
     public UserConstellationStarResponse updateStar() {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
         // 사용자 별 개수 존재여부 체크
         verifyStarCount(user);
 

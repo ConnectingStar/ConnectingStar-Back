@@ -13,12 +13,10 @@ import java.time.LocalDate;
  *
  * @author 이우진
  * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4509-17153&t=DHr54WaoOqEj05dm-4">Figma - 실천 기록</a>
- * @deprecated use {@link HistoryRestPostRequest} instead
  */
 @Getter
 @Setter
-@Deprecated
-public class HabitHistoryRestPostRequest {
+public class HistoryRestPostRequest {
     /**
      * 진행중인 습관 ID
      */

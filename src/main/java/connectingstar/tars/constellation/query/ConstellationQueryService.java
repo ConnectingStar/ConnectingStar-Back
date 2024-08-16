@@ -90,7 +90,7 @@ public class ConstellationQueryService {
      */
     @Transactional(readOnly = true)
     public ConstellationDetailResponse getOne(Integer constellationId) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
         Optional<UserConstellation> userConstellation = user.getUserConstellationList().stream()
                 .filter(it -> it.getConstellation().getConstellationId().equals(constellationId) ||
                         !it.getRegYn())

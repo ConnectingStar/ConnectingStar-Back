@@ -1,6 +1,7 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
@@ -10,6 +11,7 @@ import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.RunDayGetRequest;
 import connectingstar.tars.habit.request.RunGetRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
@@ -30,6 +32,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.NOT_USER_RUN_HABIT;
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 
 /**
@@ -78,6 +81,70 @@ public class RunHabitQueryService {
                 .filter(rh -> Objects.equals(rh.getRunHabitId(), param.getRunHabitId()))
                 .map(RunPutResponse::new)
                 .findFirst().orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * 습관이 없으면 RUN_HABIT_NOT_FOUND 예외를 발생합니다.
+     */
+    public RunHabit getByIdOrElseThrow(Integer runHabitId) {
+        return runHabitRepository.findByRunHabitId(runHabitId)
+                .orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
+     */
+    public RunHabit getMineByIdOrElseThrow(Integer runHabitId) {
+        User currentUser = userQueryService.getCurrentUserOrElseThrow();
+
+        return getMineByIdOrElseThrow(runHabitId, currentUser);
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
+     */
+    public RunHabit getMineByIdOrElseThrow(Integer runHabitId, User currentUser) {
+        RunHabit runHabit = getByIdOrElseThrow(runHabitId);
+
+        if (runHabit.getUser().getId() != currentUser.getId()) {
+            throw new ValidationException(NOT_USER_RUN_HABIT);
+        }
+
+        return runHabit;
+    }
+
+    /**
+     * 습관 id를 이용해서 습관을 조회합니다.
+     * id에 해당하는 습관이 없거나 현재 로그인한 유저의 습관이 아니면 예외를 발생합니다.
+     *
+     * @return 습관 조회 응답 DTO
+     */
+    public HabitGetOneResponse getMineById(Integer runHabitId, HabitGetOneRequestParam requestParam) {
+        RunHabit runHabit = getMineByIdOrElseThrow(runHabitId);
+
+        List<HabitAlert> habitAlerts = null;
+
+        if (requestParam.getRelated() != null) {
+            for (String related : requestParam.getRelated()) {
+                if (related.equals("habitAlerts")) {
+                    habitAlerts = runHabit.getAlerts();
+                }
+            }
+        }
+
+        return runHabitMapper.toGetOneResponse(runHabit, habitAlerts);
+    }
+
+    public HabitGetListResponse getMyList() {
+        User user = userQueryService.getCurrentUserOrElseThrow();
+        List<RunHabit> runHabits = runHabitRepository.findAllByUser(user);
+
+        return HabitGetListResponse.builder()
+                .runHabits(runHabitMapper.toDtoList(runHabits))
+                .build();
     }
 
     /**
@@ -142,7 +209,7 @@ public class RunHabitQueryService {
      * 기록이 없어도 history=null, habit, status를 반환한다.
      */
     public List<HabitDailyTrackingGetResponse> getDailyTrackingList(HabitDailyTrackingRequestParam requestParam) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         List<RunHabitAndHistoryDto> runHabitWithHistories = runHabitRepositoryCustom.getListOfUserWithHistoryByDate(user.getId(), requestParam.getDate());
 
@@ -191,4 +258,6 @@ public class RunHabitQueryService {
                 .filter(rh -> rh.getHabitHistories().stream().anyMatch(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate))).toList();
         return list.size() == runHabitSize;
     }
+
+
 }

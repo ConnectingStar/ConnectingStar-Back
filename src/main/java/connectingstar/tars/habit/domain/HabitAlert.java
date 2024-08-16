@@ -30,7 +30,7 @@ public class HabitAlert {
     /**
      * 습관 PK
      */
-    @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "run_habit_id")
     private RunHabit runHabit;
 
@@ -61,12 +61,16 @@ public class HabitAlert {
         this.alertStatus = alertStatus;
     }
 
-    public void updateAlertTime(LocalTime alertTime) {
+    public void setAlertTime(LocalTime alertTime) {
+        this.alertTime = alertTime;
+    }
+
+    public void patchAlertTime(LocalTime alertTime) {
         this.alertTime = alertTime != null ? alertTime : this.alertTime;
     }
 
     public void updateAlertStatus(Boolean alertStatus) {
-        if(alertStatus == null) return;
+        if (alertStatus == null) return;
         this.alertStatus = alertStatus;
     }
 }

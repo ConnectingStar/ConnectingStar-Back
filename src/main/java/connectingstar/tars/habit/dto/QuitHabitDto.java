@@ -37,19 +37,19 @@ public class QuitHabitDto {
     private String action;
 
     /**
-     * 실천횟수
-     */
-    private Integer value;
-
-    /**
      * 단위
      */
     private String unit;
-    
+
+    /**
+     * 실천횟수
+     */
+    private Integer completedHistoryCount;
+
     /**
      * 휴식 실천횟수
      */
-    private Integer restValue;
+    private Integer restHistoryCount;
 
     /**
      * 종료 사유
@@ -59,10 +59,12 @@ public class QuitHabitDto {
     /**
      * 시작 날짜
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startDate;
 
     /**
      * 종료 날짜
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime quitDate;
 }

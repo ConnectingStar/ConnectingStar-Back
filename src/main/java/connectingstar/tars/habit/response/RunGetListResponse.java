@@ -16,8 +16,8 @@ import java.util.List;
  * 진행중인 습관 수정 응답
  *
  * @author 김성수
+ * @deprecated us {@link HabitGetListResponse} instead
  */
-
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"runHabitId", "userId", "userNickname", "identity", "runTime", "place", "behavior", "behaviorValue", "behaviorUnit", "historyInfo"})

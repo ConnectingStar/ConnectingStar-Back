@@ -49,9 +49,9 @@ public class QuitHabitDao {
                 quitHabit.runTime,
                 quitHabit.place,
                 quitHabit.action,
-                quitHabit.value,
+                quitHabit.completedHistoryCount,
                 quitHabit.unit,
-                quitHabit.restValue,
+                quitHabit.restHistoryCount,
                 quitHabit.reasonOfQuit,
                 quitHabit.startDate,
                 quitHabit.quitDate

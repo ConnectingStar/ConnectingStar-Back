@@ -12,7 +12,9 @@ import java.time.LocalTime;
  * 내 종료한 습관 조회 응답
  *
  * @author 김성수
+ * @deprecated Use {@link connectingstar.tars.habit.dto.QuitHabitDto} instead
  */
+@Deprecated
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"quitHabitId", "userId", "userNickname", "runTime", "place", "behavior", "behaviorValue", "behaviorUnit", "restValue", "reasonOfQuit", "startDate", "quitDate"})

@@ -8,9 +8,11 @@ import lombok.Setter;
  * 진행중인 습관 수정 요청
  *
  * @author 김성수
+ * @deprecated use {@link HabitPatchRequest} instead
  */
 @Getter
 @Setter
+@Deprecated
 public class RunPutRequest {
 
 

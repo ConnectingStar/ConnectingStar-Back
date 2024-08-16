@@ -68,7 +68,7 @@ public class UserCommandService {
      */
     @Deprecated
     public UserBasicInfoResponse getUserBasicInfo() {
-        User currentUser = userQueryService.getCurrentUser();
+        User currentUser = userQueryService.getCurrentUserOrElseThrow();
         Optional<RunHabit> first = currentUser.getRunHabits().stream().filter(runHabit -> currentUser.getIdentity().equals(runHabit.getIdentity()))
                 .findFirst();
         return first.map(runHabit -> new UserBasicInfoResponse(currentUser, runHabit)).orElseGet(() -> new UserBasicInfoResponse(currentUser));
@@ -78,7 +78,7 @@ public class UserCommandService {
      * 닉네임 + 정체성 + 캐릭터 이미지 + 습관
      */
     public Object getUserBasicInfoAndHabit() {
-        User getUser = userQueryService.getCurrentUser();
+        User getUser = userQueryService.getCurrentUserOrElseThrow();
         List<RunHabit> runHabitList = getRunHabit(getUser);
         return new UserBasicInfoAndHabitResponse(getUser.getId(), getUser.getNickname(), getUser.getIdentity()
                 //, getUser.getConstellation().getCharacterImage()
@@ -86,7 +86,7 @@ public class UserCommandService {
     }
 
     public UserStarResponse getUserStar() {
-        return new UserStarResponse(userQueryService.getCurrentUser().getStar());
+        return new UserStarResponse(userQueryService.getCurrentUserOrElseThrow().getStar());
     }
 
     public boolean isHavingConstellation(Integer userId, Integer constellationId) {
@@ -100,7 +100,7 @@ public class UserCommandService {
      */
     @Transactional
     public void update(UserConstellationRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         UserConstellation userConstellation = user.getUserConstellationList()
                 .stream()
@@ -122,7 +122,7 @@ public class UserCommandService {
      */
     @Transactional
     public void update(UserNicknameRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         user.updateNickname(param.getNickname());
     }
@@ -134,7 +134,7 @@ public class UserCommandService {
      */
     @Transactional
     public void update(UserIdentityRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         user.getRunHabits()
                 .stream()
@@ -152,7 +152,7 @@ public class UserCommandService {
      */
     @Transactional
     public void update(UserGenderRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         user.updateGender(GenderType.fromCode(param.getGenderType()));
     }
@@ -164,7 +164,7 @@ public class UserCommandService {
      */
     @Transactional
     public void update(UserAgeRangeRequest param) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         user.updateAgeRange(AgeRangeType.fromCode(param.getAgeRangeType()));
     }
@@ -174,7 +174,7 @@ public class UserCommandService {
      */
     @Transactional
     public UserMeOnboardingPatchResponse updateCurrentUserOnboarding(UserMeOnboardingPatchRequest request) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         user.updateNickname(request.getNickname());
         user.updateGender(GenderType.fromCode(request.getGenderType()));
@@ -197,7 +197,7 @@ public class UserCommandService {
      */
     @Transactional
     public UserMeProfileConstellationPatchResponse updateCurrentUserConstellation(UserMeProfileConstellationPatchRequest request) {
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
         Constellation constellation = constellationQueryService.getById(request.getConstellationId());
 
         user.updateConstellation(constellation);

@@ -3,7 +3,9 @@ package connectingstar.tars.habit.command;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -13,6 +15,7 @@ import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.ALER
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.ALERT_ORDER_NOT_FOUND;
 
 @Service
+@RequiredArgsConstructor
 public class HabitAlertCommandService {
 
     public static final int FIRST_ALERT_STATUS = 1;
@@ -20,6 +23,8 @@ public class HabitAlertCommandService {
     public static final int FIRST_ALERT_DEFAULT = 10;
     public static final int SECOND_ALERT_STATUS = 2;
     public static final int SECOND_ALERT_DEFAULT = 30;
+
+    private final HabitAlertQueryService habitAlertQueryService;
 
     public HabitAlert makeAlert(RunHabit runHabit, LocalTime runTime, LocalTime alert, int alertStatus) {
         if (alert != null) {
@@ -45,9 +50,19 @@ public class HabitAlertCommandService {
                 .filter(alert -> Objects.equals(alert.getAlertOrder(), alertOrder))
                 .findFirst()
                 .orElseThrow(() -> new ValidationException(ALERT_NOT_FOUND));
-        habitAlert.updateAlertTime(changeTime);
+        habitAlert.patchAlertTime(changeTime);
         habitAlert.updateAlertStatus(alertStatus);
         return habitAlert.getAlertTime();
+    }
+
+    /**
+     * runHabitId와 alertOrder로 알림을 찾고 시간을 변경한다.
+     */
+    @Transactional
+    public HabitAlert updateTimeByRunHabitIdAndOrder(Integer runHabitId, Integer alertOrder, LocalTime alertTime) {
+        HabitAlert habitAlert = habitAlertQueryService.getByRunHabitIdAndOrderOrElseThrow(runHabitId, alertOrder);
+        habitAlert.setAlertTime(alertTime);
+        return habitAlert;
     }
 
     /**

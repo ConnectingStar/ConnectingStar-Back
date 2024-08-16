@@ -4,10 +4,12 @@ import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.response.HabitHistoryPostResponse;
 import connectingstar.tars.habit.response.HabitHistoryRestPostResponse;
+import connectingstar.tars.habit.response.HistoryRestPostResponse;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.dto.HabitHistoryDto;
 import connectingstar.tars.history.dto.HabitHistoryWithRunHabitDto;
 import connectingstar.tars.history.response.HistoryGetOneResponse;
+import connectingstar.tars.history.response.HistoryPostResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -29,9 +31,17 @@ public interface HabitHistoryMapper {
     @Mapping(target = "history", expression = "java(toWithRunHabitDto(history, runHabit))")
     HistoryGetOneResponse toGetOneResponse(HabitHistory history, RunHabit runHabit);
 
+    @Deprecated
     @Mapping(source = "habitHistory", target = "habitHistory")
-    HabitHistoryPostResponse toPostResponse(HabitHistory habitHistory);
+    HabitHistoryPostResponse toPostResponseV1(HabitHistory habitHistory);
 
     @Mapping(source = "habitHistory", target = "habitHistory")
-    HabitHistoryRestPostResponse toRestPostResponse(HabitHistory habitHistory);
+    HistoryPostResponse toPostResponse(HabitHistory habitHistory);
+
+    @Deprecated
+    @Mapping(source = "habitHistory", target = "habitHistory")
+    HabitHistoryRestPostResponse toRestPostResponseV1(HabitHistory habitHistory);
+
+    @Mapping(source = "habitHistory", target = "habitHistory")
+    HistoryRestPostResponse toRestPostResponse(HabitHistory habitHistory);
 }

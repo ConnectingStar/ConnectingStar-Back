@@ -5,17 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 습관 기록 생성 후 response DTO
+ * 휴식 기록 생성 후 response DTO
  *
  * @author 이우진
- * @deprecated use {@link connectingstar.tars.history.response.HistoryPostResponse} instead
  */
-@Deprecated
 @Getter
 @Setter
-public class HabitHistoryPostResponse {
+public class HistoryRestPostResponse {
     /**
      * 생성된 습관 기록
+     * isRest = true
      */
     private HabitHistoryDto habitHistory;
 }

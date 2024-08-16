@@ -58,14 +58,14 @@ public class HabitHistoryQueryService {
         HabitHistory habitHistory = habitHistoryRepository.findById(habitHistoryId)
                 .orElseThrow(() -> new ValidationException(HISTORY_NOT_FOUND));
 
-        User user = userQueryService.getCurrentUser();
+        User user = userQueryService.getCurrentUserOrElseThrow();
 
         if (!habitHistory.getUser().getId().equals(user.getId())) {
             throw new ValidationException(HISTORY_CANNOT_ACCESS);
         }
 
         RunHabit runHabit = null;
-        
+
         // param 'related' 필드 조회
         if (requestParam.getRelated() != null) {
             for (String relatedField : requestParam.getRelated()) {

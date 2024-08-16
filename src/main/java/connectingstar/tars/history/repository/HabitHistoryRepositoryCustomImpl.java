@@ -182,4 +182,13 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
                 habitHistory.runValue
         );
     }
+
+    public void deleteByRunHabitId(Integer runHabitId) {
+        QHabitHistory habitHistory = QHabitHistory.habitHistory;
+
+        queryFactory
+                .delete(habitHistory)
+                .where(habitHistory.runHabit.runHabitId.eq(runHabitId))
+                .execute();
+    }
 }
