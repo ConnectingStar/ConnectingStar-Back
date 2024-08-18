@@ -36,6 +36,8 @@ public class ConstellationListResponse {
     private final Integer starCount;
     /**
      * 별자리 상태
+     *
+     * @see {@link ConstellationStatus}
      */
     private final String status;
 
