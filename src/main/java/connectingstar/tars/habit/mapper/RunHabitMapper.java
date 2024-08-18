@@ -14,9 +14,11 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {HabitAlertMapper.class})
+@Named("RunHabitMapper")
 public interface RunHabitMapper {
     RunHabitMapper INSTANCE = Mappers.getMapper(RunHabitMapper.class);
 
+    @Named("toDto(RunHabit)")
     @Mapping(source = "user.id", target = "userId")
     @Mapping(target = "habitAlerts", ignore = true)
     RunHabitDto toDto(RunHabit runHabit);

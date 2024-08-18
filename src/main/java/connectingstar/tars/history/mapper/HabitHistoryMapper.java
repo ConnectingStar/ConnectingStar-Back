@@ -23,12 +23,17 @@ public interface HabitHistoryMapper {
     @Mapping(target = "runHabit", ignore = true)
     HabitHistoryDto toDto(HabitHistory habitHistory);
 
+    @Mapping(target = "userId", source = "habitHistory.user.id")
+    @Mapping(target = "runHabitId", source = "habitHistory.runHabit.runHabitId")
+    @Mapping(target = "runHabit", source = "runHabit", qualifiedByName = {"RunHabitMapper", "toDto(RunHabit)"})
+    HabitHistoryDto toDto(HabitHistory habitHistory, RunHabit runHabit);
+
     @Mapping(source = "habitHistory.user.id", target = "userId")
     @Mapping(source = "habitHistory.runHabit.runHabitId", target = "runHabitId")
     @Mapping(source = "habitHistory.action", target = "action")
     @Mapping(source = "runHabit", target = "runHabit")
     HabitHistoryWithRunHabitDto toWithRunHabitDto(HabitHistory habitHistory, RunHabit runHabit);
-
+    
     @Mapping(target = "history", expression = "java(toWithRunHabitDto(history, runHabit))")
     HistoryGetOneResponse toGetOneResponse(HabitHistory history, RunHabit runHabit);
 
