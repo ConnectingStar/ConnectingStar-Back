@@ -5,6 +5,7 @@ import connectingstar.tars.habit.request.HistoryRestPostRequest;
 import connectingstar.tars.habit.response.HistoryRestPostResponse;
 import connectingstar.tars.history.command.HabitHistoryCommandService;
 import connectingstar.tars.history.query.HabitHistoryQueryService;
+import connectingstar.tars.history.request.HistoryGetListRequestParam;
 import connectingstar.tars.history.request.HistoryPostRequest;
 import connectingstar.tars.history.request.param.HistoryGetOneRequestParam;
 import connectingstar.tars.history.response.HistoryGetListResponse;
@@ -54,9 +55,9 @@ public class HistoryController {
      */
     @GetMapping
     public ResponseEntity<DataResponse<HistoryGetListResponse>> getList(
-            @ModelAttribute @Valid HistoryGetOneRequestParam requestParam
+            @ModelAttribute @Valid HistoryGetListRequestParam requestParam
     ) {
-        HistoryGetListResponse responseDto = habitHistoryQueryService.getMyList(habitHistoryId, requestParam);
+        HistoryGetListResponse responseDto = habitHistoryQueryService.getMyList(requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
