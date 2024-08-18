@@ -1,6 +1,7 @@
 package connectingstar.tars.history.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import connectingstar.tars.habit.dto.RunHabitDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -67,4 +68,10 @@ public class HabitHistoryDto {
      * 휴식 여부
      */
     private Boolean isRest;
+
+    /**
+     * 기록과 연결된 습관 정보.
+     * Request Param이 related=runHabit일 때만 조회함.
+     */
+    private RunHabitDto runHabit;
 }
