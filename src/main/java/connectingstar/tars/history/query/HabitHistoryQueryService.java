@@ -12,7 +12,9 @@ import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.history.repository.HabitHistoryRepositoryCustom;
+import connectingstar.tars.history.request.HistoryGetListRequestParam;
 import connectingstar.tars.history.request.param.HistoryGetOneRequestParam;
+import connectingstar.tars.history.response.HistoryGetListResponse;
 import connectingstar.tars.history.response.HistoryGetOneResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
@@ -80,6 +82,14 @@ public class HabitHistoryQueryService {
         return habitHistoryMapper.toGetOneResponse(habitHistory, runHabit);
     }
 
+    public HistoryGetListResponse getMyList(HistoryGetListRequestParam requestParam) {
+        User user = userQueryService.getCurrentUserOrElseThrow();
+
+        List<HabitHistory> habitHistories = habitHistoryRepository.findByUserId(user.getId(), requestParam);
+
+        return habitHistoryMapper.toGetListResponse(habitHistories);
+    }
+
     /**
      * 월간 습관 기록 목록 조회
      *
@@ -127,6 +137,4 @@ public class HabitHistoryQueryService {
     public HistoryCreateCheckResponse checkTodayCreate(HabitHistoryCreateCheckRequest param) {
         return habitHistoryRepositoryCustom.getCheckTodayCreate(param);
     }
-
-
 }
