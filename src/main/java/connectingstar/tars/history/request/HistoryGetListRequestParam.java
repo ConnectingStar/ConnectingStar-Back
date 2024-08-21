@@ -5,20 +5,46 @@ import connectingstar.tars.common.request.param.RelatedRequestParam;
 import connectingstar.tars.common.request.param.SortRequestParam;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @Getter
 @Setter
 public class HistoryGetListRequestParam implements PaginationRequestParam, SortRequestParam, RelatedRequestParam {
-    // Pagination
-    private Integer page;
+    /**
+     * 연결된 습관 id
+     */
+    private Integer runHabitId;
 
-    private Integer size;
+    /**
+     * 휴식 기록 여부
+     */
+    @Nullable
+    private Boolean isRest = null;
+
+    // Pagination
+    @Nullable
+    private Integer page = 0;
+
+    @Nullable
+    private Integer size = 20;
 
     // Sort
-    private String sortBy;
+    /**
+     * ("runDate")
+     */
+    @Nullable
+    private String sortBy = "runDate";
 
-    private String order;
+    /**
+     * ("asc" | "desc")
+     */
+    private String order = "desc";
 
     // Related
-    private String related;
+    /**
+     * ("runHabit")[] | null
+     */
+    private List<String> related = null;
 }

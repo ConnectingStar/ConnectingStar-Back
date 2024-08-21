@@ -75,7 +75,7 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
             for (String joinField : joinFields) {
                 switch (joinField) {
                     case "runHabit":
-                        query = query.join(habitHistory.runHabit, runHabit);
+                        query = query.leftJoin(habitHistory.runHabit, runHabit);
                         break;
                 }
             }
@@ -89,10 +89,11 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
             query = query.limit(limit);
         }
 
+        order = Optional.ofNullable(order).orElse(Order.ASC);
         if (orderBy != null) {
             switch (orderBy) {
-                case "createdAt":
-                    query = query.orderBy(new OrderSpecifier(Optional.ofNullable(order).orElse(Order.ASC), habitHistory.createdAt));
+                case "runDate":
+                    query = query.orderBy(new OrderSpecifier(order, habitHistory.runDate));
                     break;
             }
         }

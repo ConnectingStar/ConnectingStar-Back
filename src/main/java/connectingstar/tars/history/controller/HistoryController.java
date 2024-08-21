@@ -57,7 +57,7 @@ public class HistoryController {
     public ResponseEntity<DataResponse<HistoryGetListResponse>> getList(
             @ModelAttribute @Valid HistoryGetListRequestParam requestParam
     ) {
-        HistoryGetListResponse responseDto = habitHistoryQueryService.getMyList(requestParam);
+        HistoryGetListResponse responseDto = habitHistoryQueryService.getMyListByRunHabitId(requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
