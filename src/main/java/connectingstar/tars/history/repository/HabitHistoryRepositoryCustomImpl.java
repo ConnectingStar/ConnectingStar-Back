@@ -2,9 +2,11 @@ package connectingstar.tars.history.repository;
 
 
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.QRunHabit;
@@ -14,13 +16,16 @@ import connectingstar.tars.habit.request.HabitHistoryListRequest;
 import connectingstar.tars.habit.response.HabitHistoryDateGetResponseV1;
 import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
+import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.domain.QHabitHistory;
 import connectingstar.tars.user.domain.QUser;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -40,6 +45,60 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
         return habitHistory.runDate.year().eq(param.getReferenceDate().getYear())
                 .and(habitHistory.runDate.month().eq(param.getReferenceDate().getMonthValue()))
                 .and(habitHistory.runDate.dayOfMonth().eq(param.getReferenceDate().getDayOfMonth()));
+    }
+
+    @Override
+    public List<HabitHistory> findByRunHabitIdAndIsRest(
+            Integer runHabitId,
+            @Nullable Boolean isRest,
+            @Nullable List<String> joinFields,
+            @Nullable Integer offset,
+            @Nullable Integer limit,
+            @Nullable String orderBy,
+            @Nullable Order order
+    ) {
+        QHabitHistory habitHistory = QHabitHistory.habitHistory;
+        QRunHabit runHabit = QRunHabit.runHabit;
+
+        JPAQuery<HabitHistory> query = queryFactory
+                .selectFrom(habitHistory);
+
+        BooleanExpression whereExpression = habitHistory.runHabit.runHabitId.eq(runHabitId);
+
+        if (isRest != null) {
+            whereExpression = whereExpression.and(habitHistory.isRest.eq(isRest));
+        }
+
+        query = query.where(whereExpression);
+
+        if (joinFields != null) {
+            for (String joinField : joinFields) {
+                switch (joinField) {
+                    case "runHabit":
+                        query = query.leftJoin(habitHistory.runHabit, runHabit);
+                        break;
+                }
+            }
+        }
+
+        if (offset != null) {
+            query = query.offset(offset);
+        }
+
+        if (limit != null) {
+            query = query.limit(limit);
+        }
+
+        order = Optional.ofNullable(order).orElse(Order.ASC);
+        if (orderBy != null) {
+            switch (orderBy) {
+                case "runDate":
+                    query = query.orderBy(new OrderSpecifier(order, habitHistory.runDate));
+                    break;
+            }
+        }
+
+        return query.fetch();
     }
 
     /**

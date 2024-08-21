@@ -1,7 +1,9 @@
 package connectingstar.tars.history.query;
 
+import com.querydsl.core.types.Order;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.request.HabitHistoryCreateCheckRequest;
 import connectingstar.tars.habit.request.HabitHistoryGetListRequest;
 import connectingstar.tars.habit.request.HabitHistoryListRequest;
@@ -12,7 +14,9 @@ import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.history.repository.HabitHistoryRepositoryCustom;
+import connectingstar.tars.history.request.HistoryGetListRequestParam;
 import connectingstar.tars.history.request.param.HistoryGetOneRequestParam;
+import connectingstar.tars.history.response.HistoryGetListResponse;
 import connectingstar.tars.history.response.HistoryGetOneResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
@@ -45,6 +49,7 @@ public class HabitHistoryQueryService {
     private final HabitHistoryRepositoryCustom habitHistoryRepositoryCustom;
 
     private final UserQueryService userQueryService;
+    private final RunHabitQueryService runHabitQueryService;
 
     private final HabitHistoryMapper habitHistoryMapper;
 
@@ -78,6 +83,66 @@ public class HabitHistoryQueryService {
         }
 
         return habitHistoryMapper.toGetOneResponse(habitHistory, runHabit);
+    }
+
+    public HistoryGetListResponse getMyListByRunHabitId(HistoryGetListRequestParam requestParam) {
+        RunHabit runHabit = runHabitQueryService.getMineByIdOrElseThrow(requestParam.getRunHabitId());
+
+        List<HabitHistory> habitHistories = habitHistoryRepositoryCustom.findByRunHabitIdAndIsRest(
+                requestParam.getRunHabitId(),
+                requestParam.getIsRest(),
+                toJoinFields(requestParam.getRelated()),
+                requestParam.getPage(),
+                requestParam.getSize(),
+                requestParam.getSortBy(),
+                toOrder(requestParam.getOrder())
+        );
+
+        return HistoryGetListResponse.builder()
+                .histories(habitHistories.stream()
+                        .map(habitHistory ->
+                                habitHistoryMapper.toDto(habitHistory, habitHistory.getRunHabit())
+                        )
+                        .toList()
+                )
+                .build();
+    }
+
+    private List<String> toJoinFields(List<String> related) {
+        if (related == null) {
+            return null;
+        }
+
+        List<String> joinFields = related.stream()
+                .map(
+                        relatedField -> {
+                            switch (relatedField) {
+                                case "runHabit":
+                                    return "runHabit";
+                                default:
+                                    return null;
+                            }
+                        }
+                )
+                .filter(joinField -> joinField != null)
+                .toList();
+
+        return joinFields;
+    }
+
+    private Order toOrder(String strOrder) {
+        if (strOrder == null) {
+            return null;
+        }
+
+        switch (strOrder) {
+            case "asc":
+                return Order.ASC;
+            case "desc":
+                return Order.DESC;
+            default:
+                return null;
+        }
     }
 
     /**
@@ -127,6 +192,4 @@ public class HabitHistoryQueryService {
     public HistoryCreateCheckResponse checkTodayCreate(HabitHistoryCreateCheckRequest param) {
         return habitHistoryRepositoryCustom.getCheckTodayCreate(param);
     }
-
-
 }
