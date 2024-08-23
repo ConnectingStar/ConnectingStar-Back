@@ -7,6 +7,7 @@ import connectingstar.tars.habit.request.HabitDeleteRequest;
 import connectingstar.tars.habit.request.HabitPatchRequest;
 import connectingstar.tars.habit.request.HabitPostRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetListRequestParam;
 import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
 import jakarta.validation.Valid;
@@ -47,8 +48,10 @@ public class HabitController {
      * 내 습관 목록 조회
      */
     @GetMapping
-    public ResponseEntity<DataResponse<HabitGetListResponse>> getList() {
-        HabitGetListResponse responseDto = runHabitQueryService.getMyList();
+    public ResponseEntity<DataResponse<HabitGetListResponse>> getList(
+            @ModelAttribute @Valid HabitGetListRequestParam requestParam
+    ) {
+        HabitGetListResponse responseDto = runHabitQueryService.getMyList(requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 

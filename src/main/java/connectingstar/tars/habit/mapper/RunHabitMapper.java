@@ -21,11 +21,13 @@ public interface RunHabitMapper {
     @Named("toDto(RunHabit)")
     @Mapping(source = "user.id", target = "userId")
     @Mapping(target = "habitAlerts", ignore = true)
+    @Mapping(target = "historyCountByStatus", ignore = true)
     RunHabitDto toDto(RunHabit runHabit);
 
     @Named("toDto(RunHabit, List<HabitAlert>)")
     @Mapping(source = "runHabit.user.id", target = "userId")
     @Mapping(target = "habitAlerts", source = "habitAlerts")
+    @Mapping(target = "historyCountByStatus", ignore = true)
     RunHabitDto toDto(RunHabit runHabit, List<HabitAlert> habitAlerts);
 
     List<RunHabitDto> toDtoList(List<RunHabit> runHabits);

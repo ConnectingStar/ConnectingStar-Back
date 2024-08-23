@@ -11,6 +11,7 @@ import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.RunDayGetRequest;
 import connectingstar.tars.habit.request.RunGetRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetListRequestParam;
 import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
 import connectingstar.tars.history.domain.HabitHistory;
@@ -138,7 +139,10 @@ public class RunHabitQueryService {
         return runHabitMapper.toGetOneResponse(runHabit, habitAlerts);
     }
 
-    public HabitGetListResponse getMyList() {
+    /**
+     * 현재 로그인한 유저가 진행중인 습관 리스트를 반환합니다
+     */
+    public HabitGetListResponse getMyList(HabitGetListRequestParam requestParam) {
         User user = userQueryService.getCurrentUserOrElseThrow();
         List<RunHabit> runHabits = runHabitRepository.findAllByUser(user);
 

@@ -57,9 +57,30 @@ public class RunHabitDto {
      */
     private String unit;
 
+    // related fields
     /**
      * 1차 알림, 2차 알림
      */
     @Nullable
     private List<HabitAlertDto> habitAlerts;
+
+    // expand fields
+    /**
+     * 기록 상태 별 기록 개수.
+     * 습관 현황 페이지에서 사용.
+     */
+    @Nullable
+    private HistoryCountByStatus historyCountByStatus;
+
+    public class HistoryCountByStatus {
+        /**
+         * 실천 기록 수
+         */
+        private Integer completedCount;
+
+        /**
+         * 휴식 기록 수
+         */
+        private Integer restCount;
+    }
 }

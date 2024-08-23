@@ -10,11 +10,11 @@ import java.util.List;
  *
  * @author 이우진
  */
-public interface ExpandRequestParam<TExpandEnum extends Enum<TExpandEnum>> {
+public interface ExpandRequestParam {
     /**
      * 추가로 조회할 필드 목록
      * request param에 추가하지 않으면 이 필드 목록은 조회하지 않습니다.
      */
     @Nullable
-    List<TExpandEnum> getExpand();
+    List<String> getExpand();
 }
