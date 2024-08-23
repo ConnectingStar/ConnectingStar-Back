@@ -4,6 +4,7 @@ import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
+import connectingstar.tars.habit.dto.RunHabitDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.repository.RunHabitRepository;
@@ -146,8 +147,26 @@ public class RunHabitQueryService {
         User user = userQueryService.getCurrentUserOrElseThrow();
         List<RunHabit> runHabits = runHabitRepository.findAllByUser(user);
 
+        List<RunHabitDto> dtos = runHabitMapper.toDtoList(runHabits);
+
+        if (requestParam.getExpand() != null) {
+            if (requestParam.getExpand().contains("historyCountByStatus")) {
+                dtos.forEach(dto -> {
+                    Integer completedHistoryCount = habitHistoryRepository.countByRunHabit_RunHabitIdAndIsRest(dto.getRunHabitId(), false);
+                    Integer restHistoryCount = habitHistoryRepository.countByRunHabit_RunHabitIdAndIsRest(dto.getRunHabitId(), true);
+
+                    dto.setHistoryCountByStatus(
+                            RunHabitDto.HistoryCountByStatus.builder()
+                                    .completedCount(completedHistoryCount)
+                                    .restCount(restHistoryCount)
+                                    .build()
+                    );
+                });
+            }
+        }
+
         return HabitGetListResponse.builder()
-                .runHabits(runHabitMapper.toDtoList(runHabits))
+                .runHabits(dtos)
                 .build();
     }
 

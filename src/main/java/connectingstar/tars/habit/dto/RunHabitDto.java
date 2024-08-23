@@ -2,6 +2,7 @@ package connectingstar.tars.habit.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -72,7 +73,10 @@ public class RunHabitDto {
     @Nullable
     private HistoryCountByStatus historyCountByStatus;
 
-    public class HistoryCountByStatus {
+    @Getter
+    @Setter
+    @Builder
+    static public class HistoryCountByStatus {
         /**
          * 실천 기록 수
          */
