@@ -6,6 +6,7 @@ import connectingstar.tars.habit.dto.RunHabitDto;
 import connectingstar.tars.habit.response.HabitGetOneResponse;
 import connectingstar.tars.habit.response.HabitPatchResponse;
 import connectingstar.tars.habit.response.HabitPostResponse;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -30,6 +31,7 @@ public interface RunHabitMapper {
     @Mapping(target = "historyCountByStatus", ignore = true)
     RunHabitDto toDto(RunHabit runHabit, List<HabitAlert> habitAlerts);
 
+    @IterableMapping(qualifiedByName = "toDto(RunHabit)")
     List<RunHabitDto> toDtoList(List<RunHabit> runHabits);
 
     @Mapping(target = "runHabit", expression = "java( toDto(runHabit, habitAlerts) )")

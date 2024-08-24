@@ -1,6 +1,7 @@
 package connectingstar.tars.habit.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Getter;
@@ -63,6 +64,7 @@ public class RunHabitDto {
      * 1차 알림, 2차 알림
      */
     @Nullable
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<HabitAlertDto> habitAlerts;
 
     // expand fields
@@ -71,6 +73,7 @@ public class RunHabitDto {
      * 습관 현황 페이지에서 사용.
      */
     @Nullable
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private HistoryCountByStatus historyCountByStatus;
 
     @Getter
