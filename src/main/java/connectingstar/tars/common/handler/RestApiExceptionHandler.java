@@ -28,6 +28,13 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
         return getErrorResponse(ex.getErrorCode());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.info("Exception: " + ex.getClass().getSimpleName() + "(" + ex.getMessage() + ")");
+
+        return getErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     /**
      * jakarta @Valid 유효성 검사 실패 처리
      */

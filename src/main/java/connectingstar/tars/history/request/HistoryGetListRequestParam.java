@@ -1,5 +1,6 @@
 package connectingstar.tars.history.request;
 
+import connectingstar.tars.common.enums.SortOrder;
 import connectingstar.tars.common.request.param.PaginationRequestParam;
 import connectingstar.tars.common.request.param.RelatedRequestParam;
 import connectingstar.tars.common.request.param.SortRequestParam;
@@ -40,7 +41,7 @@ public class HistoryGetListRequestParam implements PaginationRequestParam, SortR
     /**
      * ("asc" | "desc")
      */
-    private String order = "desc";
+    private SortOrder order = SortOrder.DESC;
 
     // Related
     /**
