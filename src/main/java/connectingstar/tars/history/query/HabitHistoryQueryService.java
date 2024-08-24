@@ -22,6 +22,7 @@ import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -52,6 +53,8 @@ public class HabitHistoryQueryService {
     private final RunHabitQueryService runHabitQueryService;
 
     private final HabitHistoryMapper habitHistoryMapper;
+
+    private final ConversionService conversionService;
 
     /**
      * 내 습관 기록 1건을 id로 조회합니다.
@@ -95,7 +98,7 @@ public class HabitHistoryQueryService {
                 requestParam.getPage(),
                 requestParam.getSize(),
                 requestParam.getSortBy(),
-                toOrder(requestParam.getOrder())
+                conversionService.convert(requestParam.getOrder(), Order.class)
         );
 
         return HistoryGetListResponse.builder()
@@ -128,21 +131,6 @@ public class HabitHistoryQueryService {
                 .toList();
 
         return joinFields;
-    }
-
-    private Order toOrder(String strOrder) {
-        if (strOrder == null) {
-            return null;
-        }
-
-        switch (strOrder) {
-            case "asc":
-                return Order.ASC;
-            case "desc":
-                return Order.DESC;
-            default:
-                return null;
-        }
     }
 
     /**
