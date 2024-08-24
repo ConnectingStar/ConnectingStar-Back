@@ -1,7 +1,13 @@
 package connectingstar.tars.habit.query;
 
-import connectingstar.tars.habit.repository.QuitHabitDao;
+import connectingstar.tars.habit.domain.QuitHabit;
+import connectingstar.tars.habit.mapper.QuitHabitMapper;
+import connectingstar.tars.habit.repository.QuitHabitRepositoryCustom;
+import connectingstar.tars.habit.request.QuitHabitGetListRequestParam;
+import connectingstar.tars.habit.response.QuitHabitGetListResponse;
 import connectingstar.tars.habit.response.QuitListResponse;
+import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +23,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuitHabitQueryService {
 
-    private final QuitHabitDao quitHabitDao;
+    private final QuitHabitRepositoryCustom quitHabitRepositoryCustom;
+
+    private final UserQueryService userQueryService;
+
+    private final QuitHabitMapper quitHabitMapper;
+
+    public QuitHabitGetListResponse getMyList(QuitHabitGetListRequestParam requestParam) {
+        User currentUser = userQueryService.getCurrentUserOrElseThrow();
+
+        List<QuitHabit> quitHabits = quitHabitRepositoryCustom
+                .findByUserId(currentUser.getId(),
+                        requestParam.getPage(),
+                        requestParam.getSize()
+                );
+
+        return QuitHabitGetListResponse.builder()
+                .quitHabits(quitHabitMapper.toDtoList(quitHabits))
+                .build();
+    }
 
     /**
      * 종료 습관 목록 조회
      *
      * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     * @deprecated use {@link #getMyList(QuitHabitGetListRequestParam)}
      */
+    @Deprecated
     public List<QuitListResponse> getList() {
-        return quitHabitDao.getList();
+        return quitHabitRepositoryCustom.getList();
     }
 }
