@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,7 +37,10 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * jakarta @Valid 유효성 검사 실패 처리
+     * Request Parameter 유효성 검사 실패 처리
+     * <p>
+     * jakarta @Valid
+     * enum Converter
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -46,7 +50,10 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         StringBuilder errorMessageBuilder = new StringBuilder();
         for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
-            errorMessageBuilder.append(fieldError.getDefaultMessage()).append("\n");
+            errorMessageBuilder.append("유효하지 않은 값이 입력되었습니다: ( 필드: "
+                    + ObjectUtils.nullSafeToString(fieldError.getField()) +
+                    ", 값: "
+                    + ObjectUtils.nullSafeToString(fieldError.getRejectedValue()) + " )\n");
         }
 
         return getErrorResponse(httpStatus, errorMessageBuilder.toString());
