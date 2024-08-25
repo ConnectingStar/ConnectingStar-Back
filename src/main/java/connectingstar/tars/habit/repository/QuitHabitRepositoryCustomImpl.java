@@ -43,12 +43,12 @@ public class QuitHabitRepositoryCustomImpl implements QuitHabitRepositoryCustom 
                 .selectFrom(quitHabit)
                 .where(quitHabit.user.id.eq(userId));
 
-        if (offset != null) {
-            query = query.offset(offset);
-        }
-
         if (limit != null) {
             query = query.limit(limit);
+
+            if (offset != null) {
+                query = query.offset(offset * limit);
+            }
         }
 
         order = Optional.ofNullable(order).orElse(Order.ASC);

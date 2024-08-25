@@ -82,12 +82,12 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
             }
         }
 
-        if (offset != null) {
-            query = query.offset(offset);
-        }
-
         if (limit != null) {
             query = query.limit(limit);
+
+            if (offset != null) {
+                query = query.offset(offset * limit);
+            }
         }
 
         order = Optional.ofNullable(order).orElse(Order.ASC);
