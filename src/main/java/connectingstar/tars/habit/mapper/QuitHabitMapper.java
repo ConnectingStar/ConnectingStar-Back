@@ -23,6 +23,7 @@ public interface QuitHabitMapper {
     @IterableMapping(qualifiedByName = "toDto(QuitHabit)")
     List<QuitHabitDto> toDtoList(List<QuitHabit> quitHabits);
 
-    @Mapping(target = "quitHabit", source = "quitHabit")
+    @Mapping(target = "quitHabit", source = "quitHabit", qualifiedByName = "toDto(QuitHabit)")
     HabitDeleteResponse toHabitDeleteResponse(QuitHabit quitHabit);
+
 }

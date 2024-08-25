@@ -1,12 +1,15 @@
 package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
+import connectingstar.tars.common.domain.converter.SoftDeletableEntity;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,11 +20,13 @@ import java.time.LocalTime;
  *
  * @author 김성수
  */
-@Getter
 @Entity
+@SQLDelete(sql = "update quit_habit set deleted_at = now() where quit_habit.quit_habit_id = ?")
+@Where(clause = "deleted_at IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
-public class QuitHabit extends Auditable {
+@Getter
+public class QuitHabit extends Auditable implements SoftDeletableEntity {
 
     /**
      * 종료한 습관 ID
@@ -91,6 +96,12 @@ public class QuitHabit extends Auditable {
      */
     @Column(name = "quit_date", nullable = false)
     private LocalDateTime quitDate;
+
+    /**
+     * 삭제된 시각
+     */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Builder
     public QuitHabit(LocalTime runTime, User user, String place, String action, Integer completedHistoryCount, String unit, Integer restHistoryCount, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
