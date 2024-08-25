@@ -3,6 +3,7 @@ package connectingstar.tars.habit.request;
 import connectingstar.tars.common.enums.SortOrder;
 import connectingstar.tars.common.request.param.PaginationRequestParam;
 import connectingstar.tars.common.request.param.SortRequestParam;
+import connectingstar.tars.habit.enums.QuitHabitSortBy;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ public class QuitHabitGetListRequestParam implements PaginationRequestParam, Sor
     private Integer size = 20;
 
     // Sort
-    private String sortBy;
+    private QuitHabitSortBy sortBy;
 
     private SortOrder order;
 }

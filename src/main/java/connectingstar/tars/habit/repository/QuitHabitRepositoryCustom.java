@@ -1,6 +1,8 @@
 package connectingstar.tars.habit.repository;
 
+import com.querydsl.core.types.Order;
 import connectingstar.tars.habit.domain.QuitHabit;
+import connectingstar.tars.habit.enums.QuitHabitSortBy;
 import connectingstar.tars.habit.response.QuitListResponse;
 import jakarta.annotation.Nullable;
 
@@ -19,7 +21,9 @@ public interface QuitHabitRepositoryCustom {
     public List<QuitHabit> findByUserId(
             Integer userId,
             @Nullable Integer offset,
-            @Nullable Integer limit
+            @Nullable Integer limit,
+            @Nullable QuitHabitSortBy orderBy,
+            @Nullable Order order
     );
 
     /**

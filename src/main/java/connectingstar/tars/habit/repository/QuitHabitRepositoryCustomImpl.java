@@ -1,18 +1,22 @@
 package connectingstar.tars.habit.repository;
 
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.QQuitHabit;
 import connectingstar.tars.habit.domain.QuitHabit;
+import connectingstar.tars.habit.enums.QuitHabitSortBy;
 import connectingstar.tars.habit.response.QuitListResponse;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 종료한 습관 Repository
@@ -29,7 +33,9 @@ public class QuitHabitRepositoryCustomImpl implements QuitHabitRepositoryCustom 
     public List<QuitHabit> findByUserId(
             Integer userId,
             @Nullable Integer offset,
-            @Nullable Integer limit
+            @Nullable Integer limit,
+            @Nullable QuitHabitSortBy orderBy,
+            @Nullable Order order
     ) {
         QQuitHabit quitHabit = QQuitHabit.quitHabit;
 
@@ -43,6 +49,15 @@ public class QuitHabitRepositoryCustomImpl implements QuitHabitRepositoryCustom 
 
         if (limit != null) {
             query = query.limit(limit);
+        }
+
+        order = Optional.ofNullable(order).orElse(Order.ASC);
+        if (orderBy != null) {
+            switch (orderBy) {
+                case QUIT_DATE:
+                    query = query.orderBy(new OrderSpecifier(order, quitHabit.quitDate));
+                    break;
+            }
         }
 
         return query.fetch();

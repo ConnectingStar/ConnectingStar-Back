@@ -18,6 +18,7 @@ import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.domain.QHabitHistory;
+import connectingstar.tars.history.enums.HabitHistorySortBy;
 import connectingstar.tars.user.domain.QUser;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +55,7 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
             @Nullable List<String> joinFields,
             @Nullable Integer offset,
             @Nullable Integer limit,
-            @Nullable String orderBy,
+            @Nullable HabitHistorySortBy orderBy,
             @Nullable Order order
     ) {
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
@@ -92,7 +93,7 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
         order = Optional.ofNullable(order).orElse(Order.ASC);
         if (orderBy != null) {
             switch (orderBy) {
-                case "runDate":
+                case RUN_DATE:
                     query = query.orderBy(new OrderSpecifier(order, habitHistory.runDate));
                     break;
             }

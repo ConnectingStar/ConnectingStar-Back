@@ -1,5 +1,6 @@
 package connectingstar.tars.habit.query;
 
+import com.querydsl.core.types.Order;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.mapper.QuitHabitMapper;
 import connectingstar.tars.habit.repository.QuitHabitRepositoryCustom;
@@ -9,6 +10,7 @@ import connectingstar.tars.habit.response.QuitListResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +28,7 @@ public class QuitHabitQueryService {
     private final QuitHabitRepositoryCustom quitHabitRepositoryCustom;
 
     private final UserQueryService userQueryService;
+    private final ConversionService conversionService;
 
     private final QuitHabitMapper quitHabitMapper;
 
@@ -35,7 +38,9 @@ public class QuitHabitQueryService {
         List<QuitHabit> quitHabits = quitHabitRepositoryCustom
                 .findByUserId(currentUser.getId(),
                         requestParam.getPage(),
-                        requestParam.getSize()
+                        requestParam.getSize(),
+                        requestParam.getSortBy(),
+                        conversionService.convert(requestParam.getOrder(), Order.class)
                 );
 
         return QuitHabitGetListResponse.builder()
