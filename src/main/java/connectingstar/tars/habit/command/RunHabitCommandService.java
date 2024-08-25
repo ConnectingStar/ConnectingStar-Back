@@ -70,6 +70,9 @@ public class RunHabitCommandService {
 
     /**
      * 진행중인 습관 생성.
+     * <p>
+     * isOnboarding=true이면 사용자의 onboarding 상태를 업데이트한다.
+     * 사용자의 정체성이 null이면 생성한 습관의 정체성으로 업데이트한다.
      */
     @Transactional
     public HabitPostResponse save(HabitPostRequest param) {
