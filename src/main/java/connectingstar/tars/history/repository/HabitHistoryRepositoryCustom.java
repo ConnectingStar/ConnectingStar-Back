@@ -9,6 +9,7 @@ import connectingstar.tars.habit.response.HabitHistoryDateGetResponseV1;
 import connectingstar.tars.habit.response.HistoryCreateCheckResponse;
 import connectingstar.tars.habit.response.HistoryListResponse;
 import connectingstar.tars.history.domain.HabitHistory;
+import connectingstar.tars.history.enums.HabitHistorySortBy;
 import jakarta.annotation.Nullable;
 
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ public interface HabitHistoryRepositoryCustom {
             @Nullable List<String> joinFields,
             @Nullable Integer offset,
             @Nullable Integer limit,
-            @Nullable String orderBy,
+            @Nullable HabitHistorySortBy orderBy,
             @Nullable Order order
     );
 

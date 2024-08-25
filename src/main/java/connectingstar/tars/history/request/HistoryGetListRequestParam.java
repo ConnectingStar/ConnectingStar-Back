@@ -1,8 +1,10 @@
 package connectingstar.tars.history.request;
 
+import connectingstar.tars.common.enums.SortOrder;
 import connectingstar.tars.common.request.param.PaginationRequestParam;
 import connectingstar.tars.common.request.param.RelatedRequestParam;
 import connectingstar.tars.common.request.param.SortRequestParam;
+import connectingstar.tars.history.enums.HabitHistorySortBy;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
@@ -35,12 +37,12 @@ public class HistoryGetListRequestParam implements PaginationRequestParam, SortR
      * ("runDate")
      */
     @Nullable
-    private String sortBy = "runDate";
+    private HabitHistorySortBy sortBy = HabitHistorySortBy.RUN_DATE;
 
     /**
      * ("asc" | "desc")
      */
-    private String order = "desc";
+    private SortOrder order = SortOrder.DESC;
 
     // Related
     /**

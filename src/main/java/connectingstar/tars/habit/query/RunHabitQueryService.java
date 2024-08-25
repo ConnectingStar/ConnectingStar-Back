@@ -4,6 +4,7 @@ import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
+import connectingstar.tars.habit.dto.RunHabitDto;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.repository.RunHabitRepository;
@@ -11,6 +12,7 @@ import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.RunDayGetRequest;
 import connectingstar.tars.habit.request.RunGetRequest;
 import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetListRequestParam;
 import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
 import connectingstar.tars.history.domain.HabitHistory;
@@ -138,12 +140,33 @@ public class RunHabitQueryService {
         return runHabitMapper.toGetOneResponse(runHabit, habitAlerts);
     }
 
-    public HabitGetListResponse getMyList() {
+    /**
+     * 현재 로그인한 유저가 진행중인 습관 리스트를 반환합니다
+     */
+    public HabitGetListResponse getMyList(HabitGetListRequestParam requestParam) {
         User user = userQueryService.getCurrentUserOrElseThrow();
         List<RunHabit> runHabits = runHabitRepository.findAllByUser(user);
 
+        List<RunHabitDto> dtos = runHabitMapper.toDtoList(runHabits);
+
+        if (requestParam.getExpand() != null) {
+            if (requestParam.getExpand().contains("historyCountByStatus")) {
+                dtos.forEach(dto -> {
+                    Integer completedHistoryCount = habitHistoryRepository.countByRunHabit_RunHabitIdAndIsRest(dto.getRunHabitId(), false);
+                    Integer restHistoryCount = habitHistoryRepository.countByRunHabit_RunHabitIdAndIsRest(dto.getRunHabitId(), true);
+
+                    dto.setHistoryCountByStatus(
+                            RunHabitDto.HistoryCountByStatus.builder()
+                                    .completedCount(completedHistoryCount)
+                                    .restCount(restHistoryCount)
+                                    .build()
+                    );
+                });
+            }
+        }
+
         return HabitGetListResponse.builder()
-                .runHabits(runHabitMapper.toDtoList(runHabits))
+                .runHabits(dtos)
                 .build();
     }
 

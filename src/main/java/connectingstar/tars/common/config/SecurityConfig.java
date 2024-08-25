@@ -58,6 +58,8 @@ public class SecurityConfig {
                                 "/alert/**",
                                 "/habit/**",
                                 "/v2/habits/**",
+                                "/v2/quit-habits",
+                                "/v2/quit-habits/**",
                                 "/v2/users/**",
                                 "/v2/histories",
                                 "/v2/histories/**",

@@ -14,4 +14,6 @@ public interface HabitHistoryRepository extends JpaRepository<HabitHistory, Inte
     Integer countByRunHabitAndIsRest(RunHabit runHabit, boolean isRest);
 
     void deleteInBatchByRunHabit(RunHabit runHabit);
+
+    Integer countByRunHabit_RunHabitIdAndIsRest(Integer runHabitId, Boolean isRest);
 }
