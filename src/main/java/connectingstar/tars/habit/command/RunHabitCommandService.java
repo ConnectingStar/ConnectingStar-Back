@@ -98,6 +98,11 @@ public class RunHabitCommandService {
             userOnboardCommandService.updateIsHabitCreated(user.getId(), true);
         }
 
+        // 사용자 정체성이 null이면 생성한 습관의 정체성으로 업데이트
+        if (user.getIdentity() == null) {
+            user.updateIdentity(runHabit.getIdentity());
+        }
+
         return runHabitMapper.toPostResponse(runHabit);
     }
 
