@@ -17,11 +17,13 @@ import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.history.request.HistoryPostRequest;
 import connectingstar.tars.history.response.HistoryPostResponse;
+import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,12 +41,17 @@ import java.util.Optional;
 @Service
 public class HabitHistoryCommandService {
     public static final int REST_VALUE = 0;
+    /**
+     * 실천 기록 생성 보상 별 개수
+     */
+    public static final int HISTORY_CREATION_REWARD_STAR_COUNT = 1;
 
     private final HabitHistoryRepository habitHistoryRepository;
     private final RunHabitRepository runHabitRepository;
     private final UserRepository userRepository;
 
     private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
 
     private final HabitHistoryMapper habitHistoryMapper;
 
@@ -54,6 +61,7 @@ public class HabitHistoryCommandService {
      *
      * @param request 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점
      */
+    @Transactional
     public HistoryPostResponse save(HistoryPostRequest request) {
         User user = userQueryService.getCurrentUserOrElseThrow();
 
@@ -83,6 +91,9 @@ public class HabitHistoryCommandService {
                 .build();
 
         HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
+
+        // [FU-24] 실천 기록 보상 별 부여
+        userCommandService.addStar(user, HISTORY_CREATION_REWARD_STAR_COUNT);
 
         return habitHistoryMapper.toPostResponse(savedHistory);
     }

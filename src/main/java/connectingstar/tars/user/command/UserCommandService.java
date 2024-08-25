@@ -16,6 +16,7 @@ import connectingstar.tars.user.mapper.UserMapper;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.repository.UserRepositoryCustom;
 import connectingstar.tars.user.request.*;
 import connectingstar.tars.user.response.*;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 public class UserCommandService {
 
     private final UserRepository userRepository;
+    private final UserRepositoryCustom userRepositoryCustom;
     private final RunHabitRepository runHabitRepository;
     private final UserConstellationRepository userConstellationRepository;
 
@@ -214,5 +216,16 @@ public class UserCommandService {
         }
 
         return userMapper.toMeConstellationPatchResponse(user, myConstellation);
+    }
+
+    /**
+     * 유저에게 별을 추가합니다
+     *
+     * @param addedStarCount 추가할 별의 개수
+     * @param user           별을 추가할 유저
+     */
+    @Transactional
+    public void addStar(User user, Integer addedStarCount) {
+        userRepositoryCustom.addStar(user.getId(), addedStarCount);
     }
 }
