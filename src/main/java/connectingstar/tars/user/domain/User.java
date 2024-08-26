@@ -10,7 +10,7 @@ import connectingstar.tars.user.domain.enums.AgeRangeType;
 import connectingstar.tars.user.domain.enums.GenderType;
 import connectingstar.tars.user.request.UserOnboardingRequest;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -77,7 +77,7 @@ public class User extends BaseTimeEntity {
      * 보유 별 개수
      */
     @Column(name = "star", nullable = false)
-    @Size(min = 0)
+    @Min(0)
     private Integer star = 0;
 
     /**
