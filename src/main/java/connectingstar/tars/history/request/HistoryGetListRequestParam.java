@@ -42,7 +42,7 @@ public class HistoryGetListRequestParam implements PaginationRequestParam, SortR
     /**
      * ("asc" | "desc")
      */
-    private SortOrder order = SortOrder.DESC;
+    private SortOrder sortOrder = SortOrder.DESC;
 
     // Related
     /**

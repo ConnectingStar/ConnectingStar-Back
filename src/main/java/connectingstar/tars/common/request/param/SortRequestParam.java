@@ -16,5 +16,5 @@ public interface SortRequestParam<ESortBy extends Enum> {
      *
      * @return "asc", "desc"
      */
-    SortOrder getOrder();
+    SortOrder getSortOrder();
 }
