@@ -98,7 +98,7 @@ public class HabitHistoryQueryService {
                 requestParam.getPage(),
                 requestParam.getSize(),
                 requestParam.getSortBy(),
-                conversionService.convert(requestParam.getOrder(), Order.class)
+                conversionService.convert(requestParam.getSortOrder(), Order.class)
         );
 
         return HistoryGetListResponse.builder()

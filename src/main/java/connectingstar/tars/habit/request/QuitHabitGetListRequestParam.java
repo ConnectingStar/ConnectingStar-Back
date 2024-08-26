@@ -18,5 +18,5 @@ public class QuitHabitGetListRequestParam implements PaginationRequestParam, Sor
     // Sort
     private QuitHabitSortBy sortBy;
 
-    private SortOrder order;
+    private SortOrder sortOrder;
 }
