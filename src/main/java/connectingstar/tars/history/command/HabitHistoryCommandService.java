@@ -42,6 +42,11 @@ import java.util.Optional;
 public class HabitHistoryCommandService {
     public static final int REST_VALUE = 0;
     /**
+     * 습관 기록 생성 기간.
+     * 이 일자를 넘어가면 습관을 생성할 수 없습니다. (만료)
+     */
+    public static final int HISTORY_CREATION_PERIOD_DAYS = 1;
+    /**
      * 실천 기록 생성 보상 별 개수
      */
     public static final int HISTORY_CREATION_REWARD_STAR_COUNT = 1;
@@ -207,16 +212,17 @@ public class HabitHistoryCommandService {
     }
 
     /**
-     * 오늘 날짜를 기준으로 습관 기록 기준일이 유효한 지 검증합니다.
+     * [FU-23] 오늘 날짜를 기준으로 습관 기록 기준일이 유효한 지 검증합니다.
      * <p>
      * 습관 기록 기간이 유효하지 않으면 exception을 throw합니다.
-     * 이틀 전까지만 기록 기준일을 설정할 수 있습니다.
      *
      * @param referenceDate 습관 기록 기준일
      */
     private void validateReferenceDateForCreation(LocalDate referenceDate) {
-        // 유효 범위: 이틀 전 < 기록 기준일
-        if (!LocalDate.now().minusDays(2).isBefore(referenceDate))
+        // [FU-23] 마감일 = 기록 기준일의 하루 뒤 자정까지
+        LocalDate dueDate = referenceDate.plusDays(HISTORY_CREATION_PERIOD_DAYS);
+
+        if (LocalDate.now().isAfter(dueDate))
             throw new ValidationException(HabitErrorCode.EXPIRED_DATE);
     }
 
