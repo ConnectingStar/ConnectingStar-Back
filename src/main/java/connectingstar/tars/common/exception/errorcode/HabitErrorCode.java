@@ -37,8 +37,8 @@ public enum HabitErrorCode implements ErrorCode {
     /**
      * bad request
      */
-    EXPIRED_DATE(HttpStatus.BAD_REQUEST, "해당 날짜에 습관기록을 작성할 수 없습니다."),
-    ALREADY_CREATED_HABIT_HISTORY(HttpStatus.BAD_REQUEST, "이미 오늘 습관기록을 생성했습니다"),
+    EXPIRED_DATE(HttpStatus.BAD_REQUEST, "습관 기록은 기준일의 하루 뒤 자정까지만 가능합니다"),
+    ALREADY_CREATED_HABIT_HISTORY(HttpStatus.BAD_REQUEST, "이미 해당 날짜에 습관 기록을 생성했습니다"),
     OUT_OF_ACHIEVEMENT_RANGE(HttpStatus.BAD_REQUEST, "입력가능한 달성도의 범위를 벗어났습니다(1~5 입력가능)"),
     NOT_USER_RUN_HABIT(HttpStatus.FORBIDDEN, "해당 유저의 진행중인 습관이 아닙니다."),
     NOT_USER_QUIT_HABIT(HttpStatus.FORBIDDEN, "해당 유저의 종료된 습관이 아닙니다."),
