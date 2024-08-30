@@ -18,14 +18,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserOnboardCommandService {
-    /**
-     * [FU-26] 온보딩 완료 시 부여할 별 개수
-     */
-    public static final Integer REWARD_STAR_COUNT = 7;
-
     private final UserOnboardRepository userOnboardRepository;
     private final UserRepository userRepository;
-    
+
     /**
      * 사용자 정보 업데이트 여부를 변경한다.
      * 레코드가 존재하지 않으면 생성.
