@@ -219,13 +219,14 @@ public class UserCommandService {
     }
 
     /**
-     * 유저에게 별을 추가합니다
+     * 유저에게 별을 추가합니다.
+     * UPDATE +addedStarCount 구문 수행.
      *
      * @param addedStarCount 추가할 별의 개수
-     * @param user           별을 추가할 유저
+     * @param userId         별을 추가할 유저의 id
      */
     @Transactional
-    public void addStar(User user, Integer addedStarCount) {
-        userRepositoryCustom.addStar(user.getId(), addedStarCount);
+    public void addStar(Integer userId, Integer addedStarCount) {
+        userRepositoryCustom.addStar(userId, addedStarCount);
     }
 }

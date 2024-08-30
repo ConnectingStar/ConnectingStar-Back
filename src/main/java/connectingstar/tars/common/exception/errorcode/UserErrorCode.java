@@ -31,6 +31,8 @@ public enum UserErrorCode implements ErrorCode {
     USER_CONSTELLATION_NOT_REGISTER(HttpStatus.BAD_REQUEST, "해당 별자리를 보유하고 있지 않습니다."),
 
     USER_DEFAULT_CONSTELLATION_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "DB에서 기본 별자리를 찾을 수 없습니다."),
+
+    USER_ONBOARD_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "이미 온보딩을 완료한 회원입니다."),
     ;
 
     private final HttpStatus httpStatus;
