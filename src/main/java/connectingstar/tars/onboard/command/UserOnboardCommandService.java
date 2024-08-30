@@ -2,7 +2,6 @@ package connectingstar.tars.onboard.command;
 
 import connectingstar.tars.onboard.domain.UserOnboard;
 import connectingstar.tars.onboard.repository.UserOnboardRepository;
-import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +25,7 @@ public class UserOnboardCommandService {
 
     private final UserOnboardRepository userOnboardRepository;
     private final UserRepository userRepository;
-
-    private final UserCommandService userCommandService;
-
+    
     /**
      * 사용자 정보 업데이트 여부를 변경한다.
      * 레코드가 존재하지 않으면 생성.

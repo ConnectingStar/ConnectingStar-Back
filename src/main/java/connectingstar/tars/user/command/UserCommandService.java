@@ -236,9 +236,7 @@ public class UserCommandService {
             // TODO: ValidationException -> 다른 예외로 변경
             throw new ValidationException(USER_ONBOARD_ALREADY_COMPLETED);
         }
-
-        userOnboardCommandService.updateIsUserUpdated(user.getId(), true);
-
+        
         if (userOnboardQueryService.isCompleted(user.getId())) {
             user.updateOnboard(true);
             addStar(user.getId(), ONBOARD_REWARD_STAR_COUNT);

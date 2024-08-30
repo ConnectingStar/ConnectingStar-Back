@@ -15,6 +15,7 @@ import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
 import connectingstar.tars.history.repository.HabitHistoryRepositoryCustom;
 import connectingstar.tars.onboard.command.UserOnboardCommandService;
+import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserRepository;
@@ -64,6 +65,7 @@ public class RunHabitCommandService {
 
     private final HabitAlertCommandService habitAlertCommandService;
     private final UserOnboardCommandService userOnboardCommandService;
+    private final UserCommandService userCommandService;
 
     private final RunHabitMapper runHabitMapper;
     private final QuitHabitMapper quitHabitMapper;
@@ -97,8 +99,10 @@ public class RunHabitCommandService {
 
         runHabitRepository.save(runHabit);
 
+        // 온보딩 과정 중 생성했으면 온보딩 상태 업데이트
         if (param.getIsOnboarding() != null && param.getIsOnboarding()) {
             userOnboardCommandService.updateIsHabitCreated(user.getId(), true);
+            userCommandService.updateOnboardIfCompleted(user);
         }
 
         // 사용자 정체성이 null이면 생성한 습관의 정체성으로 업데이트
