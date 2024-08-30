@@ -8,6 +8,7 @@ import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.oauth.service.OAuthService;
 import connectingstar.tars.onboard.command.UserOnboardCommandService;
+import connectingstar.tars.onboard.query.UserOnboardQueryService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserConstellation;
 import connectingstar.tars.user.domain.enums.AgeRangeType;
@@ -26,8 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_CONSTELLATION_NOT_REGISTER;
-import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_IDENTITY_NOT_FOUNT;
+import static connectingstar.tars.common.exception.errorcode.UserErrorCode.*;
 
 /**
  * 회원 엔티티의 상태를 변경하는 요청을 처리하는 서비스 클래스
@@ -38,6 +38,10 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 @RequiredArgsConstructor
 @Service
 public class UserCommandService {
+    /**
+     * [FU-26] 온보딩 완료 시 부여할 별 개수
+     */
+    public static final Integer ONBOARD_REWARD_STAR_COUNT = 7;
 
     private final UserRepository userRepository;
     private final UserRepositoryCustom userRepositoryCustom;
@@ -46,6 +50,7 @@ public class UserCommandService {
 
     private final OAuthService oauthService;
     private final UserQueryService userQueryService;
+    private final UserOnboardQueryService userOnboardQueryService;
     private final ConstellationQueryService constellationQueryService;
     private final UserOnboardCommandService userOnboardCommandService;
 
@@ -185,6 +190,7 @@ public class UserCommandService {
         user.updateIdentity(request.getIdentity());
 
         userOnboardCommandService.updateIsUserUpdated(user.getId(), true);
+        updateOnboardIfCompleted(user);
 
         return userMapper.toMeOnboardingPatchResponse(user);
     }
@@ -216,6 +222,27 @@ public class UserCommandService {
         }
 
         return userMapper.toMeConstellationPatchResponse(user, myConstellation);
+    }
+
+    /**
+     * 온보딩 완료 처리.
+     * 모든 온보딩 조건을 충족하면 user.onboard 필드를 true로 변경한다.
+     * [FU-26] 온보딩 보상 별 부여.
+     */
+    public void updateOnboardIfCompleted(User user) {
+        // 이미 user.onboard 완료 처리 되었으면 예외 발생.
+        // 온보딩 보상 중복 부여 방지.
+        if (user.getOnboard() == true) {
+            // TODO: ValidationException -> 다른 예외로 변경
+            throw new ValidationException(USER_ONBOARD_ALREADY_COMPLETED);
+        }
+
+        userOnboardCommandService.updateIsUserUpdated(user.getId(), true);
+
+        if (userOnboardQueryService.isCompleted(user.getId())) {
+            user.updateOnboard(true);
+            addStar(user.getId(), ONBOARD_REWARD_STAR_COUNT);
+        }
     }
 
     /**
