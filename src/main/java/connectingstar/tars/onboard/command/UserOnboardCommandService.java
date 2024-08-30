@@ -30,16 +30,12 @@ public class UserOnboardCommandService {
     public void updateIsUserUpdated(Integer userId, Boolean isUserUpdated) {
         UserOnboard userOnboard = findOneOrCreateByUserId(userId);
         userOnboard.updateIsUserUpdated(isUserUpdated);
-
-        updateUserOnboardIfCompleted(userOnboard);
     }
 
     @Transactional
     public void updateIsHabitCreated(Integer userId, Boolean isHabitCreated) {
         UserOnboard userOnboard = findOneOrCreateByUserId(userId);
         userOnboard.updateIsHabitCreated(isHabitCreated);
-
-        updateUserOnboardIfCompleted(userOnboard);
     }
 
     /**
@@ -57,16 +53,6 @@ public class UserOnboardCommandService {
                     .user(userReference)
                     .build();
             return userOnboardRepository.save(userOnboard);
-        }
-    }
-
-    /**
-     * 모든 온보딩 조건을 충족하면 user.onboard 필드를 true로 변경한다.
-     */
-    @Transactional
-    protected void updateUserOnboardIfCompleted(UserOnboard userOnboard) {
-        if (userOnboard.getIsUserUpdated() && userOnboard.getIsHabitCreated()) {
-            userOnboard.getUser().updateOnboard(true);
         }
     }
 }

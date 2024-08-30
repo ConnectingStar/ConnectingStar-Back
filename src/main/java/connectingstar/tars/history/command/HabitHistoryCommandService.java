@@ -98,7 +98,7 @@ public class HabitHistoryCommandService {
         HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
 
         // [FU-24] 실천 기록 보상 별 부여
-        userCommandService.addStar(user, HISTORY_CREATION_REWARD_STAR_COUNT);
+        userCommandService.addStar(user.getId(), HISTORY_CREATION_REWARD_STAR_COUNT);
 
         return habitHistoryMapper.toPostResponse(savedHistory);
     }
