@@ -63,7 +63,6 @@ public class RunHabitDto {
     /**
      * 생성일
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     // related fields
