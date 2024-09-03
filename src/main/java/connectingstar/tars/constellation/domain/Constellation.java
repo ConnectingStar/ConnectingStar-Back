@@ -52,8 +52,8 @@ public class Constellation {
     private String identity;
 
     /**
-     * 별자리 이미지, 흑백
-     * 해금 완료 시 이벤트성
+     * 별자리 메인 이미지
+     * 별자리 뼈대 이미지
      */
     @Column(name = "constellation_image", nullable = false)
     private String image;
@@ -66,8 +66,8 @@ public class Constellation {
     private String characterImage;
 
     /**
-     * 별자리 메인 이미지
-     * 별자리 뼈대 이미지
+     * 별자리 이미지, 흑백 (Grey 파일)
+     * 해금 완료 시 이벤트성
      */
     @Column(name = "constellation_main_image", nullable = false)
     private String mainImage;

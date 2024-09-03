@@ -115,7 +115,7 @@ public class UserQueryService {
         Constellation tarsConstellation = constellationRepository.findByCode(ConstellationCode.TARS)
                 .orElseThrow(() -> new ValidationException(USER_DEFAULT_CONSTELLATION_NOT_FOUND));
 
-        return tarsConstellation.getMainImage();
+        return tarsConstellation.getImage();
     }
 
     /**
