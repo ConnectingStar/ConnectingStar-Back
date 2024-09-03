@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -58,6 +59,11 @@ public class RunHabitDto {
      * 단위
      */
     private String unit;
+
+    /**
+     * 생성일
+     */
+    private LocalDateTime createdAt;
 
     // related fields
     /**

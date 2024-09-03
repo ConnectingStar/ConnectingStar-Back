@@ -37,6 +37,12 @@ public class QuitHabitDto {
     private String action;
 
     /**
+     * 목표 실천량.
+     * 얼마나
+     */
+    private Integer value;
+
+    /**
      * 단위
      */
     private String unit;
