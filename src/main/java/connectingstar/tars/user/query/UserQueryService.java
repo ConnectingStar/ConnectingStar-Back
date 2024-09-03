@@ -109,13 +109,13 @@ public class UserQueryService {
 
     /**
      * 사용자가 선택한 별자리가 없을 때 보여줄 기본 캐릭터 이미지.
-     * 타스 별자리 이미지.
+     * [HB-173] 타스 별자리 뼈대 이미지.
      */
     private String getDefaultCharacterImage() {
         Constellation tarsConstellation = constellationRepository.findByCode(ConstellationCode.TARS)
                 .orElseThrow(() -> new ValidationException(USER_DEFAULT_CONSTELLATION_NOT_FOUND));
 
-        return tarsConstellation.getCharacterImage();
+        return tarsConstellation.getImage();
     }
 
     /**
