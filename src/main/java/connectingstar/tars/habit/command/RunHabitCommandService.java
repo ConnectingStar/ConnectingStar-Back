@@ -278,6 +278,7 @@ public class RunHabitCommandService {
                 .user(user)
                 .place(runHabit.getPlace())
                 .action(runHabit.getAction())
+                .value(runHabit.getValue())
                 .completedHistoryCount(completedHistoryCount)
                 .unit(runHabit.getUnit())
                 .restHistoryCount(restHistoryCount)

@@ -62,6 +62,13 @@ public class QuitHabit extends Auditable implements SoftDeletableEntity {
     private String action;
 
     /**
+     * 목표 실천량.
+     * 얼마나
+     */
+    @Column(name = "value", nullable = false)
+    private Integer value;
+
+    /**
      * 단위
      */
     @Column(name = "unit", nullable = false)
@@ -104,11 +111,22 @@ public class QuitHabit extends Auditable implements SoftDeletableEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public QuitHabit(LocalTime runTime, User user, String place, String action, Integer completedHistoryCount, String unit, Integer restHistoryCount, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
+    public QuitHabit(LocalTime runTime,
+                     User user,
+                     String place,
+                     String action,
+                     Integer value,
+                     Integer completedHistoryCount,
+                     String unit,
+                     Integer restHistoryCount,
+                     String reasonOfQuit,
+                     LocalDateTime startDate,
+                     LocalDateTime quitDate) {
         this.runTime = runTime;
         this.user = user;
         this.place = place;
         this.action = action;
+        this.value = value;
         this.completedHistoryCount = completedHistoryCount;
         this.unit = unit;
         this.restHistoryCount = restHistoryCount;
