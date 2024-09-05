@@ -15,6 +15,7 @@ import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
 import connectingstar.tars.habit.request.param.HabitGetListRequestParam;
 import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
+import connectingstar.tars.history.command.HabitHistoryCommandService;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
@@ -49,6 +50,7 @@ public class RunHabitQueryService {
 
     private final UserQueryService userQueryService;
     private final UserHabitCommandService userHabitCommandService;
+    private final HabitHistoryCommandService habitHistoryCommandService;
 
     private final RunHabitRepository runHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
@@ -304,4 +306,28 @@ public class RunHabitQueryService {
     }
 
 
+    /**
+     * 습관 id를 이용해서 통계 정보를 반환합니다.
+     * 누적 별, 누적 실천량.
+     * 통계 페이지에서 사용
+     * <p>
+     * TODO: 최적화 - 통계값 별도 저장 후 조회. 변경 될 때마다 통계값 UPDATE.
+     */
+    public HabitGetOneStatisticsResponse getMyStatisticsById(Integer runHabitId) {
+        RunHabit runHabit = getMineByIdOrElseThrow(runHabitId);
+        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
+
+        Integer totalStarCount = habitHistories.stream()
+                .filter(habitHistory -> !habitHistory.getIsRest())
+                .toList().size() * habitHistoryCommandService.COMPLETED_HISTORY_CREATION_REWARD_STAR_COUNT;
+        Integer totalValue = habitHistories.stream()
+                .filter(habitHistory -> !habitHistory.getIsRest())
+                .mapToInt(HabitHistory::getRunValue)
+                .sum();
+
+        return HabitGetOneStatisticsResponse.builder()
+                .totalStarCount(totalStarCount)
+                .totalValue(totalValue)
+                .build();
+    }
 }
