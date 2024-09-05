@@ -12,6 +12,7 @@ import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.enums.HabitHistorySortBy;
 import jakarta.annotation.Nullable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,6 +32,9 @@ public interface HabitHistoryRepositoryCustom {
     /**
      * 습관 id와 휴식 여부로 습관 기록을 조회합니다.
      *
+     * @param runHabitId 습관 id
+     * @param isRest     휴식 여부
+     * @param runDate    조회할 날짜 범위. [startDate, endDate]
      * @param joinFields ("runHabit" | null) 조인할 필드. Fetch join 수행
      * @param offset     Pagination
      * @param limit      Pagination
@@ -39,6 +43,7 @@ public interface HabitHistoryRepositoryCustom {
     public List<HabitHistory> findByRunHabitIdAndIsRest(
             Integer runHabitId,
             @Nullable Boolean isRest,
+            @Nullable List<LocalDate> runDate,
             @Nullable List<String> joinFields,
             @Nullable Integer offset,
             @Nullable Integer limit,

@@ -94,6 +94,7 @@ public class HabitHistoryQueryService {
         List<HabitHistory> habitHistories = habitHistoryRepositoryCustom.findByRunHabitIdAndIsRest(
                 requestParam.getRunHabitId(),
                 requestParam.getIsRest(),
+                requestParam.getRunDate(),
                 toJoinFields(requestParam.getRelated()),
                 requestParam.getPage(),
                 requestParam.getSize(),
