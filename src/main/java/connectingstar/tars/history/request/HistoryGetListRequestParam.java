@@ -58,8 +58,13 @@ public class HistoryGetListRequestParam implements PaginationRequestParam, SortR
     private SortOrder sortOrder = SortOrder.DESC;
 
     // Related
+
+    public enum Related {
+        RUN_HABIT
+    }
+
     /**
      * ("runHabit")[] | null
      */
-    private List<String> related = null;
+    private List<Related> related = null;
 }
