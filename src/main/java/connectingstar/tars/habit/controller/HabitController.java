@@ -56,18 +56,6 @@ public class HabitController {
     }
 
     /**
-     * 내 습관 1개 조회
-     */
-    @GetMapping("/{runHabitId}")
-    public ResponseEntity<DataResponse<HabitGetOneResponse>> getOne(
-            @PathVariable Integer runHabitId,
-            @ModelAttribute @Valid HabitGetOneRequestParam requestParam
-    ) {
-        HabitGetOneResponse responseDto = runHabitQueryService.getMineById(runHabitId, requestParam);
-        return ResponseEntity.ok(new DataResponse(responseDto));
-    }
-
-    /**
      * 날짜를 입력받아 해당 날짜의 습관, 기록, 상태를 조회한다.
      * 홈 페이지 - 캘린더 - 날짜별 습관 수행을 조회할 때 사용한다.
      */
@@ -76,6 +64,18 @@ public class HabitController {
             @ModelAttribute @Valid HabitDailyTrackingRequestParam requestParam
     ) {
         List<HabitDailyTrackingGetResponse> responseDto = runHabitQueryService.getDailyTrackingList(requestParam);
+        return ResponseEntity.ok(new DataResponse(responseDto));
+    }
+
+    /**
+     * 내 습관 1개 조회
+     */
+    @GetMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitGetOneResponse>> getOne(
+            @PathVariable Integer runHabitId,
+            @ModelAttribute @Valid HabitGetOneRequestParam requestParam
+    ) {
+        HabitGetOneResponse responseDto = runHabitQueryService.getMineById(runHabitId, requestParam);
         return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
@@ -107,6 +107,21 @@ public class HabitController {
             @Valid @RequestBody HabitDeleteRequest request
     ) {
         HabitDeleteResponse response = runHabitCommandService.deleteMineById(runHabitId, request);
+
+        return ResponseEntity.ok(new DataResponse(response));
+    }
+
+    /**
+     * 습관 1개의 통계를 조회합니다.
+     * <p>
+     * 누적 별, 누적 실천량
+     * [FU-37] 통계 페이지에서 사용
+     */
+    @GetMapping("/{runHabitId}/statistics")
+    public ResponseEntity<DataResponse<HabitGetOneStatisticsResponse>> getStatistics(
+            @PathVariable Integer runHabitId
+    ) {
+        HabitGetOneStatisticsResponse response = runHabitQueryService.getMyStatisticsById(runHabitId);
 
         return ResponseEntity.ok(new DataResponse(response));
     }

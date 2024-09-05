@@ -47,9 +47,10 @@ public class HabitHistoryCommandService {
      */
     public static final int HISTORY_CREATION_PERIOD_DAYS = 1;
     /**
-     * 실천 기록 생성 보상 별 개수
+     * 실천 기록 생성 보상 별 개수.
+     * 휴식 기록은 제외.
      */
-    public static final int HISTORY_CREATION_REWARD_STAR_COUNT = 1;
+    public static final int COMPLETED_HISTORY_CREATION_REWARD_STAR_COUNT = 1;
 
     private final HabitHistoryRepository habitHistoryRepository;
     private final RunHabitRepository runHabitRepository;
@@ -98,7 +99,7 @@ public class HabitHistoryCommandService {
         HabitHistory savedHistory = habitHistoryRepository.save(habitHistory);
 
         // [FU-24] 실천 기록 보상 별 부여
-        userCommandService.addStar(user.getId(), HISTORY_CREATION_REWARD_STAR_COUNT);
+        userCommandService.addStar(user.getId(), COMPLETED_HISTORY_CREATION_REWARD_STAR_COUNT);
 
         return habitHistoryMapper.toPostResponse(savedHistory);
     }

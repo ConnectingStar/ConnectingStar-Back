@@ -24,7 +24,9 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +54,7 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
     public List<HabitHistory> findByRunHabitIdAndIsRest(
             Integer runHabitId,
             @Nullable Boolean isRest,
+            @Nullable List<LocalDate> runDate,
             @Nullable List<String> joinFields,
             @Nullable Integer offset,
             @Nullable Integer limit,
@@ -68,6 +71,11 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
 
         if (isRest != null) {
             whereExpression = whereExpression.and(habitHistory.isRest.eq(isRest));
+        }
+
+        if (runDate != null) {
+            whereExpression = whereExpression.and(
+                    habitHistory.runDate.between(runDate.get(0).atStartOfDay(), runDate.get(1).atTime(LocalTime.MAX)));
         }
 
         query = query.where(whereExpression);

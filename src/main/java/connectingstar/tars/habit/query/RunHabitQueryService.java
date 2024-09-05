@@ -15,6 +15,7 @@ import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
 import connectingstar.tars.habit.request.param.HabitGetListRequestParam;
 import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
 import connectingstar.tars.habit.response.*;
+import connectingstar.tars.history.command.HabitHistoryCommandService;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
@@ -49,6 +50,7 @@ public class RunHabitQueryService {
 
     private final UserQueryService userQueryService;
     private final UserHabitCommandService userHabitCommandService;
+    private final HabitHistoryCommandService habitHistoryCommandService;
 
     private final RunHabitRepository runHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
@@ -62,7 +64,9 @@ public class RunHabitQueryService {
      *
      * @return 진행중인 습관 수정을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각 (추후 고치겠습니다 지금 시간이 없어서 ㅠ)
      * TODO: 리턴값 수정
+     * @deprecated use .getMyList() instead.
      */
+    @Deprecated
     public List<RunGetListResponse> getList() {
 
         List<RunHabit> allByUser = runHabitRepository.findAllByUser(userHabitCommandService.findUserByUserId());
@@ -74,7 +78,9 @@ public class RunHabitQueryService {
      *
      * @return 진행중인 습관 수정을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각 (추후 고치겠습니다 지금 시간이 없어서 ㅠ)
      * TODO: 리턴값 수정
+     * @deprecated use .getMineById() instead.
      */
+    @Deprecated
     public RunPutResponse get(RunGetRequest param) {
 
         User userByUserId = userHabitCommandService.findUserByUserId();
@@ -147,10 +153,27 @@ public class RunHabitQueryService {
         User user = userQueryService.getCurrentUserOrElseThrow();
         List<RunHabit> runHabits = runHabitRepository.findAllByUser(user);
 
+        if (requestParam.getSortBy() != null) {
+            runHabits.sort((habit1, habit2) -> {
+                switch (requestParam.getSortBy()) {
+                    case CREATED_AT:
+                        switch (requestParam.getSortOrder()) {
+                            case ASC:
+                            default:
+                                return habit1.getCreatedAt().compareTo(habit2.getCreatedAt());
+                            case DESC:
+                                return habit2.getCreatedAt().compareTo(habit1.getCreatedAt());
+                        }
+                    default:
+                        return 0;
+                }
+            });
+        }
+
         List<RunHabitDto> dtos = runHabitMapper.toDtoList(runHabits);
 
         if (requestParam.getExpand() != null) {
-            if (requestParam.getExpand().contains("historyCountByStatus")) {
+            if (requestParam.getExpand().contains(HabitGetListRequestParam.Expand.HISTORY_COUNT_BY_STATUS)) {
                 dtos.forEach(dto -> {
                     Integer completedHistoryCount = habitHistoryRepository.countByRunHabit_RunHabitIdAndIsRest(dto.getRunHabitId(), false);
                     Integer restHistoryCount = habitHistoryRepository.countByRunHabit_RunHabitIdAndIsRest(dto.getRunHabitId(), true);
@@ -283,4 +306,28 @@ public class RunHabitQueryService {
     }
 
 
+    /**
+     * 습관 id를 이용해서 통계 정보를 반환합니다.
+     * 누적 별, 누적 실천량.
+     * 통계 페이지에서 사용
+     * <p>
+     * TODO: 최적화 - 통계값 별도 저장 후 조회. 변경 될 때마다 통계값 UPDATE.
+     */
+    public HabitGetOneStatisticsResponse getMyStatisticsById(Integer runHabitId) {
+        RunHabit runHabit = getMineByIdOrElseThrow(runHabitId);
+        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
+
+        Integer totalStarCount = habitHistories.stream()
+                .filter(habitHistory -> !habitHistory.getIsRest())
+                .toList().size() * habitHistoryCommandService.COMPLETED_HISTORY_CREATION_REWARD_STAR_COUNT;
+        Integer totalValue = habitHistories.stream()
+                .filter(habitHistory -> !habitHistory.getIsRest())
+                .mapToInt(HabitHistory::getRunValue)
+                .sum();
+
+        return HabitGetOneStatisticsResponse.builder()
+                .totalStarCount(totalStarCount)
+                .totalValue(totalValue)
+                .build();
+    }
 }

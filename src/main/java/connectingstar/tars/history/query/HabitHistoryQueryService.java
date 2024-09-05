@@ -94,6 +94,7 @@ public class HabitHistoryQueryService {
         List<HabitHistory> habitHistories = habitHistoryRepositoryCustom.findByRunHabitIdAndIsRest(
                 requestParam.getRunHabitId(),
                 requestParam.getIsRest(),
+                requestParam.getRunDate(),
                 toJoinFields(requestParam.getRelated()),
                 requestParam.getPage(),
                 requestParam.getSize(),
@@ -111,7 +112,7 @@ public class HabitHistoryQueryService {
                 .build();
     }
 
-    private List<String> toJoinFields(List<String> related) {
+    private List<String> toJoinFields(List<HistoryGetListRequestParam.Related> related) {
         if (related == null) {
             return null;
         }
@@ -120,7 +121,7 @@ public class HabitHistoryQueryService {
                 .map(
                         relatedField -> {
                             switch (relatedField) {
-                                case "runHabit":
+                                case RUN_HABIT:
                                     return "runHabit";
                                 default:
                                     return null;
