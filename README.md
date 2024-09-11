@@ -2,7 +2,7 @@
 
 ## About The Project
 
-습관 관리 애플리케이션 'Connecting Star'의 백엔드 repository.
+습관 관리 애플리케이션 'Habit Buddy'의 백엔드 repository.
 
 ### Built With
 
