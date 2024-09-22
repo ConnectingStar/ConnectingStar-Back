@@ -9,6 +9,7 @@ import connectingstar.tars.user.mapper.UserMapper;
 import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserConstellationRepository;
 import connectingstar.tars.user.repository.UserRepository;
+import connectingstar.tars.user.repository.UserRepositoryCustom;
 import connectingstar.tars.user.request.UserConstellationRequest;
 import connectingstar.tars.user.request.UserMeConstellationPostRequest;
 import connectingstar.tars.user.response.UserConstellationStarResponse;
@@ -26,6 +27,7 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.*;
 @Service
 public class UserConstellationCommandService {
     private final UserRepository userRepository;
+    private final UserRepositoryCustom userRepositoryCustom;
     private final UserConstellationRepository userConstellationRepository;
 
     private final UserQueryService userQueryService;
@@ -56,6 +58,8 @@ public class UserConstellationCommandService {
      * 해금 중인 상태로 설정합니다.
      * <p>
      * 이미 등록된 별자리가 있을 경우, 예외를 발생시킵니다.
+     * <p>
+     * 프론트엔드 - 온보딩 페이지 - 온보딩 결과 제출에서 'POST /v2/habits' 와 동시에 호출됨.
      */
     @Transactional
     public UserMeConstellationPostResponse saveMyUnlocking(UserMeConstellationPostRequest request) {
@@ -66,13 +70,15 @@ public class UserConstellationCommandService {
         verifyNotDuplicate(user.getId(), request.getConstellationId());
 
         UserConstellation userConstellation = UserConstellation.builder()
+                .user(user)
                 .constellation(constellation)
                 .build();
 
-        user.addUserConstellation(userConstellation);
-        user.updateUnlockingConstellation(userConstellation);
-
-        userRepository.save(user);
+        userConstellationRepository.save(userConstellation);
+        // `userRepository.save(user)`를 하면 온보딩 업데이트를 동시에 실행했을 때
+        // user.star = 0 으로 업데이트되는 동시성 버그 존재.
+        // 이 메소드에서 GET한 온보딩 업데이트 전의 user를 .save()하기 때문임.
+        userRepositoryCustom.updateUnlockingConstellation(user.getId(), userConstellation.getUserConstellationId());
 
         return userMapper.toMeConstellationPostResponse(user, user.getUnlockingConstellation());
     }
