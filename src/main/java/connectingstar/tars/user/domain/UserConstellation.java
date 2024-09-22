@@ -55,8 +55,18 @@ public class UserConstellation {
     @JoinColumn(name = "constellation_id")
     private Constellation constellation;
 
+    public UserConstellation(
+            Constellation constellation
+    ) {
+        setConstellation(constellation);
+    }
+
     @Builder
-    public UserConstellation(Constellation constellation) {
+    public UserConstellation(
+            User user,
+            Constellation constellation
+    ) {
+        setUser(user);
         setConstellation(constellation);
     }
 
