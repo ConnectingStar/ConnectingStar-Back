@@ -15,6 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.List;
+
 /**
  * Security Configuration
  *
@@ -38,9 +40,10 @@ public class SecurityConfig {
                 // CORS 설정
                 .cors(httpSecurityCorsConfigurer ->
                         httpSecurityCorsConfigurer.configurationSource(request -> {
-                            CorsConfiguration corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                            corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:8080", "http://localhost:3000", "https://localhost:3000"));
-                            corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
+                            CorsConfiguration corsConfiguration = new CorsConfiguration();
+                            corsConfiguration.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:3000", "https://localhost:3000"));
+                            corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
+                            corsConfiguration.setAllowedHeaders(List.of("*"));
                             corsConfiguration.setAllowCredentials(true);
                             return corsConfiguration;
                         }))
@@ -48,7 +51,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // 세션을 생성하지 않게 설정
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((authorize) -> authorize.requestMatchers("/static/**", "/error", "/health", "/", "/test")
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/static/**", "/error", "/health", "/", "/test")
                         .permitAll()
                         .requestMatchers("/oauth/code/url", "/oauth/login", "/oauth2/**")
                         .anonymous()
