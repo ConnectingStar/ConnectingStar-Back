@@ -5,6 +5,7 @@ name: CD with Gradle
 on:
   push:
     branches: [ "dev" ]
+  workflow_dispatch:
 
 # 실제 실행될 내용들을 정의합니다.
 jobs:
