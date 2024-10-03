@@ -52,7 +52,7 @@ public class SecurityConfig {
                 // 세션을 생성하지 않게 설정
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/static/**", "/error", "/health", "/", "/test")
+                        .requestMatchers("/static/**", "/error", "/health", "/", "/test", "/oauth/issue")
                         .permitAll()
                         .requestMatchers("/oauth/code/url", "/oauth/login", "/oauth2/**")
                         .anonymous()
@@ -68,8 +68,7 @@ public class SecurityConfig {
                                 "/v2/histories",
                                 "/v2/histories/**",
                                 "/oauth/logout",
-                                "/oauth/unlink/**",
-                                "/oauth/issue")
+                                "/oauth/unlink/**")
                         .authenticated()
                         .anyRequest()
                         .denyAll())

@@ -92,7 +92,7 @@ public class JwtService {
         String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
 
         // 유효하지 않으면 쿠키의 리프레시 토큰 확인
-        if (StringUtils.hasText(refreshTokenValue) && validateToken(refreshTokenValue)) {
+        if (StringUtils.hasText(refreshTokenValue) && isTokenExpired(refreshTokenValue)) {
             // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
             String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(refreshTokenValue))));
             SecurityContextHolder.getContext().setAuthentication(getAuthentication(newAccessToken));
@@ -149,6 +149,14 @@ public class JwtService {
         } catch (IllegalArgumentException e) {
             log.info("잘못된 JWT 토큰입니다.");
             throw new ValidationException(ILLEGAL_ARGUMENT_TOKEN);
+        }
+    }
+    public boolean isTokenExpired(String token){
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+            return true;
+        } catch (Exception e){
+            return false;
         }
     }
 }
