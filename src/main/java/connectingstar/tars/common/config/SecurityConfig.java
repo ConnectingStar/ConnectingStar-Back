@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 // 세션을 생성하지 않게 설정
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((authorize) -> authorize
+                .authorizeHttpRequests((authorize) -> authorize //토큰 재발급 허용처리
                         .requestMatchers("/static/**", "/error", "/health", "/", "/test", "/oauth/issue")
                         .permitAll()
                         .requestMatchers("/oauth/code/url", "/oauth/login", "/oauth2/**")

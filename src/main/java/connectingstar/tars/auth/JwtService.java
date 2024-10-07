@@ -91,7 +91,7 @@ public class JwtService {
         //쿠키에서 리프레시 토큰을 꺼내 만료되었는지 확인
         String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
 
-        // 유효하지 않으면 쿠키의 리프레시 토큰 확인
+        // 유효하지 않으면 쿠키의 리프레시 토큰 여부 확인
         if (StringUtils.hasText(refreshTokenValue) && isTokenExpired(refreshTokenValue)) {
             // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
             String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(refreshTokenValue))));
