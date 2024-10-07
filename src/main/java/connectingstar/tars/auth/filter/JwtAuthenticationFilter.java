@@ -58,7 +58,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-
+    if (request.getRequestURI().equals("/oauth/issue")) {
+      filterChain.doFilter(request, response);
+      return; // 필터를 종료합니다.
+    }
     // 유효성 체크
     if (jwtService.validateToken(accessTokenValue)) {
       // 토큰이 유효하면 인증 정보를 설정
