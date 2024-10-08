@@ -2,7 +2,10 @@ package connectingstar.tars.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import connectingstar.tars.auth.JwtService;
+import connectingstar.tars.common.config.JwtProperties;
+import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.response.DataResponse;
+import connectingstar.tars.common.utils.CookieUtils;
 import connectingstar.tars.user.response.UserOnboardCheckResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,21 +13,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.EXPIRED_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.INVALID_TOKEN;
 
 /**
  * JwtAuthenticationFilter
  *
  * @author 송병선
  */
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
+  private final JwtProperties jwtProperties;
 
   /**
    * /check-onboarding api에서 인증 실패하면 응답에 OK이지만, Onboarding false로 기록한다
@@ -41,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String authorizationHeader = request.getHeader("Authorization");
+    String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
     String accessTokenValue = null;
 
     if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -63,10 +73,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return; // 필터를 종료합니다.
     }
     // 유효성 체크
-    if (jwtService.validateToken(accessTokenValue)) {
-      // 토큰이 유효하면 인증 정보를 설정
-      SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessTokenValue));
+    // 리프레시 토큰 체크
+    if(jwtService.isTokenExpired(refreshTokenValue)){
+      // 엑세스 토큰 체크
+      if (jwtService.validateToken(accessTokenValue)) {
+        // 토큰이 유효하면 인증 정보를 설정
+        SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessTokenValue));
+      }
     }
+    else{
+      log.info("토큰이 만료 되었습니다");
+      CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
+      throw new ValidationException(EXPIRED_TOKEN);
+    }
+
     // 다음 필터로 요청을 전달
     filterChain.doFilter(request, response);
   }

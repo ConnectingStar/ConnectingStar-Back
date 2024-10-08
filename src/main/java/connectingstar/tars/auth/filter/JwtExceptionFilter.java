@@ -35,8 +35,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (ValidationException e) {
-            // 쿠키 삭제
-            CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
+//            CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
             ErrorCode errorCode = (ErrorCode) e.getErrorCode();
             setErrorResponse(response, errorCode);
         }
