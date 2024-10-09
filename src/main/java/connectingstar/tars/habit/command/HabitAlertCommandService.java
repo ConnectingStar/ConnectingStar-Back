@@ -3,6 +3,7 @@ package connectingstar.tars.habit.command;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.query.HabitAlertQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

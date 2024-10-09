@@ -1,10 +1,12 @@
 package connectingstar.tars.habit.query;
 
+import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.device.domain.Device;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.HabitAlertWithDevice;
 import connectingstar.tars.habit.repository.HabitAlertRepository;
+import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.type.AlertOrderType;
 import connectingstar.tars.pushnotification.dto.PushNotificationMessage;
 import connectingstar.tars.user.domain.User;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+
+import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.ALERT_NOT_FOUND;
 
 /**
  * 습관 알림 조회 Service
@@ -23,16 +27,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HabitAlertQueryService {
     private final HabitAlertRepository habitAlertRepository;
+    private final RunHabitRepository runHabitRepository;
+
+    /**
+     * 사용자 ID와 알림 순서로 알림을 조회한다.
+     * 없을 시 IllegalArgumentException 발생
+     */
+    public HabitAlert getByRunHabitIdAndOrderOrElseThrow(Integer runHabitId, Integer alertOrder) {
+        RunHabit runHabit = runHabitRepository.getReferenceById(runHabitId);
+
+        return habitAlertRepository.findByRunHabitAndAlertOrder(runHabit, alertOrder)
+                .orElseThrow(() -> new ValidationException(ALERT_NOT_FOUND));
+    }
 
     /**
      * 입력으로 받은 알림 시각과 시, 분 정보가 일치하는 습관 알림 리스트를 반환합니다.
      * User, RunHabit, Device 테이블을 조인해서 데이터를 반환합니다.
      * status = TRUE로 활성화된 알람만 반환합니다.
      *
-     * @example
-     * alertTime = 2024.07.01 12:01:02
+     * @example alertTime = 2024.07.01 12:01:02
      * -> alertTime이 12:01:00 ~ 12:01:59 범위에 해당하는 habit alert 리스트
-     *
      * @author 이우진
      */
     public List<HabitAlertWithDevice> getActiveListByAlertTimeMinuteWithUserAndRunHabitAndDevice(LocalTime alertTime) {
@@ -60,7 +74,7 @@ public class HabitAlertQueryService {
                 return pushNotificationMessageBuilder
                         .title(runHabit.getAction() + " 약속 리마인더")
                         .body(runHabit.getIdentity() + " " + user.getNickname() + "님, 곧 약속 시간이에요!\n"
-                        + "오늘도 꾸준한 " + runHabit.getAction() + " 응원합니다\uD83D\uDE0A")
+                                + "오늘도 꾸준한 " + runHabit.getAction() + " 응원합니다\uD83D\uDE0A")
                         .build();
             case WRITE_HISTORY:
                 return pushNotificationMessageBuilder
