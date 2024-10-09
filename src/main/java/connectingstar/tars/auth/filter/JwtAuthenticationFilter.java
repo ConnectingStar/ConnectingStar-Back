@@ -19,8 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.EXPIRED_TOKEN;
-import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.INVALID_TOKEN;
+import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.*;
 
 /**
  * JwtAuthenticationFilter
@@ -50,12 +49,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String authorizationHeader = request.getHeader("Authorization");
-    String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
     String accessTokenValue = null;
-
+    String refreshTokenValue = null;
+    if (CookieUtils.getCookie(request, jwtProperties.cookieName()) != null){
+       refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
+    }
     if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
       accessTokenValue = authorizationHeader.substring(7);
     }
+
 
     // 헤더에서 가져온 어세스 토큰이 비어 있으면
     if (!StringUtils.hasText(accessTokenValue)) {
@@ -74,17 +76,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
     // 유효성 체크
     // 리프레시 토큰 체크
-    if(jwtService.isTokenExpired(refreshTokenValue)){
-      // 엑세스 토큰 체크
-      if (jwtService.validateToken(accessTokenValue)) {
-        // 토큰이 유효하면 인증 정보를 설정
-        SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessTokenValue));
+    if (accessTokenValue != null && refreshTokenValue != null) {
+      if (jwtService.isTokenExpired(refreshTokenValue) || jwtService.isTokenExpired(accessTokenValue)) {
+        // 엑세스 토큰 체크
+        if (jwtService.validateToken(accessTokenValue)) {
+          // 토큰이 유효하면 인증 정보를 설정
+          SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessTokenValue));
+        }
       }
-    }
-    else{
-      log.info("토큰이 만료 되었습니다");
-      CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
-      throw new ValidationException(EXPIRED_TOKEN);
+      else{
+        log.info("토큰이 만료 되었습니다");
+        CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
+        throw new ValidationException(EXPIRED_TOKEN);
+      }
     }
 
     // 다음 필터로 요청을 전달
