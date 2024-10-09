@@ -44,11 +44,14 @@ public class HabitAlertSendJob implements Job {
 
         List<HabitAlertWithDevice> habitAlertWithDevices = habitAlertQueryService.getActiveListByAlertTimeMinuteWithUserAndRunHabitAndDevice(firedLocalTime);
 
-//        log.info("habitAlertWithDevices: " + habitAlertWithDevices.stream().count() + " " + habitAlertWithDevices.toString());
-//        if (habitAlertWithDevices == null || habitAlertWithDevices.isEmpty()) {
-//            log.info("habitAlert is null");
-//            return;
-//        }
+        Boolean logsHabitAlert = false;
+        if (logsHabitAlert) {
+            log.info("habitAlertWithDevices: " + habitAlertWithDevices.stream().count() + " " + habitAlertWithDevices.toString());
+            if (habitAlertWithDevices == null || habitAlertWithDevices.isEmpty()) {
+                log.info("habitAlert is null");
+                return;
+            }
+        }
 
         // 메세지 내용 생성
         List<PushNotificationMessage> pushNotificationMessages = habitAlertWithDevices.stream()
@@ -56,7 +59,9 @@ public class HabitAlertSendJob implements Job {
                 .map(habitAlertWithDevice -> habitAlertQueryService.generatePushNotificationMessage(habitAlertWithDevice.getHabitAlert(), habitAlertWithDevice.getDevice()))
                 .toList();
 
-//        log.info("pushNotificationMessages: "+ pushNotificationMessages.toString());
+        if (logsHabitAlert) {
+            log.info("pushNotificationMessages: " + pushNotificationMessages.toString());
+        }
 
         // 전송
         try {
