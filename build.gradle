@@ -30,9 +30,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux:3.2.4'
     implementation 'org.springframework.boot:spring-boot-configuration-processor:3.2.4'
 
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc:3.3.3'
-    implementation 'mysql:mysql-connector-java:8.0.33'
-
     // Jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -59,6 +56,17 @@ dependencies {
 
     // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // querydsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Quartz. 정해진 시간에 작업 수행 용도 (습관 알림)
+    implementation 'org.springframework.boot:spring-boot-starter-quartz'
+
+    // Firebase Admin. 기기에 FCM 전송 (습관 알림)
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 tasks.named('bootBuildImage') {
@@ -76,6 +84,12 @@ task copyPrivate(type: Copy) {
     copy {
         from './ConnectingStar-Back-Data'
         include "*.yml"
+        into 'src/main/resources'
+    }
+
+    copy {
+        from './ConnectingStar-Back-Data'
+        include "habbit-buddy-firebase-service-account.json"
         into 'src/main/resources'
     }
 }

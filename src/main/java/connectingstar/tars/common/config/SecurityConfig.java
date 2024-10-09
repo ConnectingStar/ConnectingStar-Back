@@ -61,6 +61,7 @@ public class SecurityConfig {
                                 "/constellation/**",
                                 "/alert/**",
                                 "/habit/**",
+                                "/device/**",
                                 "/v2/habits/**",
                                 "/v2/quit-habits",
                                 "/v2/quit-habits/**",

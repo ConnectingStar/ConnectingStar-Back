@@ -3,6 +3,7 @@ package connectingstar.tars.habit.command;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.query.HabitAlertQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,21 +28,20 @@ public class HabitAlertCommandService {
     private final HabitAlertQueryService habitAlertQueryService;
 
     public HabitAlert makeAlert(RunHabit runHabit, LocalTime runTime, LocalTime alert, int alertStatus) {
-        if (alert != null) {
-            return HabitAlert.postHabitAlert()
-                    .runHabit(runHabit)
-                    .alertOrder(alertStatus)
-                    .alertTime(alert)
-                    .alertStatus(ALERT_ON)
-                    .build();
+        HabitAlert.HabitAlertBuilder habitAlertBuilder = HabitAlert.postHabitAlert();
+
+        habitAlertBuilder = habitAlertBuilder
+                .runHabit(runHabit)
+                .alertOrder(alertStatus)
+                .alertStatus(ALERT_ON);
+
+        if (alert == null) {
+            habitAlertBuilder = habitAlertBuilder.alertTime(changeDefaultTime(runTime, alertStatus));
         } else {
-            return HabitAlert.postHabitAlert()
-                    .runHabit(runHabit)
-                    .alertOrder(alertStatus)
-                    .alertTime(changeDefaultTime(runTime, alertStatus))
-                    .alertStatus(ALERT_ON)
-                    .build();
+            habitAlertBuilder.alertTime(alert);
         }
+
+        return habitAlertBuilder.build();
     }
 
     public LocalTime updateHabitAlert(LocalTime changeTime, List<HabitAlert> alerts, Integer alertOrder, Boolean alertStatus) {

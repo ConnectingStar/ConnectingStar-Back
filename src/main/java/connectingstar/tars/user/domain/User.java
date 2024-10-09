@@ -2,6 +2,7 @@ package connectingstar.tars.user.domain;
 
 import connectingstar.tars.common.domain.BaseTimeEntity;
 import connectingstar.tars.constellation.domain.Constellation;
+import connectingstar.tars.device.domain.Device;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.history.domain.HabitHistory;
@@ -36,27 +37,32 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     /**
      * 이메일
      */
     @Column(name = "email", nullable = false)
     private String email;
+
     /**
      * 닉네임
      */
     @Column(name = "nickname")
     private String nickname;
+
     /**
      * 연령대
      */
     @Convert(converter = AgeRangeType.TypeCodeConverter.class)
     @Column(name = "age_range")
     private AgeRangeType ageRange;
+
     /**
      * 정체성
      */
     @Column(name = "identity")
     private String identity;
+
     /**
      * 유입 경로
      */
@@ -119,21 +125,27 @@ public class User extends BaseTimeEntity {
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<HabitHistory> habitHistories = new ArrayList<>();
+
     /**
      * 진행중인 습관 리스트
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<RunHabit> runHabits = new ArrayList<>();
+
     /**
      * 종료한 습관 리스트
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<QuitHabit> quitHabits = new ArrayList<>();
+
     /**
      * 보유한 별자리(캐릭터) 목록
      */
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private final List<UserConstellation> userConstellationList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "owningUser", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    private Device device;
 
     public User(String email, SocialType socialType) {
         this.email = email;
