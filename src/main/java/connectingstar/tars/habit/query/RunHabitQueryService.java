@@ -1,17 +1,14 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.common.exception.ValidationException;
-import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.device.domain.Device;
-import connectingstar.tars.habit.domain.HabitHistory;
+import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.dto.RunHabitDto;
+import connectingstar.tars.habit.dto.RunHabitWithDevice;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
-import connectingstar.tars.habit.dto.RunHabitWithDevice;
-import connectingstar.tars.habit.repository.HabitHistoryRepository;
-import connectingstar.tars.habit.repository.RunHabitDao;
 import connectingstar.tars.habit.repository.RunHabitRepository;
 import connectingstar.tars.habit.repository.RunHabitRepositoryCustom;
 import connectingstar.tars.habit.request.RunDayGetRequest;
@@ -24,10 +21,6 @@ import connectingstar.tars.history.command.HabitHistoryCommandService;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
-import connectingstar.tars.habit.response.HabitHistoryWeekelyWriteResponse;
-import connectingstar.tars.habit.response.HabitDayGetResponse;
-import connectingstar.tars.habit.response.RunGetListResponse;
-import connectingstar.tars.habit.response.RunPutResponse;
 import connectingstar.tars.pushnotification.dto.PushNotificationMessage;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
@@ -39,12 +32,6 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
-
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -341,8 +328,8 @@ public class RunHabitQueryService {
         return PushNotificationMessage.builder()
                 .token(device.getFcmRegistrationToken())
                 .title(runHabit.getAction() + " 기록 리마인더\n")
-                .body("앗,, 어제 "+ runHabit.getAction() +" 기록이 없네요\uD83D\uDE25\n" +
-                        "마감(자정) 전에 남기고 \"" + runHabit.getIdentity() +"\" 강화하기!")
+                .body("앗,, 어제 " + runHabit.getAction() + " 기록이 없네요\uD83D\uDE25\n" +
+                        "마감(자정) 전에 남기고 \"" + runHabit.getIdentity() + "\" 강화하기!")
                 .build();
     }
 

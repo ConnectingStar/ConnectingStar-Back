@@ -3,7 +3,6 @@ package connectingstar.tars.user.domain;
 import connectingstar.tars.common.domain.BaseTimeEntity;
 import connectingstar.tars.constellation.domain.Constellation;
 import connectingstar.tars.device.domain.Device;
-import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.history.domain.HabitHistory;
