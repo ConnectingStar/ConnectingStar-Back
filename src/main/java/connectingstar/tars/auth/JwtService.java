@@ -92,7 +92,7 @@ public class JwtService {
         String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
 
         // 유효하지 않으면 쿠키의 리프레시 토큰 여부 확인
-        if (StringUtils.hasText(refreshTokenValue) && isTokenExpired(refreshTokenValue)) {
+        if (StringUtils.hasText(refreshTokenValue) && isTokenValid(refreshTokenValue)) {
             // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
             String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(refreshTokenValue))));
             SecurityContextHolder.getContext().setAuthentication(getAuthentication(newAccessToken));
@@ -152,13 +152,11 @@ public class JwtService {
         }
     }
 
-    public boolean isTokenExpired(String token) {
+    public boolean isTokenValid(String token) {
         try {
-            log.error("token: " + token);
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             return true;
         } catch (Exception e) {
-            log.error(e.toString());
             return false;
         }
     }
