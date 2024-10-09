@@ -11,10 +11,7 @@ import connectingstar.tars.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.CompletableFuture;
 
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
@@ -35,7 +32,7 @@ public class DeviceCommandService {
         User user = findUserByUserId(UserUtils.getUserId());
 
         // 기존 기기 삭제
-        deviceRepository.deleteAllByOwningUser(user);
+        deviceRepository.deleteByOwningUser(user);
 
         // 새 기기 생성
         Device newDevice = Device.creationBuilder()
