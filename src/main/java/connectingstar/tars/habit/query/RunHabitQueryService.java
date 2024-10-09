@@ -1,10 +1,12 @@
 package connectingstar.tars.habit.query;
 
 import connectingstar.tars.common.exception.ValidationException;
+import connectingstar.tars.device.domain.Device;
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.domain.RunHabit;
 import connectingstar.tars.habit.dto.RunHabitAndHistoryDto;
 import connectingstar.tars.habit.dto.RunHabitDto;
+import connectingstar.tars.habit.dto.RunHabitWithDevice;
 import connectingstar.tars.habit.enums.DailyTrackingStatus;
 import connectingstar.tars.habit.mapper.RunHabitMapper;
 import connectingstar.tars.habit.repository.RunHabitRepository;
@@ -19,6 +21,7 @@ import connectingstar.tars.history.command.HabitHistoryCommandService;
 import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.history.mapper.HabitHistoryMapper;
 import connectingstar.tars.history.repository.HabitHistoryRepository;
+import connectingstar.tars.pushnotification.dto.PushNotificationMessage;
 import connectingstar.tars.user.command.UserHabitCommandService;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.query.UserQueryService;
@@ -43,7 +46,6 @@ import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_
  *
  * @author 김성수
  */
-
 @Service
 @RequiredArgsConstructor
 public class RunHabitQueryService {
@@ -303,6 +305,32 @@ public class RunHabitQueryService {
         List<RunHabit> list = user.getRunHabits().stream()
                 .filter(rh -> rh.getHabitHistories().stream().anyMatch(hh -> hh.getRunDate().toLocalDate().isEqual(referenceDate))).toList();
         return list.size() == runHabitSize;
+    }
+
+    /**
+     * 유저의 수행 시각이 1일 전인 기록이 존재하지 않는 습관을 fetch 합니다.
+     * runDate가 어제인 history가 없는 습관 fetch.
+     *
+     * @author 이우진
+     */
+    public List<RunHabitWithDevice> getListByYesterdayHistoryNotExistWithDevice() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+
+        return runHabitRepository.findAllByHistoryOfRunDateNotExistWithDevice(yesterday);
+    }
+
+    /**
+     * 기록 독려 알림 메세지를 생성합니다
+     *
+     * @link <a href="https://www.figma.com/design/deVOGLOqzbCjKJP9fDeB3i/%ED%95%B4%EB%B9%97%EB%B2%84%EB%94%94?node-id=4076-4527&m=dev">Figma</a>
+     */
+    public PushNotificationMessage generateMissingHistoryPushNotificationMessage(RunHabit runHabit, Device device) {
+        return PushNotificationMessage.builder()
+                .token(device.getFcmRegistrationToken())
+                .title(runHabit.getAction() + " 기록 리마인더\n")
+                .body("앗,, 어제 " + runHabit.getAction() + " 기록이 없네요\uD83D\uDE25\n" +
+                        "마감(자정) 전에 남기고 \"" + runHabit.getIdentity() + "\" 강화하기!")
+                .build();
     }
 
 

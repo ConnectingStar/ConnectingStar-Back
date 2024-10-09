@@ -151,11 +151,14 @@ public class JwtService {
             throw new ValidationException(ILLEGAL_ARGUMENT_TOKEN);
         }
     }
-    public boolean isTokenExpired(String token){
+
+    public boolean isTokenExpired(String token) {
         try {
+            log.error("token: " + token);
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
             return true;
-        } catch (Exception e){
+        } catch (Exception e) {
+            log.error(e.toString());
             return false;
         }
     }
