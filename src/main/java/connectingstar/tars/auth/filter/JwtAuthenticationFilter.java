@@ -51,6 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
         String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
+        log.error("refreshTokenValue: " + refreshTokenValue);
+        log.error("cookieName: " + jwtProperties.cookieName());
         String accessTokenValue = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
