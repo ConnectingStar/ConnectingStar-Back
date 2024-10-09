@@ -1,26 +1,32 @@
 package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
+import connectingstar.tars.common.domain.converter.SoftDeletableEntity;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
  * 종료한 습관 엔티티
+ * 습관 현황 - 히스토리
  *
  * @author 김성수
  */
-@Getter
 @Entity
+@SQLDelete(sql = "update quit_habit set deleted_at = now() where quit_habit.quit_habit_id = ?")
+@Where(clause = "deleted_at IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Access(AccessType.FIELD)
-public class QuitHabit extends Auditable {
+@Getter
+public class QuitHabit extends Auditable implements SoftDeletableEntity {
 
     /**
      * 종료한 습관 ID
@@ -34,7 +40,7 @@ public class QuitHabit extends Auditable {
      * 사용자 PK
      */
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     /**
@@ -56,7 +62,8 @@ public class QuitHabit extends Auditable {
     private String action;
 
     /**
-     * 실천횟수
+     * 목표 실천량.
+     * 얼마나
      */
     @Column(name = "value", nullable = false)
     private Integer value;
@@ -67,12 +74,17 @@ public class QuitHabit extends Auditable {
     @Column(name = "unit", nullable = false)
     private String unit;
 
+    /**
+     * 실천 횟수
+     */
+    @Column(name = "completed_history_count", nullable = false)
+    private Integer completedHistoryCount;
 
     /**
-     * 휴식 실천횟수
+     * 휴식 기록 횟수
      */
-    @Column(name = "rest_value", nullable = false)
-    private Integer restValue;
+    @Column(name = "rest_history_count", nullable = false)
+    private Integer restHistoryCount;
 
     /**
      * 종료 사유
@@ -92,15 +104,32 @@ public class QuitHabit extends Auditable {
     @Column(name = "quit_date", nullable = false)
     private LocalDateTime quitDate;
 
-    @Builder(builderMethodName = "postQuitHabit")
-    public QuitHabit(LocalTime runTime, User user, String place, String action, Integer value, String unit, Integer restValue, String reasonOfQuit, LocalDateTime startDate, LocalDateTime quitDate) {
+    /**
+     * 삭제된 시각
+     */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Builder
+    public QuitHabit(LocalTime runTime,
+                     User user,
+                     String place,
+                     String action,
+                     Integer value,
+                     Integer completedHistoryCount,
+                     String unit,
+                     Integer restHistoryCount,
+                     String reasonOfQuit,
+                     LocalDateTime startDate,
+                     LocalDateTime quitDate) {
         this.runTime = runTime;
         this.user = user;
         this.place = place;
         this.action = action;
         this.value = value;
+        this.completedHistoryCount = completedHistoryCount;
         this.unit = unit;
-        this.restValue = restValue;
+        this.restHistoryCount = restHistoryCount;
         this.reasonOfQuit = reasonOfQuit;
         this.startDate = startDate;
         this.quitDate = quitDate;

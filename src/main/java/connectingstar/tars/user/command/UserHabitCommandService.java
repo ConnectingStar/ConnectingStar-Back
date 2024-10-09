@@ -12,10 +12,11 @@ import connectingstar.tars.user.repository.UserRepository;
 import connectingstar.tars.user.request.UserOnboardingRequest;
 import connectingstar.tars.user.response.UserIdentityInfoResponse;
 import connectingstar.tars.user.response.UserOnboardingResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 import static connectingstar.tars.habit.command.RunHabitCommandService.FIRST_ALERT_STATUS;
@@ -37,7 +38,7 @@ public class UserHabitCommandService {
      * @param param 등록 정보
      */
     @Transactional
-    public UserOnboardingResponse save(UserOnboardingRequest param) {
+    public UserOnboardingResponse updateMeOnboardingParams(UserOnboardingRequest param) {
         User user = findUserByUserId();
         user.updateOnboarding(param);
         RunHabit runHabit = saveRunHabit(param, user);
@@ -48,12 +49,18 @@ public class UserHabitCommandService {
         return userRepository.findById(UserUtils.getUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
     }
 
-  public List<UserIdentityInfoResponse> getUserIdentityInfo() {
-    return findUserByUserId().getRunHabits().stream().map(habit -> new UserIdentityInfoResponse(habit.getIdentity())).toList();
-  }
+    public List<UserIdentityInfoResponse> getUserIdentityInfo() {
+        return findUserByUserId().getRunHabits().stream().map(habit -> new UserIdentityInfoResponse(habit.getIdentity())).toList();
+    }
 
-  private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
-        RunHabit runHabit = RunHabit.postRunHabit()
+    /**
+     * 온보딩 할 때 사용
+     *
+     * @deprecated use {@link connectingstar.tars.habit.command.RunHabitCommandService#save} isOnboarding=true instead
+     */
+    @Deprecated
+    private RunHabit saveRunHabit(UserOnboardingRequest param, User user) {
+        RunHabit runHabit = RunHabit.postBuilder()
                 .identity(param.getIdentity())
                 .user(user)
                 .runTime(param.getRunTime().toLocalTime())

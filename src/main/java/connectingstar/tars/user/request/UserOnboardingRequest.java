@@ -9,8 +9,9 @@ import lombok.Setter;
  * 회원 온보딩
  *
  * @author 김성수, 김규리
+ * @deprecated use {@link UserMeOnboardingPatchRequest} instead
  */
-
+@Deprecated
 @Getter
 @Setter
 public class UserOnboardingRequest {

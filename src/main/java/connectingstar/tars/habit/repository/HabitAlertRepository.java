@@ -2,14 +2,20 @@ package connectingstar.tars.habit.repository;
 
 import connectingstar.tars.habit.domain.HabitAlert;
 import connectingstar.tars.habit.dto.HabitAlertWithDevice;
+import connectingstar.tars.habit.domain.RunHabit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import java.util.Optional;
 
 import java.time.LocalTime;
 import java.util.List;
 
 public interface HabitAlertRepository extends JpaRepository<HabitAlert,Integer> {
+    Optional<HabitAlert> findByRunHabitAndAlertOrder(RunHabit runHabit, Integer alertOrder);
+
+    void deleteInBatchByRunHabit(RunHabit runHabit);
+
     /**
      * 1. status = 1 (active),
      * 2. alertTime BETWEEN 조건으로 조회.

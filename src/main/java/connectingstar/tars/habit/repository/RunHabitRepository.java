@@ -9,10 +9,15 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-public interface RunHabitRepository extends JpaRepository<RunHabit,Integer> {
+public interface RunHabitRepository extends JpaRepository<RunHabit, Integer> {
+
+    Optional<RunHabit> findByRunHabitId(Integer runHabitId);
 
     List<RunHabit> findAllByUser(User user);
+
+    Integer countByUser(User user);
 
     /**
      * history.runDate가 입력한 runDate와 일치하는 값이 없는 RunHabit을 반환합니다.

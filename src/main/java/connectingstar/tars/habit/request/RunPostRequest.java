@@ -9,7 +9,9 @@ import lombok.Setter;
  * 진행중인 습관 생성 요청
  *
  * @author 김성수
+ * @deprecated use {@link connectingstar.tars.habit.request.HabitPostRequest} instead
  */
+@Deprecated
 @Getter
 @Setter
 public class RunPostRequest {

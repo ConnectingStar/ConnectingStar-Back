@@ -1,30 +1,33 @@
 package connectingstar.tars.habit.command;
 
 import connectingstar.tars.common.exception.ValidationException;
-import connectingstar.tars.common.exception.errorcode.UserErrorCode;
 import connectingstar.tars.common.utils.UserUtils;
 import connectingstar.tars.habit.domain.HabitAlert;
-import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.QuitHabit;
 import connectingstar.tars.habit.domain.RunHabit;
+import connectingstar.tars.habit.mapper.QuitHabitMapper;
+import connectingstar.tars.habit.mapper.RunHabitMapper;
+import connectingstar.tars.habit.query.RunHabitQueryService;
 import connectingstar.tars.habit.repository.*;
-import connectingstar.tars.habit.request.RunDeleteRequest;
-import connectingstar.tars.habit.request.RunPostRequest;
-import connectingstar.tars.habit.request.RunPutRequest;
-import connectingstar.tars.habit.response.RunPostResponse;
-import connectingstar.tars.habit.response.RunPutResponse;
-import connectingstar.tars.user.command.UserHabitCommandService;
+import connectingstar.tars.habit.request.*;
+import connectingstar.tars.habit.response.*;
+import connectingstar.tars.history.domain.HabitHistory;
+import connectingstar.tars.history.repository.HabitHistoryRepository;
+import connectingstar.tars.history.repository.HabitHistoryRepositoryCustom;
+import connectingstar.tars.onboard.command.UserOnboardCommandService;
+import connectingstar.tars.user.command.UserCommandService;
 import connectingstar.tars.user.domain.User;
+import connectingstar.tars.user.query.UserQueryService;
 import connectingstar.tars.user.repository.UserRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
+import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.EXCEED_USER_MAX_COUNT;
 import static connectingstar.tars.common.exception.errorcode.HabitErrorCode.RUN_HABIT_NOT_FOUND;
 import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_NOT_FOUND;
 
@@ -38,29 +41,101 @@ import static connectingstar.tars.common.exception.errorcode.UserErrorCode.USER_
 @Service
 public class RunHabitCommandService {
 
+    /**
+     * 사용자가 가질 수 있는 최대 진행중인 습관 수
+     */
+    public static final Integer USER_MAX_COUNT = 3;
     public static final int FIRST_ALERT_STATUS = 1;
     public static final int SECOND_ALERT_STATUS = 2;
     public static final boolean NOT_REST = false;
     public static final boolean REST = true;
     public static final String IDENTITY_NOTHING = "없음";
 
-    private final HabitAlertCommandService habitAlertCommandService;
     private final RunHabitRepository runHabitRepository;
-    private final RunHabitDao runHabitDao;
+    private final RunHabitRepositoryCustom runHabitRepositoryCustom;
     private final HabitAlertRepository habitAlertRepository;
+    private final HabitAlertRepositoryCustom habitAlertRepositoryCustom;
     private final QuitHabitRepository quitHabitRepository;
     private final HabitHistoryRepository habitHistoryRepository;
+    private final HabitHistoryRepositoryCustom habitHistoryRepositoryCustom;
     private final UserRepository userRepository;
+
+    private final RunHabitQueryService runHabitQueryService;
+    private final UserQueryService userQueryService;
+
+    private final HabitAlertCommandService habitAlertCommandService;
+    private final UserOnboardCommandService userOnboardCommandService;
+    private final UserCommandService userCommandService;
+
+    private final RunHabitMapper runHabitMapper;
+    private final QuitHabitMapper quitHabitMapper;
+
+    /**
+     * 진행중인 습관 생성.
+     * <p>
+     * isOnboarding=true이면 사용자의 onboarding 상태를 업데이트한다.
+     * 사용자의 정체성이 null이면 생성한 습관의 정체성으로 업데이트한다.
+     */
+    @Transactional
+    public HabitPostResponse save(HabitPostRequest param) {
+        User user = userQueryService.getCurrentUserOrElseThrow();
+
+        validateUserMaxCount(user.getId());
+
+        RunHabit runHabit = RunHabit.postBuilder()
+                .identity(param.getIdentity())
+                .user(user)
+                .runTime(param.getRunTime())
+                .place(param.getPlace())
+                .action(param.getAction())
+                .value(param.getValue())
+                .unit(param.getUnit())
+                .build();
+
+        HabitAlert firstHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getFirstAlert(), FIRST_ALERT_STATUS);
+        HabitAlert secondHabitAlert = habitAlertCommandService.makeAlert(runHabit, param.getRunTime(), param.getSecondAlert(), SECOND_ALERT_STATUS);
+        runHabit.addAlert(habitAlertRepository.save(firstHabitAlert));
+        runHabit.addAlert(habitAlertRepository.save(secondHabitAlert));
+
+        runHabitRepository.save(runHabit);
+
+        // 온보딩 과정 중 생성했으면 온보딩 상태 업데이트
+        if (param.getIsOnboarding() != null && param.getIsOnboarding()) {
+            userOnboardCommandService.updateIsHabitCreated(user.getId(), true);
+            userCommandService.updateOnboardIfCompleted(user);
+        }
+
+        // 사용자 정체성이 null이면 생성한 습관의 정체성으로 업데이트
+        if (user.getIdentity() == null) {
+            user.updateIdentity(runHabit.getIdentity());
+        }
+
+        return runHabitMapper.toPostResponse(runHabit);
+    }
+
+    /**
+     * 유저별 습관 개수가 최대 개수를 초과하면 예외를 발생시킨다.
+     */
+    private void validateUserMaxCount(Integer userId) {
+        User userReference = userRepository.getReferenceById(userId);
+        Integer userRunHabitCount = runHabitRepository.countByUser(userReference);
+
+        if (userRunHabitCount >= USER_MAX_COUNT) {
+            throw new ValidationException(EXCEED_USER_MAX_COUNT);
+        }
+    }
 
     /**
      * 진행중인 습관 생성
      *
      * @param param 진행중인 습관 생성을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
+     * @deprecated use {@link connectingstar.tars.habit.command.RunHabitCommandService#save} instead
      */
     @Transactional
-    public RunPostResponse saveRun(RunPostRequest param) {
+    @Deprecated
+    public RunPostResponse save(RunPostRequest param) {
         User user = findUserByUserId(UserUtils.getUserId());
-        RunHabit runHabit = RunHabit.postRunHabit()
+        RunHabit runHabit = RunHabit.postBuilder()
                 .identity(param.getIdentity())
                 .user(user)
                 .runTime(param.getRunTime().toLocalTime())
@@ -79,51 +154,59 @@ public class RunHabitCommandService {
 
     /**
      * 진행중인 습관 수정
+     * 습관 알람 수정 포함
      *
      * @param param 진행중인 습관 수정을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
      * @return 입력값을 그대로 반환합니다.(추후 필요한 값만 반환하도록 수정필요)
      */
+    @Deprecated
     @Transactional
     public RunPutResponse updateRun(RunPutRequest param) {
         RunHabit runHabit = findRunHabitByRunHabitId(param.getRunHabitId());
         User user = userRepository.findById(UserUtils.getUserId()).orElseThrow(() -> new ValidationException(USER_NOT_FOUND));
-        runHabit.updateData(param,user);
+        runHabit.updateData(param, user);
         List<HabitAlert> alerts = runHabit.getAlerts();
-        habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts,FIRST_ALERT_STATUS, param.getFirstAlertStatus());
-        habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS, param.getSecondAlertStatus() );
+        habitAlertCommandService.updateHabitAlert(param.getFirstAlert().toLocalTime(), alerts, FIRST_ALERT_STATUS, param.getFirstAlertStatus());
+        habitAlertCommandService.updateHabitAlert(param.getSecondAlert().toLocalTime(), alerts, SECOND_ALERT_STATUS, param.getSecondAlertStatus());
         return new RunPutResponse(runHabit);
 
     }
 
     /**
-     * 진행중인 습관 삭제
-     *
-     * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
+     * 진행중인 내 습관을 일부 수정합니다.
+     * null인 필드는 수정하지 않습니다.
      */
-    public void deleteRun(RunDeleteRequest param) {
-        User user = findUserByUserId(UserUtils.getUserId());
-        RunHabit runHabit = runHabitDao.checkUserId(param.getRunHabitId());
-        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
-        if(runHabit.getIdentity().equals(user.getIdentity())) {
-            Optional<RunHabit> first = user.getRunHabits().stream().filter(rh -> !rh.getIdentity().equals(user.getIdentity())).findFirst();
-            if(first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
-            else user.updateIdentity(first.get().getIdentity());
+    @Transactional
+    public HabitPatchResponse patchMineById(Integer runHabitId, HabitPatchRequest param) {
+        RunHabit runHabit = runHabitQueryService.getMineByIdOrElseThrow(runHabitId);
+
+        if (param.getIdentity() != null) {
+            runHabit.setIdentity(param.getIdentity());
         }
-        QuitHabit quitHabit = QuitHabit.postQuitHabit()
-                .runTime(runHabit.getRunTime())
-                .user(user)
-                .place(runHabit.getPlace())
-                .action(runHabit.getAction())
-                .value(findValue(habitHistories, NOT_REST))
-                .unit(runHabit.getUnit())
-                .restValue(findValue(habitHistories, REST))
-                .reasonOfQuit(param.getReason())
-                .startDate(runHabit.getCreatedAt())
-                .quitDate(LocalDateTime.now())
-                .build();
-        quitHabitRepository.save(quitHabit);
-        habitHistoryRepository.deleteAll(habitHistories);
-        runHabitRepository.delete(runHabit);
+        if (param.getRunTime() != null) {
+            runHabit.setRunTime(param.getRunTime());
+        }
+        if (param.getPlace() != null) {
+            runHabit.setPlace(param.getPlace());
+        }
+        if (param.getAction() != null) {
+            runHabit.setAction(param.getAction());
+        }
+        if (param.getValue() != null) {
+            runHabit.setValue(param.getValue());
+        }
+        if (param.getUnit() != null) {
+            runHabit.setUnit(param.getUnit());
+        }
+
+        if (param.getFirstAlert() != null) {
+            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(), 1, param.getFirstAlert());
+        }
+        if (param.getSecondAlert() != null) {
+            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(), 2, param.getSecondAlert());
+        }
+
+        return runHabitMapper.toPatchResponse(runHabit, runHabit.getAlerts());
     }
 
     private User findUserByUserId(Integer userId) {
@@ -135,7 +218,81 @@ public class RunHabitCommandService {
         return runHabitRepository.findById(runHabitId).orElseThrow(() -> new ValidationException(RUN_HABIT_NOT_FOUND));
     }
 
+    /**
+     * 진행중인 습관 삭제
+     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다
+     *
+     * @param param 진행중인 습관 삭제를 위한 사용자 PK, 진행중인 습관 ID, 삭제 이유
+     * @deprecated use {@link connectingstar.tars.habit.command.RunHabitCommandService#deleteMineById} instead
+     */
+    @Deprecated
+    public void deleteRun(RunDeleteRequest param) {
+        User user = findUserByUserId(UserUtils.getUserId());
+        RunHabit runHabit = runHabitRepositoryCustom.checkUserId(param.getRunHabitId());
+        List<HabitHistory> habitHistories = runHabit.getHabitHistories();
+        if (runHabit.getIdentity().equals(user.getIdentity())) {
+            Optional<RunHabit> first = user.getRunHabits().stream().filter(rh -> !rh.getIdentity().equals(user.getIdentity())).findFirst();
+            if (first.isEmpty()) user.updateIdentity(IDENTITY_NOTHING);
+            else user.updateIdentity(first.get().getIdentity());
+        }
+        QuitHabit quitHabit = QuitHabit.builder()
+                .runTime(runHabit.getRunTime())
+                .user(user)
+                .place(runHabit.getPlace())
+                .action(runHabit.getAction())
+                .completedHistoryCount(findValue(habitHistories, NOT_REST))
+                .unit(runHabit.getUnit())
+                .restHistoryCount(findValue(habitHistories, REST))
+                .reasonOfQuit(param.getReason())
+                .startDate(runHabit.getCreatedAt())
+                .quitDate(LocalDateTime.now())
+                .build();
+        quitHabitRepository.save(quitHabit);
+        habitHistoryRepository.deleteAll(habitHistories);
+        runHabitRepository.delete(runHabit);
+    }
+
+    /**
+     * 휴식이 몇 번인 지 반환한다
+     */
     private Integer findValue(List<HabitHistory> habitHistories, Boolean restValue) {
         return habitHistories.stream().filter(habitHistory -> habitHistory.getIsRest() == restValue).toList().size();
+    }
+
+
+    /**
+     * 진행중인 습관 삭제.
+     * RunHabit 레코드를 QuitHabit으로 복사하고, RunHabit 레코드를 hard delete한다.
+     * runHabitId에 해당하는 습관이 현재 로그인한 유저의 습관이 아니면 예외를 발생시킨다.
+     */
+    @Transactional
+    public HabitDeleteResponse deleteMineById(Integer runHabitId, HabitDeleteRequest request) {
+        User user = userQueryService.getCurrentUserOrElseThrow();
+        RunHabit runHabit = runHabitQueryService.getMineByIdOrElseThrow(runHabitId, user);
+
+        Integer completedHistoryCount = habitHistoryRepository.countByRunHabitAndIsRest(runHabit, false);
+        Integer restHistoryCount = habitHistoryRepository.countByRunHabitAndIsRest(runHabit, true);
+
+        QuitHabit quitHabit = QuitHabit.builder()
+                .runTime(runHabit.getRunTime())
+                .user(user)
+                .place(runHabit.getPlace())
+                .action(runHabit.getAction())
+                .value(runHabit.getValue())
+                .completedHistoryCount(completedHistoryCount)
+                .unit(runHabit.getUnit())
+                .restHistoryCount(restHistoryCount)
+                .reasonOfQuit(request.getReasonOfQuit())
+                .startDate(runHabit.getCreatedAt())
+                .quitDate(LocalDateTime.now())
+                .build();
+
+        quitHabitRepository.save(quitHabit);
+
+        habitAlertRepositoryCustom.deleteByRunHabitId(runHabit.getRunHabitId());
+        habitHistoryRepositoryCustom.deleteByRunHabitId(runHabit.getRunHabitId());
+        runHabitRepository.delete(runHabit);
+
+        return quitHabitMapper.toHabitDeleteResponse(quitHabit);
     }
 }

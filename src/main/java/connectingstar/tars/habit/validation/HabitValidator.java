@@ -47,14 +47,17 @@ public class HabitValidator {
     public void validate(RunDayGetRequest param) {
         validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
     }
+
     /**
      * 오늘 실천한 습관 저장 요청 검증
      */
-    public void validate(HistoryPostRequest param) {
+    public void validate(HabitHistoryPostRequest param) {
         validateNull(param.getRunHabitId(), PARAM_RUN_HABIT_ID_EMPTY);
-        validateNull(param.getAchievement(), PARAM_ACHIEVEMENT_EMPTY);
-        validateNull(param.getRunPlace(), PARAM_PLACE_EMPTY);
         validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
+        validateNull(param.getRunTime(), PARAM_RUN_TIME_EMPTY);
+        validateNull(param.getRunPlace(), PARAM_PLACE_EMPTY);
+        validateNull(param.getAction(), PARAM_ACTION_EMPTY);
+        validateNull(param.getAchievement(), PARAM_ACHIEVEMENT_EMPTY);
         validateNull(param.getBehaviorValue(), PARAM_VALUE_EMPTY);
         validateNull(param.getReview(), PARAM_REVIEW_EMPTY);
 
@@ -72,7 +75,7 @@ public class HabitValidator {
     /**
      * 습관 기록 조회 요청 검증
      */
-    public void validate(HistoryGetListRequest param) {
+    public void validate(HabitHistoryGetListRequest param) {
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
         validateNull(param.getIncrease(), PARAM_INCREASE_EMPTY);
     }
@@ -80,7 +83,7 @@ public class HabitValidator {
     /**
      * 습관 기록 기간 조회 요청 검증
      */
-    public void validate(HistoryListRequest param) {
+    public void validate(HabitHistoryListRequest param) {
         validateNull(param.getReferenceDate(), PARAM_REFERENCE_DATE_EMPTY);
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
     }
@@ -88,7 +91,7 @@ public class HabitValidator {
     /**
      * 특정기간 습관 기록 생성여부 조회 요청 검증
      */
-    public void validate(HistoryCreateCheckRequest param) {
+    public void validate(HabitHistoryCreateCheckRequest param) {
         validateNull(param.getReferenceDate(), PARAM_DATE_EMPTY);
         validateNull(param.getRunHabitId(), RUN_HABIT_NOT_FOUND);
     }

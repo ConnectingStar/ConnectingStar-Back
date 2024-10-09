@@ -3,14 +3,8 @@ package connectingstar.tars.habit.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import connectingstar.tars.common.domain.TimeInfo;
-import connectingstar.tars.habit.domain.HabitHistory;
 import connectingstar.tars.habit.domain.RunHabit;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.Getter;
-
-import java.time.LocalTime;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * 진행중인 습관 수정 응답

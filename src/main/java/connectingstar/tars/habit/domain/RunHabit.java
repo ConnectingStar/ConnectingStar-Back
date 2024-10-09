@@ -2,6 +2,7 @@ package connectingstar.tars.habit.domain;
 
 import connectingstar.tars.common.audit.Auditable;
 import connectingstar.tars.habit.request.RunPutRequest;
+import connectingstar.tars.history.domain.HabitHistory;
 import connectingstar.tars.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -87,7 +88,7 @@ public class RunHabit extends Auditable {
     @OneToMany(mappedBy = "runHabit", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private List<HabitAlert> alerts = new ArrayList<>();
 
-    @Builder(builderMethodName = "postRunHabit")
+    @Builder(builderMethodName = "postBuilder")
     public RunHabit(String identity,
                     User user,
                     LocalTime runTime,
@@ -108,6 +109,31 @@ public class RunHabit extends Auditable {
         this.alerts.add(habitAlert);
     }
 
+    public void setIdentity(String identity) {
+        this.identity = identity;
+    }
+
+    public void setRunTime(LocalTime runTime) {
+        this.runTime = runTime;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    @Deprecated
     public void updateData(RunPutRequest param, User user) {
         this.identity = checkIdentity(user, param.getIdentity());
         this.runTime = param.getRunTime() != null ? param.getRunTime().toLocalTime() : this.runTime;
@@ -117,13 +143,12 @@ public class RunHabit extends Auditable {
         this.unit = param.getBehaviorUnit() != null ? param.getBehaviorUnit() : this.unit;
     }
 
+    @Deprecated
     private String checkIdentity(User user, String paramIdentity) {
         if (paramIdentity != null && user.getRunHabits().stream().anyMatch(rh -> rh.getIdentity().equals(paramIdentity)))
             return paramIdentity;
         else {
             return this.identity;
         }
-
-
     }
 }

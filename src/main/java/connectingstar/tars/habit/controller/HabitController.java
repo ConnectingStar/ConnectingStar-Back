@@ -1,202 +1,128 @@
 package connectingstar.tars.habit.controller;
 
 import connectingstar.tars.common.response.DataResponse;
-import connectingstar.tars.common.response.ListResponse;
-import connectingstar.tars.common.response.SuccessResponse;
-import connectingstar.tars.habit.command.HabitHistoryCommandService;
 import connectingstar.tars.habit.command.RunHabitCommandService;
-import connectingstar.tars.habit.query.HabitHistoryQueryService;
-import connectingstar.tars.habit.query.QuitHabitQueryService;
 import connectingstar.tars.habit.query.RunHabitQueryService;
-import connectingstar.tars.habit.request.*;
-import connectingstar.tars.habit.response.HistoryGetListResponse;
-import connectingstar.tars.habit.validation.HabitValidator;
+import connectingstar.tars.habit.request.HabitDeleteRequest;
+import connectingstar.tars.habit.request.HabitPatchRequest;
+import connectingstar.tars.habit.request.HabitPostRequest;
+import connectingstar.tars.habit.request.param.HabitDailyTrackingRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetListRequestParam;
+import connectingstar.tars.habit.request.param.HabitGetOneRequestParam;
+import connectingstar.tars.habit.response.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * 습관 관련 API
- *
- * @author 김성수
- */
-@RequiredArgsConstructor
-@RequestMapping(value = "/habit", produces = MediaType.APPLICATION_JSON_VALUE)
-@RestController
-public class HabitController {
+import java.util.List;
 
-    private final RunHabitCommandService runHabitCommandService;
-    private final HabitHistoryCommandService habitHistoryCommandService;
-    private final QuitHabitQueryService quitHabitQueryService;
-    private final HabitHistoryQueryService habitHistoryQueryService;
+/**
+ * 습관 API.
+ * REST API naming convention 준수.
+ *
+ * @author 이우진
+ */
+@RestController
+@RequestMapping(value = "/v2/habits", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequiredArgsConstructor
+public class HabitController {
     private final RunHabitQueryService runHabitQueryService;
+    private final RunHabitCommandService runHabitCommandService;
 
     /**
      * 진행중인 습관 생성
      *
      * @param param 진행중인 습관 생성을 위한 사용자 PK, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
-     * @return 201 응답 RunHabitId
      */
     @PostMapping
-    public ResponseEntity<?> doPostRun(@RequestBody RunPostRequest param) {
-        HabitValidator.validate(param);
+    public ResponseEntity<DataResponse<HabitPostResponse>> post(@Valid @RequestBody HabitPostRequest param) {
+        HabitPostResponse response = runHabitCommandService.save(param);
 
-        return ResponseEntity.ok(new DataResponse(runHabitCommandService.saveRun(param)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DataResponse(response));
     }
 
     /**
-     * 습관 기록 생성
-     *
-     * @param param 습관 기록을 저장하기 위한 유저 ID, 진행중인 습관 ID, 만족도, 실천한 장소, 실천량, 느낀점, 휴식여부
-     * @return 201 응답
-     */
-    @PostMapping(value = "/history")
-    public ResponseEntity<?> doPostHistory(@RequestBody HistoryPostRequest param) {
-        HabitValidator.validate(param);
-        habitHistoryCommandService.saveHistory(param);
-        return ResponseEntity.ok(new SuccessResponse());
-    }
-
-    /**
-     * 내 진행중인 습관 조회 (*임시 추후 고치겠습니다)
-     *
-     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     * 내 습관 목록 조회
      */
     @GetMapping
-    public ResponseEntity<?> doGetRunList() {
-        return ResponseEntity.ok(new ListResponse(runHabitQueryService.getList()));
+    public ResponseEntity<DataResponse<HabitGetListResponse>> getList(
+            @ModelAttribute @Valid HabitGetListRequestParam requestParam
+    ) {
+        HabitGetListResponse responseDto = runHabitQueryService.getMyList(requestParam);
+        return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
     /**
-     * 내 진행중인 단일 습관 조회 (*임시 추후 고치겠습니다)
-     *
-     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID)
-     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     * 날짜를 입력받아 해당 날짜의 습관, 기록, 상태를 조회한다.
+     * 홈 페이지 - 캘린더 - 날짜별 습관 수행을 조회할 때 사용한다.
      */
-    @GetMapping(value = "/one")
-    public ResponseEntity<?> doGetRun(RunGetRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(new DataResponse(runHabitQueryService.get(param)));
+    @GetMapping("/daily-trackings")
+    public ResponseEntity<DataResponse<HabitDailyTrackingGetResponse>> getDailyTrackingList(
+            @ModelAttribute @Valid HabitDailyTrackingRequestParam requestParam
+    ) {
+        List<HabitDailyTrackingGetResponse> responseDto = runHabitQueryService.getDailyTrackingList(requestParam);
+        return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
     /**
-     * 내 진행중인 당일 습관 조회
-     *
-     * @param param 진행중인 습관 ID, 기준 날짜
-     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
+     * 내 습관 1개 조회
      */
-    @GetMapping(value = "/day")
-    public ResponseEntity<?> doGetRunDay(RunDayGetRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(new DataResponse(runHabitQueryService.getDay(param)));
+    @GetMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitGetOneResponse>> getOne(
+            @PathVariable Integer runHabitId,
+            @ModelAttribute @Valid HabitGetOneRequestParam requestParam
+    ) {
+        HabitGetOneResponse responseDto = runHabitQueryService.getMineById(runHabitId, requestParam);
+        return ResponseEntity.ok(new DataResponse(responseDto));
     }
 
     /**
-     * 내 이번주 매일 습관 전체 작성여부 확인 **쿼리에 매우 문제가 많음(N+1문제) 추후 반드시 수정이 필요함
+     * 내 습관을 부분 업데이트 (PATCH).
+     * null인 필드는 업데이트하지 않습니다.
      *
-     * @param param 진행중인 습관 ID, 기준 날짜
-     * @return 배열(기준 날짜, 습관기록 전체 작성 여부)
+     * @param runHabitId 수정할 습관 ID
+     * @param param      수정할 값
      */
-    @GetMapping(value = "/history/week-total-write")
-    public ResponseEntity<?> doGetHistoryTotalWrite(RunDayGetRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(new DataResponse(runHabitQueryService.getHistoryTotalWrite(param)));
-    }
+    @PatchMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitPatchResponse>> patch(
+            @PathVariable Integer runHabitId,
+            @Valid @RequestBody HabitPatchRequest param
+    ) {
+        HabitPatchResponse response = runHabitCommandService.patchMineById(runHabitId, param);
 
-
-    /**
-     * 내 종료 습관 조회
-     *
-     * @return 배열(종료한 습관 ID, 사용자 PK, 사용자 이름, 실천 시간, 장소, 행동, 실천횟수, 휴식 실천횟수, 종료 사유, 시작 날짜, 종료 날짜)
-     */
-    @GetMapping(value = "/quit")
-    public ResponseEntity<?> doGetQuitList() {
-        return ResponseEntity.ok(new ListResponse(quitHabitQueryService.getList()));
+        return ResponseEntity.ok(new DataResponse(response));
     }
 
     /**
-     * 내 습관기록목록 조회
+     * 내 습관 삭제
      *
-     * @param param 습관기록목록 조회를 위한 위한 유저 ID,진행중인 습관 ID, 최신,오래된 순 구분, 휴식 여부 구분
-     * @return 배열(습관 수행 날짜, 실천한 장소, 실천량, 단위, 느낀점)
+     * @returns response.quitHabit {QuitHabitDto} - 삭제된 습관 정보
      */
-    @GetMapping(value = "/history")
-    public ResponseEntity<?> doGetHistoryList(HistoryGetListRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(new ListResponse(habitHistoryQueryService.getList(param)));
+    @DeleteMapping("/{runHabitId}")
+    public ResponseEntity<DataResponse<HabitDeleteResponse>> delete(
+            @PathVariable Integer runHabitId,
+            @Valid @RequestBody HabitDeleteRequest request
+    ) {
+        HabitDeleteResponse response = runHabitCommandService.deleteMineById(runHabitId, request);
+
+        return ResponseEntity.ok(new DataResponse(response));
     }
 
     /**
-     * 내 습관 기록 단일 조회
-     *
-     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
-     * @return 습관 수행 날짜, 만족도, 실천량
+     * 습관 1개의 통계를 조회합니다.
+     * <p>
+     * 누적 별, 누적 실천량
+     * [FU-37] 통계 페이지에서 사용
      */
-    @GetMapping(value = "/history/date")
-    public ResponseEntity<?> doGetHistory(HistoryListRequest param) {
-        HabitValidator.validate(param);
-        HistoryGetListResponse historyGetListResponse = habitHistoryQueryService.get(param);
-        DataResponse dataResponse = new DataResponse(historyGetListResponse);
-        return ResponseEntity.ok(dataResponse);
-    }
+    @GetMapping("/{runHabitId}/statistics")
+    public ResponseEntity<DataResponse<HabitGetOneStatisticsResponse>> getStatistics(
+            @PathVariable Integer runHabitId
+    ) {
+        HabitGetOneStatisticsResponse response = runHabitQueryService.getMyStatisticsById(runHabitId);
 
-    /**
-     * 내 습관 주간기록 조회
-     *
-     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
-     * @return 배열(습관 수행 날짜, 만족도, 실천량)
-     */
-    @GetMapping(value = "/history/weekly")
-    public ResponseEntity<?> doGetHistoryWeeklyList(HistoryListRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(new ListResponse(habitHistoryQueryService.getWeeklyList(param)));
-    }
-
-    /**
-     * 내 습관 월간기록 조회
-     *
-     * @param param 습관월간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
-     * @return 배열(습관 수행 날짜, 만족도, 실천량)
-     */
-    @GetMapping(value = "/history/monthly")
-    public ResponseEntity<?> doGetHistoryMonthlyList(HistoryListRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(new ListResponse(habitHistoryQueryService.getMonthList(param)));
-    }
-
-    /**
-     * 특정 날짜 습관기록 생성여부 조회
-     *
-     * @param param 습관주간기록 조회를 위한 진행중인 습관 ID, 조회 기준 날짜("yyyy-MM-dd")
-     * @return 배열(습관 수행 날짜, 만족도, 실천량)
-     */
-    @GetMapping(value = "/history/check")
-    public ResponseEntity<?> doGetCreateCheck(HistoryCreateCheckRequest param) {
-        HabitValidator.validate(param);
-        return ResponseEntity.ok(new DataResponse(habitHistoryQueryService.checkTodayCreate(param)));
-    }
-
-    /**
-     * 진행중인 습관 수정
-     *
-     * @param param 진행중인 습관 수정을 위한 진행중인 습관 ID, 정체성, 실천 시간, 장소, 행동, 얼마나, 단위, 1차 알림시각, 2차 알림시각
-     * @return 200 응답, 입력값을 그대로 반환합니다.(추후 필요한 값만 반환하도록 수정필요)
-     */
-    @PutMapping
-    public ResponseEntity<?> doPutRun(@RequestBody RunPutRequest param) {
-        return ResponseEntity.ok(new DataResponse(runHabitCommandService.updateRun(param)));
-    }
-
-    /**
-     * 진행중인 습관 삭제
-     *
-     * @param param 진행중인 습관 삭제를 위한 진행중인 습관 ID, 삭제 이유
-     * @return 204 응답
-     */
-    @DeleteMapping
-    public ResponseEntity<?> doDeleteRun(@RequestBody RunDeleteRequest param) {
-        runHabitCommandService.deleteRun(param);
-        return ResponseEntity.ok(new SuccessResponse());
+        return ResponseEntity.ok(new DataResponse(response));
     }
 }
