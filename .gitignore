@@ -24,6 +24,7 @@ bin/
 *.ipr
 out/
 /src/main/resources/*.yml
+/src/main/resources/habbit-buddy-firebase-service-account.json
 !**/src/main/**/out/
 !**/src/test/**/out/
 
