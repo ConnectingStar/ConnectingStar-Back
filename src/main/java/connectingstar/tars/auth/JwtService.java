@@ -92,12 +92,17 @@ public class JwtService {
         String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
 
         // 유효하지 않으면 쿠키의 리프레시 토큰 여부 확인
-        if (StringUtils.hasText(refreshTokenValue) && isTokenValid(refreshTokenValue)) {
+        if (isTokenValid(refreshTokenValue)) {
             // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
             String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(refreshTokenValue))));
             SecurityContextHolder.getContext().setAuthentication(getAuthentication(newAccessToken));
             return new IssueTokenResponse(newAccessToken);
-        } else {
+        }
+        else if (StringUtils.hasText(refreshTokenValue)){
+            log.info("리프레시 토큰 값이 NULL 입니다");
+            throw new ValidationException(NULL_TOKEN);
+        }
+        else {
             // 리프레시 토큰도 유효하지 않으면 인증 실패 처리
             log.info("토큰이 유효하지 않습니다");
             throw new ValidationException(INVALID_TOKEN);
