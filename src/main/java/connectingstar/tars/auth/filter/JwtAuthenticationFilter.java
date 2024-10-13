@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -50,10 +51,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
         String accessTokenValue = null;
-//        String refreshTokenValue = null;
-//        if (CookieUtils.getCookie(request, jwtProperties.cookieName()) != null){
-//            refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
-//        }
+        String refreshTokenValue = null;
+        if (CookieUtils.getCookie(request, jwtProperties.cookieName()) != null){
+            refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
+        }
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             accessTokenValue = authorizationHeader.substring(7);
         }
@@ -80,10 +81,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("엑세스 토큰 값이 NULL 입니다");
             throw new ValidationException(NULL_TOKEN);
         }
-//        else if (!StringUtils.hasText(refreshTokenValue)){
-//            log.info("리프레시 토큰 값이 NULL 입니다");
-//            throw new ValidationException(NULL_TOKEN);
-//        }
+        else if (!StringUtils.hasText(refreshTokenValue)){
+            log.info("리프레시 토큰 값이 NULL 입니다");
+            throw new ValidationException(NULL_TOKEN);
+        }
 
         // 3. Access Token이 있는 경우
         if (jwtService.validateToken(accessTokenValue)) {
