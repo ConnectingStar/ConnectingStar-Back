@@ -2,7 +2,6 @@ package connectingstar.tars.auth;
 
 import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.exception.ValidationException;
-import connectingstar.tars.common.utils.CookieUtils;
 import connectingstar.tars.oauth.response.IssueTokenResponse;
 import connectingstar.tars.oauth.service.RedisTokenService;
 import connectingstar.tars.user.domain.TokenRedis;
@@ -87,12 +86,13 @@ public class JwtService {
     /**
      * refreshToken을 통해 accessToken 재발급, refreshToken 이 만료되었으면 401 에러
      *
-     * @param request
-     * @return
+     * @param request 요청확인
+     *
      */
     public IssueTokenResponse issueAccessToken(HttpServletRequest request) {
         //쿠키에서 리프레시 토큰을 꺼내 만료되었는지 확인
 //        String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
+        //엑세스토큰 추출 뒤, 리프레시 토큰을 검색.
         String authorizationHeader = request.getHeader("Authorization");
         TokenRedis tokenRedis = new TokenRedis();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -107,6 +107,7 @@ public class JwtService {
             String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(tokenRedis.getRefreshToken()))));
             SecurityContextHolder.getContext().setAuthentication(getAuthentication(newAccessToken));
             redisTokenService.updateToken(newAccessToken, tokenRedis);
+            // 엑세스 토큰 교체
             return new IssueTokenResponse(newAccessToken);
         }
         else if (!StringUtils.hasText(tokenRedis.getRefreshToken())){
@@ -120,14 +121,19 @@ public class JwtService {
             throw new ValidationException(INVALID_TOKEN);
         }
     }
+
+    /**
+     * 로그아웃. redis에서 토큰을 검색, 있으면 삭제
+     *
+     * @param request 요청확인
+     *
+     */
     public void Logout(HttpServletRequest request){
         String authorizationHeader = request.getHeader("Authorization");
         TokenRedis tokenRedis = new TokenRedis();
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String accessToken = authorizationHeader.substring(7);
             tokenRedis = redisTokenService.findRefreshToken(accessToken);
-            log.info("refreshToken: "+tokenRedis.getRefreshToken());
-            log.info("로그아웃 완료!");
         }
         redisTokenService.deleteToken(tokenRedis);
     }
@@ -147,8 +153,8 @@ public class JwtService {
     /**
      * Token에서 UserName 정보 가져오기
      *
-     * @param token
-     * @return
+     * @param token 토큰
+     *
      */
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
