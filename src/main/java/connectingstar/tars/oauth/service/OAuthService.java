@@ -15,6 +15,7 @@ import connectingstar.tars.oauth.response.SocialUserResponse;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +38,7 @@ public class OAuthService {
   private final JwtProperties jwtProperties;
   private final JwtService jwtService;
   private final UserRepository userRepository;
+  private final RedisTokenService redisTokenService;
 
   /**
    * 소셜 타입에 따른 AuthCode 요청 Url 반환
@@ -67,7 +69,10 @@ public class OAuthService {
     String refreshToken = jwtService.generateRefreshToken(user.get());
 
     //리프레시 토큰은 쿠키에 저장 (24 * 60 * 60 * 7) = 7일
-    CookieUtils.setCookie(jwtProperties.cookieName(), refreshToken, 24 * 60 * 60 * 7, response);
+//    CookieUtils.setCookie(jwtProperties.cookieName(), refreshToken, 24 * 60 * 60 * 7, response);
+
+    redisTokenService.saveToken(userInfo.email(), accessToken, refreshToken);
+
     SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(refreshToken));
 
     return new OAuthLoginResponse(UserUtils.getUser().getOnboard(), accessToken);

@@ -16,5 +16,15 @@ services:
       - mysql_data:/var/lib/mysql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
+  redis:
+    hostname: redis
+    container_name: redis
+    image: redis:latest
+    command: redis-server --requirepass local_password --port 6379
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data:/data
+
 volumes:
   mysql_data:

@@ -57,8 +57,9 @@ public class OAuthController {
    * @param response 응답 객체
    */
   @PostMapping(value = "/logout")
-  public ResponseEntity<?> doPostLogout(HttpServletResponse response) {
-    CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
+  public ResponseEntity<?> doPostLogout(HttpServletResponse response, HttpServletRequest request) {
+//    CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response);
+    jwtService.Logout(request);
     return ResponseEntity.ok(new SuccessResponse());
   }
 

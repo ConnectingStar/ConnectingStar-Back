@@ -4,6 +4,8 @@ import connectingstar.tars.common.config.JwtProperties;
 import connectingstar.tars.common.exception.ValidationException;
 import connectingstar.tars.common.utils.CookieUtils;
 import connectingstar.tars.oauth.response.IssueTokenResponse;
+import connectingstar.tars.oauth.service.RedisTokenService;
+import connectingstar.tars.user.domain.TokenRedis;
 import connectingstar.tars.user.domain.User;
 import connectingstar.tars.user.domain.UserDetail;
 import connectingstar.tars.user.query.UserQueryService;
@@ -39,6 +41,7 @@ public class JwtService {
     private Key key;
     private final JwtProperties jwtProperties;
     private final UserQueryService userQueryService;
+    private final RedisTokenService redisTokenService;
 
     @PostConstruct
     public void init() {
@@ -89,24 +92,44 @@ public class JwtService {
      */
     public IssueTokenResponse issueAccessToken(HttpServletRequest request) {
         //쿠키에서 리프레시 토큰을 꺼내 만료되었는지 확인
-        String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
-
+//        String refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
+        String authorizationHeader = request.getHeader("Authorization");
+        TokenRedis tokenRedis = new TokenRedis();
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String accessToken = authorizationHeader.substring(7);
+            log.info("accessToken: "+accessToken);
+            tokenRedis = redisTokenService.findRefreshToken(accessToken);
+            log.info("refreshToken: "+tokenRedis.getRefreshToken());
+        }
         // 유효하지 않으면 쿠키의 리프레시 토큰 여부 확인
-        if (isTokenValid(refreshTokenValue)) {
+        if (isTokenValid(tokenRedis.getRefreshToken())) {
             // 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
-            String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(refreshTokenValue))));
+            String newAccessToken = generateAccessToken(userQueryService.getUser(Integer.valueOf(getUsernameFromToken(tokenRedis.getRefreshToken()))));
             SecurityContextHolder.getContext().setAuthentication(getAuthentication(newAccessToken));
+            redisTokenService.updateToken(newAccessToken, tokenRedis);
             return new IssueTokenResponse(newAccessToken);
         }
-        else if (StringUtils.hasText(refreshTokenValue)){
+        else if (!StringUtils.hasText(tokenRedis.getRefreshToken())){
             log.info("리프레시 토큰 값이 NULL 입니다");
             throw new ValidationException(NULL_TOKEN);
         }
         else {
             // 리프레시 토큰도 유효하지 않으면 인증 실패 처리
             log.info("토큰이 유효하지 않습니다");
+            redisTokenService.deleteToken(tokenRedis);
             throw new ValidationException(INVALID_TOKEN);
         }
+    }
+    public void Logout(HttpServletRequest request){
+        String authorizationHeader = request.getHeader("Authorization");
+        TokenRedis tokenRedis = new TokenRedis();
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String accessToken = authorizationHeader.substring(7);
+            tokenRedis = redisTokenService.findRefreshToken(accessToken);
+            log.info("refreshToken: "+tokenRedis.getRefreshToken());
+            log.info("로그아웃 완료!");
+        }
+        redisTokenService.deleteToken(tokenRedis);
     }
 
     /**

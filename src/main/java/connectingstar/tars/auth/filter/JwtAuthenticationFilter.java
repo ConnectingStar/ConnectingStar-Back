@@ -33,7 +33,7 @@ import static connectingstar.tars.common.exception.errorcode.AuthErrorCode.*;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final JwtProperties jwtProperties;
+//    private final JwtProperties jwtProperties;
 
     /**
      * /check-onboarding api에서 인증 실패하면 응답에 OK이지만, Onboarding false로 기록한다
@@ -51,14 +51,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
         String accessTokenValue = null;
-//        String refreshTokenValue = null;
-//        if (CookieUtils.getCookie(request, jwtProperties.cookieName()) != null){
-//            refreshTokenValue = CookieUtils.getCookie(request, jwtProperties.cookieName());
-//        }
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             accessTokenValue = authorizationHeader.substring(7);
         }
-
 
         // 헤더에서 가져온 어세스 토큰이 비어 있으면
         if (!StringUtils.hasText(accessTokenValue)) {
@@ -76,30 +71,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return; // 필터를 종료합니다.
         }
         // 유효성 체크
-        // 2. Access, Refresh Token이 없는 경우 (Refresh Token이 유효해야 함)
         if (!StringUtils.hasText(accessTokenValue)) {
             log.info("엑세스 토큰 값이 NULL 입니다");
             throw new ValidationException(NULL_TOKEN);
         }
-//        else if (!StringUtils.hasText(refreshTokenValue)){
-//            log.info("리프레시 토큰 값이 NULL 입니다");
-//            throw new ValidationException(NULL_TOKEN);
-//        }
 
         // 3. Access Token이 있는 경우
         if (jwtService.validateToken(accessTokenValue)) {
             // Access Token이 유효하면 SecurityContext에 설정하고 다음 필터로 전달
             SecurityContextHolder.getContext().setAuthentication(jwtService.getAuthentication(accessTokenValue));
         }
-//        else {
-//            // Access Token이 만료된 경우, Refresh Token 확인
-//            if(jwtService.isTokenValid(refreshTokenValue)) {
-//                // Refresh Token이 유효하지 않은 경우 예외 처리
-//                log.info("리프레시 토큰 값이 만료되었습니다");
-//                CookieUtils.setCookie(jwtProperties.cookieName(), null, 0, response, isSecure); // 쿠키 삭제
-//                throw new ValidationException(EXPIRED_TOKEN);
-//            }
-//        }
 
         // 다음 필터로 요청을 전달
         filterChain.doFilter(request, response);
