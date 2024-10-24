@@ -19,9 +19,9 @@ jobs:
       # Ensure submodules are on the correct branch (live)
       - name: Ensure Submodules are on Live Branch
         run: |
-          git submodule foreach --recursive 'git checkout live || true'
-          git submodule foreach --recursive 'git fetch origin live && git reset --hard origin/live'
-
+          git submodule foreach --recursive 'git fetch origin live || true'
+          git submodule foreach --recursive 'git checkout -b live origin/live || true'
+          git submodule foreach --recursive 'git pull origin live || true'
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
