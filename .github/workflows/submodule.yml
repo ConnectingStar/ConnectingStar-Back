@@ -15,12 +15,12 @@ jobs:
         shell: bash
 
     steps:
-      # Checkout the repository and submodules
+      # Checkout the repository and submodules with token for authentication
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GIT_TOKEN }}
-          submodules: true
+          token: ${{ secrets.GIT_TOKEN }}  # Ensure the token is correctly passed
+          submodules: true  # Submodules will be checked out
 
       # Ensure all submodules are on the correct branch (live)
       - name: Git Submodule Update
