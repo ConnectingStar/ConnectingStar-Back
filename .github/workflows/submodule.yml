@@ -1,7 +1,6 @@
 name: 'Submodules Sync'
 
 on:
-  # Allows you to run this workflow manually from the Actions tab or through HTTP API
   workflow_dispatch:
 
 jobs:
@@ -9,7 +8,6 @@ jobs:
     name: 'Submodules Sync'
     runs-on: ubuntu-latest
 
-    # Use the Bash shell regardless of whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -26,9 +24,8 @@ jobs:
       - name: Git Submodule Update
         run: |
           git submodule update --init --recursive
-          git submodule foreach --recursive 'git checkout live || true'
-          git submodule foreach --recursive 'git pull origin live || true'
-          git submodule foreach --recursive git reset --hard
+          git submodule foreach --recursive 'branch=$(git symbolic-ref --short -q HEAD); if [ "$branch" != "live" ]; then git checkout live; fi'
+          git submodule foreach --recursive 'git fetch origin live && git reset --hard origin/live'
           git submodule foreach --recursive git clean -df
 
       # Commit and push updates (if there are changes)
