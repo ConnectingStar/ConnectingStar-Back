@@ -25,9 +25,8 @@ jobs:
       # Update references
       - name: Git Submodule Update
         run: |
-          git fetch origin          # 원격 저장소에서 업데이트 가져오기
-          git checkout live         # 'live' 브랜치로 체크아웃
           git submodule update --init --recursive
+          git submodule foreach --recursive git checkout live || git checkout -b live
           git submodule foreach --recursive git reset --hard
           git submodule foreach --recursive git clean -df
           git submodule update --recursive --remote
