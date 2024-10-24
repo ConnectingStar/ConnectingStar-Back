@@ -15,23 +15,22 @@ jobs:
         shell: bash
 
     steps:
-      # Checkout the repository to the GitHub Actions runner
+      # Checkout the repository and submodules
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.GIT_TOKEN }}
           submodules: true
+          submodules_recursive: true
 
-      # Update references
+      # Ensure all submodules are on the correct branch (live)
       - name: Git Submodule Update
         run: |
           git submodule update --init --recursive
-          git submodule foreach --recursive
-          git fetch origin live   # 원격 저장소에서 live 브랜치 가져오기
-          git checkout live || git checkout -b live
+          git submodule foreach --recursive 'git checkout live || true'
+          git submodule foreach --recursive 'git pull origin live || true'
           git submodule foreach --recursive git reset --hard
           git submodule foreach --recursive git clean -df
-          git submodule update --recursive --remote
 
       # Commit and push updates (if there are changes)
       - name: Commit and push updates
@@ -41,6 +40,6 @@ jobs:
             git config --global user.email 'bot@noreply.github.com'
             git remote set-url origin https://x-access-token:${{ secrets.GIT_TOKEN }}@github.com/${{ github.repository }}
             git add .
-            git commit -am "Auto updated submodule references"
-            git push
+            git commit -m "Auto updated submodule references"
+            git push origin HEAD:live
           } || echo "No changes to commit"
