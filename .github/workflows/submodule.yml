@@ -21,7 +21,6 @@ jobs:
         with:
           token: ${{ secrets.GIT_TOKEN }}
           submodules: true
-          submodules_recursive: true
 
       # Ensure all submodules are on the correct branch (live)
       - name: Git Submodule Update
