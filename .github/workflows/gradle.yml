@@ -56,6 +56,7 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker rm -f connectingstarlive
+            echo ${{ secrets.DOCKER_PWD_LIVE }} | sudo docker login -u ${{ secrets.DOCKER_ID_LIVE }} --password-stdin
             sudo docker pull ${{ secrets.DOCKER_REPO_LIVE }}
             docker-compose up -d
             docker image prune -f
