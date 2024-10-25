@@ -17,10 +17,6 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
 
       # Ensure submodules are on the correct branch (live)
-      - name: Ensure Submodules are on Live Branch
-        run: |
-          git submodule foreach --recursive 'git fetch origin'
-          git submodule foreach --recursive 'if git branch -r | grep -q origin/live; then git checkout -b live origin/live; else echo "live branch does not exist"; fi'
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -59,7 +55,7 @@ jobs:
           port: ${{ secrets.PORT }}
           envs: GITHUB_SHA
           script: |
-            sudo docker rm -f $(docker ps -aq) || true # 모든 컨테이너 제거
+            sudo docker rm -f docker-compose.yml || true # 모든 컨테이너 제거
             sudo docker pull ${{ secrets.DOCKER_REPO_LIVE }}
             docker-compose up -d
             docker image prune -f
