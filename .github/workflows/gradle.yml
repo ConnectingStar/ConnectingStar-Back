@@ -55,7 +55,7 @@ jobs:
           port: ${{ secrets.PORT }}
           envs: GITHUB_SHA
           script: |
-            sudo docker rm -f docker-compose.yml || true # 모든 컨테이너 제거
+            sudo docker rm -f docker-compose.yml
             sudo docker pull ${{ secrets.DOCKER_REPO_LIVE }}
             docker-compose up -d
             docker image prune -f
