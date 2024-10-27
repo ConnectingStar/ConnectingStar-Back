@@ -24,9 +24,9 @@ jobs:
       - name: Git Submodule Update
         run: |
           git submodule update --init --recursive
-          git submodule foreach --recursive 'branch=$(git symbolic-ref --short -q HEAD); if [ "$branch" != "live" ]; then git checkout live; fi'
-          git submodule foreach --recursive 'git fetch origin live && git reset --hard origin/live'
+          git submodule foreach --recursive git reset --hard
           git submodule foreach --recursive git clean -df
+          git submodule update --recursive --remote
 
       # Commit and push updates (if there are changes)
       - name: Commit and push updates
