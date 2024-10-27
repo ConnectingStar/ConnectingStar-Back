@@ -24,9 +24,10 @@ jobs:
       - name: Git Submodule Update
         run: |
           git submodule update --init --recursive
+          git submodule foreach --recursive 'git checkout live || true'
+          git submodule foreach --recursive 'git pull origin live || true'
           git submodule foreach --recursive git reset --hard
           git submodule foreach --recursive git clean -df
-          git submodule update --recursive --remote
 
       # Commit and push updates (if there are changes)
       - name: Commit and push updates
