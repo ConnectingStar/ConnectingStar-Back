@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .cors(httpSecurityCorsConfigurer ->
                         httpSecurityCorsConfigurer.configurationSource(request -> {
                             CorsConfiguration corsConfiguration = new CorsConfiguration();
-                            corsConfiguration.setAllowedOrigins(List.of("http://localhost:8080", "http://localhost:3000", "https://localhost:3000"));
+                            corsConfiguration.setAllowedOrigins(List.of("https://dev.habitbuddy.me","http://localhost:8080", "http://localhost:3000", "https://localhost:3000"));
                             corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
                             corsConfiguration.setAllowedHeaders(List.of("*"));
                             corsConfiguration.setAllowCredentials(true);
