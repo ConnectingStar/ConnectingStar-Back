@@ -287,7 +287,7 @@ public class RunHabitQueryService {
         // 기록 없음
         if (history == null) {
             // 만료 여부 - 이틀 이상 지나면 만료.
-            if (date.isBefore(LocalDate.now().minusDays(2))) {
+            if (date.isBefore(LocalDate.now().minusDays(1))) {
                 return DailyTrackingStatus.EXPIRED;
             }
             return DailyTrackingStatus.TO_DO;
