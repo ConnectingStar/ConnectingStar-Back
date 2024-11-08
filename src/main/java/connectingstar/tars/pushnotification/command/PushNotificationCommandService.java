@@ -66,6 +66,7 @@ public class PushNotificationCommandService {
     private Message toFirebaseMessage(PushNotificationMessage pushNotificationMessage) {
         Message message = Message.builder()
                 .setToken(pushNotificationMessage.getToken())
+                .putData("click_action", "http://localhost:3000/sign-up")
                 .setNotification(Notification.builder()
                         .setTitle(pushNotificationMessage.getTitle())
                         .setBody(pushNotificationMessage.getBody())
