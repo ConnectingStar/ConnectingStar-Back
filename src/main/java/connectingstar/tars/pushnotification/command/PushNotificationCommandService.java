@@ -49,6 +49,7 @@ public class PushNotificationCommandService {
             try {
                 BatchResponse response = firebaseMessaging.sendEach(batch);
                 responses.add(response);
+                log.info("FCM 메시지 전송 성공, 응답: " + response);
             } catch (FirebaseMessagingException err) {
                 log.error("Error sending batch", err);
             }
