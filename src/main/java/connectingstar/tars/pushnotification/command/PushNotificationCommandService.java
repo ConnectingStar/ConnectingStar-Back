@@ -67,6 +67,9 @@ public class PushNotificationCommandService {
         Message message = Message.builder()
                 .setToken(pushNotificationMessage.getToken())
                 .putData("click_action", "http://localhost:3000/sign-up")
+                .setAndroidConfig(AndroidConfig.builder()
+                        .setPriority(AndroidConfig.Priority.HIGH) // 우선 순위를 HIGH로 설정
+                        .build())
                 .setNotification(Notification.builder()
                         .setTitle(pushNotificationMessage.getTitle())
                         .setBody(pushNotificationMessage.getBody())
