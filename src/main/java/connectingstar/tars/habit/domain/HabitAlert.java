@@ -79,6 +79,8 @@ public class HabitAlert {
         this.alertTime = alertTime;
     }
 
+    public void setAlertStatus(boolean alertStatus) { this.alertStatus= alertStatus; }
+
     public void patchAlertTime(LocalTime alertTime) {
         this.alertTime = alertTime != null ? alertTime : this.alertTime;
     }
