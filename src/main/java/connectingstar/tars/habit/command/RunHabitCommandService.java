@@ -198,12 +198,11 @@ public class RunHabitCommandService {
         if (param.getUnit() != null) {
             runHabit.setUnit(param.getUnit());
         }
-
-        if (param.getFirstAlert() != null) {
-            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(), 1, param.getFirstAlert());
+        if (param.getFirstAlert() != null || param.getFirstAlertStatus() != null ) {
+            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(),1, param.getFirstAlertStatus(), param.getFirstAlert() );
         }
-        if (param.getSecondAlert() != null) {
-            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(), 2, param.getSecondAlert());
+        if (param.getSecondAlert() != null || param.getSecondAlert() != null) {
+            habitAlertCommandService.updateTimeByRunHabitIdAndOrder(runHabit.getRunHabitId(), 2, param.getSecondAlertStatus(), param.getSecondAlert());
         }
 
         return runHabitMapper.toPatchResponse(runHabit, runHabit.getAlerts());

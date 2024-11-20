@@ -41,9 +41,14 @@ public class HabitPatchRequest {
     private String unit;
 
     /**
-     * 알림 여부
+     * 1차 알림 여부
      */
-    private Boolean alertStatus;
+    private Boolean firstAlertStatus;
+
+    /**
+     * 2차 알림 여부
+     */
+    private Boolean secondAlertStatus;
 
     /**
      * 1차 알림 (값이 없을 시 자동으로 runTime 10분 전으로 설정)

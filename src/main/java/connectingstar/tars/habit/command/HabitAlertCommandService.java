@@ -59,8 +59,9 @@ public class HabitAlertCommandService {
      * runHabitId와 alertOrder로 알림을 찾고 시간을 변경한다.
      */
     @Transactional
-    public HabitAlert updateTimeByRunHabitIdAndOrder(Integer runHabitId, Integer alertOrder, LocalTime alertTime) {
+    public HabitAlert updateTimeByRunHabitIdAndOrder(Integer runHabitId, Integer alertOrder, boolean alertStatus, LocalTime alertTime) {
         HabitAlert habitAlert = habitAlertQueryService.getByRunHabitIdAndOrderOrElseThrow(runHabitId, alertOrder);
+        habitAlert.setAlertStatus(alertStatus);
         habitAlert.setAlertTime(alertTime);
         return habitAlert;
     }
