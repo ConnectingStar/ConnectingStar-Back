@@ -51,7 +51,7 @@ public class HabitAlertQueryService {
      */
     public List<HabitAlertWithDevice> getActiveListByAlertTimeMinuteWithUserAndRunHabitAndDevice(LocalTime alertTime) {
         LocalTime startTime = alertTime.withSecond(0).withNano(0);
-        LocalTime endTime = startTime.plusMinutes(1).minusNanos(1);
+        LocalTime endTime = startTime.plusMinutes(1).minusSeconds(1);
 
         return habitAlertRepository.findActiveByAlertTimeBetweenWithUserAndRunHabitAndDevice(startTime, endTime);
     }
