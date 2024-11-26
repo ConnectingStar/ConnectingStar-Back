@@ -223,8 +223,12 @@ public class HabitHistoryCommandService {
         // [FU-23] 마감일 = 기록 기준일의 하루 뒤 자정까지
         LocalDate dueDate = referenceDate.plusDays(HISTORY_CREATION_PERIOD_DAYS);
 
-        if (LocalDate.now().isAfter(dueDate))
+        if (LocalDate.now().isAfter(dueDate)) {
             throw new ValidationException(HabitErrorCode.EXPIRED_DATE);
+        }
+        else if(LocalDate.now().isBefore(referenceDate)){
+            throw new ValidationException(HabitErrorCode.EARLY_PERIOD_CHECK);
+        }
     }
 
 
