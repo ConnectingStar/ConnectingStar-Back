@@ -290,6 +290,9 @@ public class RunHabitQueryService {
             if (date.isBefore(LocalDate.now().minusDays(1))) {
                 return DailyTrackingStatus.EXPIRED;
             }
+            else if (date.isAfter(LocalDate.now())) {
+                return DailyTrackingStatus.EXPIRED;
+            }
             return DailyTrackingStatus.TO_DO;
         }
 
