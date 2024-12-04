@@ -7,7 +7,9 @@ package connectingstar.tars.oauth.response;
  */
 public record SocialUserResponse(
 
-    String email
+    String email,
+    String name,
+    String picture
 ) {
 
 }

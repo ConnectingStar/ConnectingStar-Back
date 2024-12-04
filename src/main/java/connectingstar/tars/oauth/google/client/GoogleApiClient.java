@@ -1,11 +1,8 @@
-package connectingstar.tars.oauth.kakao.client;
-
-import static connectingstar.tars.common.exception.errorcode.OAuthErrorCode.OAUTH_TOKEN_FAIL;
-import static connectingstar.tars.common.exception.errorcode.OAuthErrorCode.OAUTH_USER_FAIL;
+package connectingstar.tars.oauth.google.client;
 
 import connectingstar.tars.common.exception.ValidationException;
-import connectingstar.tars.oauth.kakao.KakaoOAuthConfig;
-import connectingstar.tars.oauth.kakao.response.KakaoTokenResponse;
+import connectingstar.tars.oauth.google.GoogleOAuthConfig;
+import connectingstar.tars.oauth.google.response.GoogleTokenResponse;
 import connectingstar.tars.oauth.response.SocialUserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -15,48 +12,59 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
+import static connectingstar.tars.common.exception.errorcode.OAuthErrorCode.OAUTH_TOKEN_FAIL;
+import static connectingstar.tars.common.exception.errorcode.OAuthErrorCode.OAUTH_USER_FAIL;
+
 /**
- * Kakao Api 요청
+ * Google Api 요청
  *
- * @author 송병선
+ * @author 박정민
  */
 @RequiredArgsConstructor
 @Component
-public class KakaoApiClient {
+public class GoogleApiClient {
 
-  private final KakaoOAuthConfig kakaoOAuthConfig;
+  private final GoogleOAuthConfig googleOAuthConfig;
 
   /**
-   * Kakao 엑세스 토큰 발급
+   * Google 엑세스 토큰 발급
    *
    * @param authCode 경도
-   * @return Kakao 엑세스 토큰
+   * @return Google 엑세스 토큰
    */
-  public KakaoTokenResponse getToken(String authCode) {
+  public GoogleTokenResponse getToken(String authCode) {
+    String decode = URLDecoder.decode(authCode, StandardCharsets.UTF_8);
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("grant_type", "authorization_code");
-    params.add("client_id", kakaoOAuthConfig.clientId());
-    params.add("redirect_uri", kakaoOAuthConfig.redirectUri());
-    params.add("code", authCode);
-    params.add("client_secret", kakaoOAuthConfig.clientSecret());
+    params.add("client_id", googleOAuthConfig.clientId());
+    params.add("redirect_uri", googleOAuthConfig.redirectUri());
+    params.add("code", decode);
+    params.add("client_secret", googleOAuthConfig.clientSecret());
 
-    String resultText = WebClient.create(kakaoOAuthConfig.tokenUri())
+    String resultText = WebClient.create(googleOAuthConfig.tokenUri())
         .post()
         .bodyValue(params)
         .header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
-        .exchangeToMono(res -> res.bodyToMono(String.class))
+        .exchangeToMono(res -> {
+          System.out.println("Response status: " + res.statusCode());
+          return res.bodyToMono(String.class);
+        })
         .block();
 
     return makeTokenInfo(resultText);
   }
 
   public SocialUserResponse getUser(String bearerToken) {
-    String resultText = WebClient.create(kakaoOAuthConfig.userInfoUri())
+    String resultText = WebClient.create(googleOAuthConfig.userInfoUri())
         .get()
         .header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
         .header(HttpHeaders.AUTHORIZATION, bearerToken)
         .exchangeToMono(res -> res.bodyToMono(String.class))
         .block();
+
 
     return makeUserInfo(resultText);
   }
@@ -67,13 +75,14 @@ public class KakaoApiClient {
    * @param resultText 응답 문자열
    * @return 토큰 정보
    */
-  private KakaoTokenResponse makeTokenInfo(String resultText) {
+  private GoogleTokenResponse makeTokenInfo(String resultText) {
     try {
       JSONObject jsonObject = new JSONObject(resultText);
-      return new KakaoTokenResponse(jsonObject.getString("token_type"),
+      return new GoogleTokenResponse(jsonObject.getString("token_type"),
           jsonObject.getString("access_token"),
-          jsonObject.getInt("expires_in"), jsonObject.getString("refresh_token"),
-          jsonObject.getInt("refresh_token_expires_in")
+          jsonObject.getInt("expires_in"),
+//              jsonObject.getString("refresh_token"),
+          jsonObject.getString("id_token")
       );
     } catch (Exception e) {
       throw new ValidationException(OAUTH_TOKEN_FAIL);
@@ -89,9 +98,10 @@ public class KakaoApiClient {
   private SocialUserResponse makeUserInfo(String resultText) {
     try {
       JSONObject jsonObject = new JSONObject(resultText);
-      return new SocialUserResponse(String.valueOf(jsonObject.getLong("id")),
-              "",
-              "");
+      return new SocialUserResponse(String.valueOf(jsonObject.getString("email")),
+              String.valueOf(jsonObject.get("name")),
+              String.valueOf(jsonObject.get("picture"))
+              );
     } catch (Exception e) {
       throw new ValidationException(OAUTH_USER_FAIL);
     }
