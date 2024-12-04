@@ -21,7 +21,13 @@ public enum SocialType implements Codable {
     /**
      * 카카오
      */
-    KAKAO("K");
+    KAKAO("K"),
+
+    /**
+     * 구글
+     */
+    GOOGLE("G");
+
 
     private final String code;
 
