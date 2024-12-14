@@ -67,7 +67,7 @@ public class PushNotificationCommandService {
     private Message toFirebaseMessage(PushNotificationMessage pushNotificationMessage) {
         Message message = Message.builder()
                 .setToken(pushNotificationMessage.getToken())
-                .putData("click_action", "https://habitbuddy.me/sign-up")
+                .putData("click_action", "https://habitbuddy.me/")
                 .setAndroidConfig(AndroidConfig.builder()
                         .setPriority(AndroidConfig.Priority.HIGH) // 우선 순위를 HIGH로 설정
                         .build())
