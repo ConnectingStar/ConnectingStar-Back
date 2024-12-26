@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class HabitDeleteRequest {
     private String reasonOfQuit;
+    private boolean visibility;
 }

@@ -85,6 +85,15 @@ public class HabitHistory extends Auditable {
     @Column(name = "review", nullable = false, length = 400)
     private String review;
 
+
+
+    /*
+    * 통계 포함 여부
+    * */
+    @Column(name = "visibility", nullable = false)
+    private Boolean visibility;
+
+
     /**
      * 휴식 여부
      * <p>

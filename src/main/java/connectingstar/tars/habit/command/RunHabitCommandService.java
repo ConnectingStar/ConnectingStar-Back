@@ -289,7 +289,13 @@ public class RunHabitCommandService {
         quitHabitRepository.save(quitHabit);
 
         habitAlertRepositoryCustom.deleteByRunHabitId(runHabit.getRunHabitId());
-        habitHistoryRepositoryCustom.deleteByRunHabitId(runHabit.getRunHabitId());
+        if(request.isVisibility()){
+            habitHistoryRepositoryCustom.updateByRunHabitId(runHabit.getRunHabitId());
+        }
+        else{
+            habitHistoryRepositoryCustom.deleteByRunHabitId(runHabit.getRunHabitId());
+        }
+
         runHabitRepository.delete(runHabit);
 
         return quitHabitMapper.toHabitDeleteResponse(quitHabit);
