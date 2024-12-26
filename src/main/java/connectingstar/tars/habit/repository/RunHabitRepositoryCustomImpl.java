@@ -59,7 +59,7 @@ public class RunHabitRepositoryCustomImpl implements RunHabitRepositoryCustom {
                         runHabit,
                         habitHistory))
                 .from(runHabit)
-                .where(runHabit.user.id.eq(userId))
+                .where(runHabit.user.id.eq(userId).and(habitHistory.visibility))
                 .leftJoin(runHabit.habitHistories, habitHistory)
                 .on(habitHistory.runDate.between(date.atStartOfDay(), date.atTime(LocalTime.MAX)))
                 .fetch();

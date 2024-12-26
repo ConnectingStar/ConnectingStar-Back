@@ -69,6 +69,12 @@ public class HabitHistoryDto {
      */
     private Boolean isRest;
 
+    /*
+    *
+    * 통계 확인 여부
+    */
+    private Boolean visibility;
+
     /**
      * 기록과 연결된 습관 정보.
      * Request Param이 related=runHabit일 때만 조회함.
