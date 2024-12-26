@@ -122,6 +122,7 @@ public class HabitHistory extends Auditable {
         this.action = action;
         this.runValue = runValue;
         this.achievement = achievement;
+        this.visibility = true;
         this.review = review;
         this.isRest = isRest;
     }
