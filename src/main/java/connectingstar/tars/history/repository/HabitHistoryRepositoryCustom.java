@@ -39,7 +39,6 @@ public interface HabitHistoryRepositoryCustom {
      * @param offset     Pagination
      * @param limit      Pagination
      * @param orderBy    ("createdAt") Sort
-     * @param visibility 통계포함 여부
      */
     public List<HabitHistory> findByRunHabitIdAndIsRest(
             Integer runHabitId,
@@ -49,8 +48,7 @@ public interface HabitHistoryRepositoryCustom {
             @Nullable Integer offset,
             @Nullable Integer limit,
             @Nullable HabitHistorySortBy orderBy,
-            @Nullable Order order,
-            @Nullable Boolean visibility
+            @Nullable Order order
     );
 
     /**
@@ -82,6 +80,4 @@ public interface HabitHistoryRepositoryCustom {
     public HistoryCreateCheckResponse getCheckTodayCreate(HabitHistoryCreateCheckRequest param);
 
     public void deleteByRunHabitId(Integer runHabitId);
-
-    public void updateByRunHabitId(Integer runHabitId);
 }

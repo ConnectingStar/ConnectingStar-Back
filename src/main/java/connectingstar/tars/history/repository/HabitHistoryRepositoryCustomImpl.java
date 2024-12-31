@@ -59,8 +59,7 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
             @Nullable Integer offset,
             @Nullable Integer limit,
             @Nullable HabitHistorySortBy orderBy,
-            @Nullable Order order,
-            @Nullable Boolean visibility
+            @Nullable Order order
     ) {
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
         QRunHabit runHabit = QRunHabit.runHabit;
@@ -79,8 +78,6 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
                     habitHistory.runDate.between(runDate.get(0).atStartOfDay(), runDate.get(1).atTime(LocalTime.MAX)));
         }
 
-        whereExpression = whereExpression.and(
-                habitHistory.visibility.eq(true));
 
         query = query.where(whereExpression);
 
@@ -259,17 +256,7 @@ public class HabitHistoryRepositoryCustomImpl implements HabitHistoryRepositoryC
         QHabitHistory habitHistory = QHabitHistory.habitHistory;
 
         queryFactory
-                .update(habitHistory)
-                .set(habitHistory.visibility, false)
-                .where(habitHistory.runHabit.runHabitId.eq(runHabitId))
-                .execute();
-    }
-    public void updateByRunHabitId(Integer runHabitId){
-        QHabitHistory habitHistory = QHabitHistory.habitHistory;
-
-        queryFactory
-                .update(habitHistory)
-                .set(habitHistory.visibility, true)
+                .delete(habitHistory)
                 .where(habitHistory.runHabit.runHabitId.eq(runHabitId))
                 .execute();
     }

@@ -68,6 +68,4 @@ public class HistoryGetListRequestParam implements PaginationRequestParam, SortR
      */
     private List<Related> related = null;
 
-    //    통계포함 여부
-    private Boolean visibility = true;
 }

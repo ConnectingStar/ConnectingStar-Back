@@ -349,10 +349,10 @@ public class RunHabitQueryService {
         List<HabitHistory> habitHistories = runHabit.getHabitHistories();
 
         Integer totalStarCount = habitHistories.stream()
-                .filter(habitHistory -> !habitHistory.getIsRest() && habitHistory.getVisibility())
+                .filter(habitHistory -> !habitHistory.getIsRest())
                 .toList().size() * habitHistoryCommandService.COMPLETED_HISTORY_CREATION_REWARD_STAR_COUNT;
         Integer totalValue = habitHistories.stream()
-                .filter(habitHistory -> !habitHistory.getIsRest() && habitHistory.getVisibility())
+                .filter(habitHistory -> !habitHistory.getIsRest())
                 .mapToInt(HabitHistory::getRunValue)
                 .sum();
 
